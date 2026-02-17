@@ -345,6 +345,27 @@ function getCallsByDay(tenantId, days = 7) {
   return stmt.all(tenantId, startTime);
 }
 
+// ============= USER QUERIES =============
+
+function createUser(email, passwordHash, tenantId) {
+  const stmt = getDb().prepare(`
+    INSERT INTO users (email, password_hash, tenant_id)
+    VALUES (?, ?, ?)
+  `);
+  const result = stmt.run(email, passwordHash, tenantId);
+  return result.lastInsertRowid;
+}
+
+function getUserByEmail(email) {
+  const stmt = getDb().prepare('SELECT * FROM users WHERE email = ?');
+  return stmt.get(email);
+}
+
+function getUserById(id) {
+  const stmt = getDb().prepare('SELECT * FROM users WHERE id = ?');
+  return stmt.get(id);
+}
+
 module.exports = {
   init,
   getDb,
@@ -375,4 +396,8 @@ module.exports = {
   getCallAnalytics,
   getCallsByHour,
   getCallsByDay,
+  // Users
+  createUser,
+  getUserByEmail,
+  getUserById,
 };
