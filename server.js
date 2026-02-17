@@ -20,6 +20,7 @@ const onboardRoutes = require('./src/routes/onboard');
 const billingRoutes = require('./src/routes/billing');
 const chatRoutes = require('./src/routes/chat');
 const authRoutes = require('./src/routes/auth');
+const dashboardApiRoutes = require('./src/routes/dashboard-api');
 const { setupConversationRelay } = require('./src/routes/conversation-relay');
 
 const app = express();
@@ -121,6 +122,9 @@ app.use('/onboard', onboardRoutes);
 
 // Auth
 app.use('/auth', authRoutes);
+
+// Dashboard API (analytics + settings)
+app.use('/api/dashboard', dashboardApiRoutes);
 
 // Billing (Stripe)
 app.use('/billing', billingRoutes);

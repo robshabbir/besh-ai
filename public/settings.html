@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Calva</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <div class="max-w-3xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">⚙️ Settings</h1>
+
+    <form id="settingsForm" class="space-y-8">
+      <!-- Greeting -->
+      <section class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-3">Business Greeting</h2>
+        <textarea id="greeting" rows="3" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Hello! Thanks for calling..."></textarea>
+      </section>
+
+      <!-- Personality -->
+      <section class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-3">Receptionist Personality</h2>
+        <select id="personality" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          <option value="professional">Professional</option>
+          <option value="friendly">Friendly</option>
+          <option value="casual">Casual</option>
+        </select>
+      </section>
+
+      <!-- Business Hours -->
+      <section class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-3">Business Hours</h2>
+        <div id="hoursGrid" class="space-y-3"></div>
+      </section>
+
+      <!-- FAQs -->
+      <section class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-3">Top FAQs</h2>
+        <div id="faqsContainer" class="space-y-4"></div>
+      </section>
+
+      <!-- Save -->
+      <div class="flex items-center gap-4">
+        <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Save Settings</button>
+        <span id="status" class="text-sm text-green-600 hidden">✓ Saved</span>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const DAYS = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+
+    function renderHours(hours) {
+      const grid = document.getElementById('hoursGrid');
+      grid.innerHTML = DAYS.map(day => `
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+          <span class="w-28 font-medium capitalize text-gray-700">${day}</span>
+          <input type="time" data-day="${day}" data-field="open" value="${hours[day]?.open || ''}" class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          <span class="text-gray-400">to</span>
+          <input type="time" data-day="${day}" data-field="close" value="${hours[day]?.close || ''}" class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+        </div>
+      `).join('');
+    }
+
+    function renderFaqs(faqs) {
+      const container = document.getElementById('faqsContainer');
+      container.innerHTML = faqs.map((faq, i) => `
+        <div class="border border-gray-200 rounded-lg p-4 space-y-2">
+          <label class="text-sm font-medium text-gray-600">FAQ ${i + 1}</label>
+          <input type="text" data-faq="${i}" data-field="question" value="${faq.question || ''}" placeholder="Question" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          <textarea data-faq="${i}" data-field="answer" rows="2" placeholder="Answer" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">${faq.answer || ''}</textarea>
+        </div>
+      `).join('');
+    }
+
+    function collectForm() {
+      const businessHours = {};
+      DAYS.forEach(day => {
+        businessHours[day] = {
+          open: document.querySelector(`[data-day="${day}"][data-field="open"]`).value,
+          close: document.querySelector(`[data-day="${day}"][data-field="close"]`).value,
+        };
+      });
+      const faqs = [0, 1, 2].map(i => ({
+        question: document.querySelector(`[data-faq="${i}"][data-field="question"]`).value,
+        answer: document.querySelector(`[data-faq="${i}"][data-field="answer"]`).value,
+      }));
+      return {
+        greeting: document.getElementById('greeting').value,
+        personality: document.getElementById('personality').value,
+        businessHours,
+        faqs,
+      };
+    }
+
+    (async () => {
+      const me = await fetch('/auth/me').then(r => r.json()).catch(() => null);
+      if (!me?.user) return location.href = '/login.html';
+
+      const data = await fetch('/api/dashboard/settings').then(r => r.json());
+      document.getElementById('greeting').value = data.greeting || '';
+      document.getElementById('personality').value = data.personality || 'professional';
+      renderHours(data.businessHours || {});
+      renderFaqs(data.faqs || [{},{},{}]);
+
+      document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const statusEl = document.getElementById('status');
+        statusEl.classList.add('hidden');
+        const res = await fetch('/api/dashboard/settings', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(collectForm()),
+        });
+        if (res.ok) {
+          statusEl.classList.remove('hidden');
+          setTimeout(() => statusEl.classList.add('hidden'), 3000);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics - Calva</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">📊 Analytics</h1>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white rounded-xl shadow p-6">
+        <p class="text-sm text-gray-500">Calls Today</p>
+        <p id="today" class="text-3xl font-bold text-indigo-600 mt-1">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow p-6">
+        <p class="text-sm text-gray-500">Calls This Week</p>
+        <p id="thisWeek" class="text-3xl font-bold text-indigo-600 mt-1">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow p-6">
+        <p class="text-sm text-gray-500">Avg Duration</p>
+        <p id="avgDuration" class="text-3xl font-bold text-indigo-600 mt-1">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow p-6">
+        <p class="text-sm text-gray-500">Top Intent</p>
+        <p id="topIntent" class="text-3xl font-bold text-indigo-600 mt-1">—</p>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Daily Call Volume (Last 7 Days)</h2>
+        <canvas id="dailyChart"></canvas>
+      </div>
+      <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Peak Hours</h2>
+        <canvas id="hourlyChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (async () => {
+      // Auth check
+      const me = await fetch('/auth/me').then(r => r.json()).catch(() => null);
+      if (!me?.user) return location.href = '/login.html';
+
+      const data = await fetch('/api/dashboard/analytics').then(r => r.json());
+
+      document.getElementById('today').textContent = data.today;
+      document.getElementById('thisWeek').textContent = data.thisWeek;
+      document.getElementById('avgDuration').textContent = data.avgDuration + 's';
+      document.getElementById('topIntent').textContent = data.topIntent;
+
+      // Daily volume chart
+      const dailyLabels = (data.dailyVolume || []).map(d => d.date).reverse();
+      const dailyData = (data.dailyVolume || []).map(d => d.count).reverse();
+      new Chart(document.getElementById('dailyChart'), {
+        type: 'bar',
+        data: {
+          labels: dailyLabels,
+          datasets: [{
+            label: 'Calls',
+            data: dailyData,
+            backgroundColor: 'rgba(99, 102, 241, 0.7)',
+            borderRadius: 6,
+          }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+      });
+
+      // Hourly distribution chart
+      const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
+      const hourMap = Object.fromEntries((data.hourlyDistribution || []).map(h => [h.hour, h.count]));
+      new Chart(document.getElementById('hourlyChart'), {
+        type: 'bar',
+        data: {
+          labels: hours.map(h => h + ':00'),
+          datasets: [{
+            label: 'Calls',
+            data: hours.map(h => hourMap[h] || 0),
+            backgroundColor: hours.map(h => (hourMap[h] || 0) > 0 ? 'rgba(16, 185, 129, 0.7)' : 'rgba(229, 231, 235, 0.5)'),
+            borderRadius: 4,
+          }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -26,7 +26,7 @@
         "Submit button exists",
         "Verify in browser using dev-browser skill"
       ],
-      "passes": false,
+      "passes": true,
       "priority": "critical"
     },
     {
@@ -40,7 +40,7 @@
         "Dashboard requires authentication",
         "Logout clears session"
       ],
-      "passes": false,
+      "passes": true,
       "priority": "critical"
     },
     {
