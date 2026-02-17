@@ -5,44 +5,101 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Settings - Calva</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.4s ease-out; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes toastOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(16px); } }
+    .toast-in { animation: toastIn 0.3s ease-out; }
+    .toast-out { animation: toastOut 0.3s ease-in forwards; }
+    .toggle-checkbox:checked { background-color: #4f46e5; }
+    .toggle-checkbox:checked + .toggle-label .toggle-dot { transform: translateX(100%); background-color: white; }
+    .toggle-checkbox { appearance: none; width: 44px; height: 24px; background: #d1d5db; border-radius: 999px; position: relative; cursor: pointer; transition: background-color 0.2s; }
+    .toggle-checkbox::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: transform 0.2s; }
+    .toggle-checkbox:checked::after { transform: translateX(20px); }
+  </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-  <div class="max-w-3xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-8">⚙️ Settings</h1>
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden">
+    <div class="bg-gray-900 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 text-sm font-medium">
+      <svg class="w-5 h-5 text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span id="toast-text">Settings saved successfully</span>
+    </div>
+  </div>
 
-    <form id="settingsForm" class="space-y-8">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 fade-in">
+    <!-- Header -->
+    <div class="flex items-center gap-3 mb-8">
+      <a href="/dashboard/" class="text-gray-400 hover:text-indigo-600 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      </a>
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Settings</h1>
+        <p class="text-sm text-gray-500">Configure your AI receptionist</p>
+      </div>
+    </div>
+
+    <form id="settingsForm" class="space-y-6">
       <!-- Greeting -->
-      <section class="bg-white rounded-xl shadow p-6">
-        <h2 class="text-lg font-semibold text-gray-800 mb-3">Business Greeting</h2>
-        <textarea id="greeting" rows="3" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Hello! Thanks for calling..."></textarea>
+      <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+        <h2 class="text-base font-semibold text-gray-900 mb-1">Business Greeting</h2>
+        <p class="text-sm text-gray-500 mb-4">What your AI says when answering the phone.</p>
+        <textarea id="greeting" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 placeholder-gray-400" placeholder="Hello! Thanks for calling..."></textarea>
       </section>
 
       <!-- Personality -->
-      <section class="bg-white rounded-xl shadow p-6">
-        <h2 class="text-lg font-semibold text-gray-800 mb-3">Receptionist Personality</h2>
-        <select id="personality" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-          <option value="professional">Professional</option>
-          <option value="friendly">Friendly</option>
-          <option value="casual">Casual</option>
-        </select>
+      <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+        <h2 class="text-base font-semibold text-gray-900 mb-1">Receptionist Personality</h2>
+        <p class="text-sm text-gray-500 mb-4">Choose the tone for your AI receptionist.</p>
+        <div class="grid grid-cols-3 gap-3">
+          <label class="personality-option relative">
+            <input type="radio" name="personality" value="professional" class="peer sr-only">
+            <div class="cursor-pointer border-2 border-gray-200 rounded-xl p-4 text-center peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-gray-300 transition-all duration-200">
+              <div class="text-2xl mb-1">👔</div>
+              <div class="text-sm font-semibold text-gray-900">Professional</div>
+              <div class="text-xs text-gray-500">Formal & polished</div>
+            </div>
+          </label>
+          <label class="personality-option relative">
+            <input type="radio" name="personality" value="friendly" class="peer sr-only">
+            <div class="cursor-pointer border-2 border-gray-200 rounded-xl p-4 text-center peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-gray-300 transition-all duration-200">
+              <div class="text-2xl mb-1">😊</div>
+              <div class="text-sm font-semibold text-gray-900">Friendly</div>
+              <div class="text-xs text-gray-500">Warm & approachable</div>
+            </div>
+          </label>
+          <label class="personality-option relative">
+            <input type="radio" name="personality" value="casual" class="peer sr-only">
+            <div class="cursor-pointer border-2 border-gray-200 rounded-xl p-4 text-center peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-gray-300 transition-all duration-200">
+              <div class="text-2xl mb-1">✌️</div>
+              <div class="text-sm font-semibold text-gray-900">Casual</div>
+              <div class="text-xs text-gray-500">Relaxed & natural</div>
+            </div>
+          </label>
+        </div>
       </section>
 
       <!-- Business Hours -->
-      <section class="bg-white rounded-xl shadow p-6">
-        <h2 class="text-lg font-semibold text-gray-800 mb-3">Business Hours</h2>
+      <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+        <h2 class="text-base font-semibold text-gray-900 mb-1">Business Hours</h2>
+        <p class="text-sm text-gray-500 mb-4">Toggle days on/off and set opening hours.</p>
         <div id="hoursGrid" class="space-y-3"></div>
       </section>
 
       <!-- FAQs -->
-      <section class="bg-white rounded-xl shadow p-6">
-        <h2 class="text-lg font-semibold text-gray-800 mb-3">Top FAQs</h2>
+      <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+        <h2 class="text-base font-semibold text-gray-900 mb-1">Top FAQs</h2>
+        <p class="text-sm text-gray-500 mb-4">Common questions your AI should know how to answer.</p>
         <div id="faqsContainer" class="space-y-4"></div>
       </section>
 
       <!-- Save -->
-      <div class="flex items-center gap-4">
-        <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Save Settings</button>
-        <span id="status" class="text-sm text-green-600 hidden">✓ Saved</span>
+      <div class="flex items-center justify-between pt-2 pb-8">
+        <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-all duration-200 shadow-sm hover:shadow-md text-sm">
+          Save Settings
+        </button>
+        <a href="/dashboard/" class="text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">Back to Dashboard</a>
       </div>
     </form>
   </div>
@@ -50,25 +107,63 @@
   <script>
     const DAYS = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
 
+    function showToast(text = 'Settings saved successfully') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-text').textContent = text;
+      toast.classList.remove('hidden', 'toast-out');
+      toast.classList.add('toast-in');
+      setTimeout(() => {
+        toast.classList.add('toast-out');
+        setTimeout(() => toast.classList.add('hidden'), 300);
+      }, 3000);
+    }
+
     function renderHours(hours) {
       const grid = document.getElementById('hoursGrid');
-      grid.innerHTML = DAYS.map(day => `
-        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-          <span class="w-28 font-medium capitalize text-gray-700">${day}</span>
-          <input type="time" data-day="${day}" data-field="open" value="${hours[day]?.open || ''}" class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-          <span class="text-gray-400">to</span>
-          <input type="time" data-day="${day}" data-field="close" value="${hours[day]?.close || ''}" class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-        </div>
-      `).join('');
+      grid.innerHTML = DAYS.map(day => {
+        const h = hours[day] || {};
+        const isOpen = h.open || h.close;
+        return `<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-2 ${isOpen ? '' : 'opacity-60'}">
+          <div class="flex items-center gap-3 w-32 shrink-0">
+            <input type="checkbox" data-day="${day}" data-field="enabled" ${isOpen ? 'checked' : ''} 
+              class="toggle-checkbox" onchange="toggleDay(this, '${day}')">
+            <span class="text-sm font-semibold capitalize text-gray-900">${day}</span>
+          </div>
+          <div class="flex items-center gap-2 flex-1 day-times-${day}" ${isOpen ? '' : 'style="pointer-events:none;opacity:0.4"'}>
+            <input type="time" data-day="${day}" data-field="open" value="${h.open || '09:00'}" 
+              class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
+            <span class="text-gray-400 text-sm">to</span>
+            <input type="time" data-day="${day}" data-field="close" value="${h.close || '17:00'}" 
+              class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function toggleDay(checkbox, day) {
+      const row = checkbox.closest('div').parentElement;
+      const times = row.querySelector(`.day-times-${day}`);
+      if (checkbox.checked) {
+        row.classList.remove('opacity-60');
+        times.style.pointerEvents = '';
+        times.style.opacity = '';
+      } else {
+        row.classList.add('opacity-60');
+        times.style.pointerEvents = 'none';
+        times.style.opacity = '0.4';
+      }
     }
 
     function renderFaqs(faqs) {
       const container = document.getElementById('faqsContainer');
       container.innerHTML = faqs.map((faq, i) => `
-        <div class="border border-gray-200 rounded-lg p-4 space-y-2">
-          <label class="text-sm font-medium text-gray-600">FAQ ${i + 1}</label>
-          <input type="text" data-faq="${i}" data-field="question" value="${faq.question || ''}" placeholder="Question" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-          <textarea data-faq="${i}" data-field="answer" rows="2" placeholder="Answer" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">${faq.answer || ''}</textarea>
+        <div class="border border-gray-200 rounded-xl p-5 hover:border-indigo-200 transition-colors duration-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">FAQ ${i + 1} — Question</label>
+          <input type="text" data-faq="${i}" data-field="question" value="${faq.question || ''}" placeholder="e.g. Do you offer same-day service?"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm mb-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 placeholder-gray-400">
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Answer</label>
+          <textarea data-faq="${i}" data-field="answer" rows="2" placeholder="e.g. Yes! Call before noon for same-day appointments."
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 placeholder-gray-400">${faq.answer || ''}</textarea>
         </div>
       `).join('');
     }
@@ -76,18 +171,22 @@
     function collectForm() {
       const businessHours = {};
       DAYS.forEach(day => {
-        businessHours[day] = {
-          open: document.querySelector(`[data-day="${day}"][data-field="open"]`).value,
-          close: document.querySelector(`[data-day="${day}"][data-field="close"]`).value,
-        };
+        const enabled = document.querySelector(`[data-day="${day}"][data-field="enabled"]`);
+        if (enabled && enabled.checked) {
+          businessHours[day] = {
+            open: document.querySelector(`[data-day="${day}"][data-field="open"]`).value,
+            close: document.querySelector(`[data-day="${day}"][data-field="close"]`).value,
+          };
+        }
       });
+      const personality = document.querySelector('input[name="personality"]:checked')?.value || 'professional';
       const faqs = [0, 1, 2].map(i => ({
         question: document.querySelector(`[data-faq="${i}"][data-field="question"]`).value,
         answer: document.querySelector(`[data-faq="${i}"][data-field="answer"]`).value,
       }));
       return {
         greeting: document.getElementById('greeting').value,
-        personality: document.getElementById('personality').value,
+        personality,
         businessHours,
         faqs,
       };
@@ -99,23 +198,29 @@
 
       const data = await fetch('/api/dashboard/settings').then(r => r.json());
       document.getElementById('greeting').value = data.greeting || '';
-      document.getElementById('personality').value = data.personality || 'professional';
+      
+      // Set personality radio
+      const personalityVal = data.personality || 'professional';
+      const radio = document.querySelector(`input[name="personality"][value="${personalityVal}"]`);
+      if (radio) radio.checked = true;
+      
       renderHours(data.businessHours || {});
       renderFaqs(data.faqs || [{},{},{}]);
 
       document.getElementById('settingsForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const statusEl = document.getElementById('status');
-        statusEl.classList.add('hidden');
+        const btn = e.submitter;
+        btn.textContent = 'Saving…';
+        btn.disabled = true;
         const res = await fetch('/api/dashboard/settings', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(collectForm()),
         });
-        if (res.ok) {
-          statusEl.classList.remove('hidden');
-          setTimeout(() => statusEl.classList.add('hidden'), 3000);
-        }
+        btn.textContent = 'Save Settings';
+        btn.disabled = false;
+        if (res.ok) showToast('Settings saved successfully');
+        else showToast('Failed to save — please try again');
       });
     })();
   </script>
