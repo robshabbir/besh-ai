@@ -220,7 +220,7 @@
               <div class="font-semibold text-green-700">Test Call</div>
               <div class="text-sm text-gray-600">Call your AI receptionist</div>
             </a>
-            <a href="/dashboard.html" class="block px-6 py-4 bg-purple-50 border-2 border-purple-300 rounded-xl hover:bg-purple-100 transition text-center">
+            <a href="/dashboard/" class="block px-6 py-4 bg-purple-50 border-2 border-purple-300 rounded-xl hover:bg-purple-100 transition text-center">
               <div class="text-3xl mb-2">📊</div>
               <div class="font-semibold text-purple-700">Dashboard</div>
               <div class="text-sm text-gray-600">View calls & settings</div>
@@ -256,7 +256,7 @@
             loadTemplates();
           } else if (data.tenant) {
             // Already set up, go to dashboard
-            window.location.href = '/dashboard.html';
+            window.location.href = '/dashboard/';
           }
         }
       } catch (e) { /* not logged in */ }

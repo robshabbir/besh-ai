@@ -180,7 +180,7 @@ let currentTenant = null;
 // ============= INIT =============
 (async function init() {
   try {
-    const res = await fetch('/dashboard/api/me');
+    const res = await fetch('/api/dashboard/me');
     if (!res.ok) { window.location.href = '/login.html'; return; }
     const data = await res.json();
     currentUser = data.user;
@@ -258,7 +258,7 @@ function closeSidebar() {
 // ============= OVERVIEW =============
 async function loadOverview() {
   try {
-    const res = await fetch('/dashboard/api/overview');
+    const res = await fetch('/api/dashboard/overview');
     const { stats } = await res.json();
     document.getElementById('stat-today').textContent = stats.callsToday ?? 0;
     document.getElementById('stat-week').textContent = stats.callsThisWeek ?? 0;
@@ -272,7 +272,7 @@ async function loadOverview() {
 // ============= CALLS =============
 async function loadCalls() {
   try {
-    const res = await fetch('/dashboard/api/calls');
+    const res = await fetch('/api/dashboard/calls');
     const { calls } = await res.json();
     const tbody = document.getElementById('calls-table');
 
@@ -379,7 +379,7 @@ async function saveCustomization() {
   })).filter(f => f.q || f.a);
 
   try {
-    const res = await fetch('/dashboard/api/customize', {
+    const res = await fetch('/api/dashboard/customize', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

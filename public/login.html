@@ -43,7 +43,7 @@
         const res = await fetch('/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
         const data = await res.json();
         if (!res.ok) { errorEl.textContent = data.error; errorEl.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'Log In'; return; }
-        window.location.href = '/dashboard.html';
+        window.location.href = '/dashboard/';
       } catch (e) { errorEl.textContent = 'Network error'; errorEl.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'Log In'; }
     }
     document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
