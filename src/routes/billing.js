@@ -1,5 +1,4 @@
 const express = require('express');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const db = require('../db');
 const logger = require('../utils/logger');
 const crypto = require('crypto');
@@ -8,6 +7,9 @@ const { sendSMS } = require('../services/notify');
 const { loadTemplate } = require('../services/template-loader');
 
 const router = express.Router();
+
+const isPlaceholder = (process.env.STRIPE_SECRET_KEY || '').includes('PLACEHOLDER');
+const stripe = isPlaceholder ? null : require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Pricing tiers
 const PRICING = {
@@ -37,6 +39,10 @@ const PRICING = {
  */
 router.post('/create-checkout', async (req, res) => {
   try {
+    if (isPlaceholder) {
+      return res.json({ skipped: true, message: 'Stripe not configured — payment skipped' });
+    }
+
     const { plan, email, businessName, industry } = req.body;
     
     if (!plan || !PRICING[plan]) {
@@ -420,5 +426,31 @@ async function handlePaymentFailed(invoice) {
   // TODO: Send notification to business owner about failed payment
   // Could deactivate after multiple failures
 }
+
+/**
+ * GET /billing/status
+ * Returns payment/subscription status for the current tenant
+ */
+router.get('/status', (req, res) => {
+  if (isPlaceholder) {
+    return res.json({ status: 'skipped', message: 'Stripe not configured — payment step skipped', paid: true });
+  }
+
+  if (!req.session || !req.session.tenantId) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+
+  const tenant = db.getTenantById(req.session.tenantId);
+  if (!tenant) {
+    return res.status(404).json({ error: 'Tenant not found' });
+  }
+
+  const config = tenant.config || {};
+  res.json({
+    status: config.stripeSubscriptionId ? 'active' : 'none',
+    paid: !!config.stripeSubscriptionId,
+    plan: config.plan || null
+  });
+});
 
 module.exports = router;

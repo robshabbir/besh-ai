@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Calva AI Receptionist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+  <div class="min-h-screen flex items-center justify-center py-12 px-4">
+    <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+      <div class="text-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+        <p class="text-gray-600">Log in to your Calva dashboard</p>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <input id="email" type="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <input id="password" type="password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent">
+        </div>
+        <div id="error" class="text-red-600 text-sm hidden"></div>
+        <button onclick="login()" id="login-btn" class="w-full px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold shadow-md transition">
+          Log In
+        </button>
+        <p class="text-center text-sm text-gray-500">Don't have an account? <a href="/onboard" class="text-purple-600 hover:underline">Sign up</a></p>
+      </div>
+    </div>
+  </div>
+  <script>
+    async function login() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorEl = document.getElementById('error');
+      const btn = document.getElementById('login-btn');
+      errorEl.classList.add('hidden');
+      if (!email || !password) { errorEl.textContent = 'All fields required'; errorEl.classList.remove('hidden'); return; }
+      btn.disabled = true; btn.textContent = 'Logging in...';
+      try {
+        const res = await fetch('/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+        const data = await res.json();
+        if (!res.ok) { errorEl.textContent = data.error; errorEl.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'Log In'; return; }
+        window.location.href = '/dashboard.html';
+      } catch (e) { errorEl.textContent = 'Network error'; errorEl.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'Log In'; }
+    }
+    document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+  </script>
+</body>
+</html>

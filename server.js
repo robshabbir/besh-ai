@@ -9,6 +9,8 @@ const db = require('./src/db');
 const { migrate } = require('./src/db/migrate');
 const logger = require('./src/utils/logger');
 
+const session = require('express-session');
+
 // Import routes
 const voiceRoutes = require('./src/routes/voice');
 const { router: voiceStreamRoutes, setupMediaStreamWebSocket } = require('./src/routes/voice-stream');
@@ -17,6 +19,7 @@ const apiRoutes = require('./src/routes/api');
 const onboardRoutes = require('./src/routes/onboard');
 const billingRoutes = require('./src/routes/billing');
 const chatRoutes = require('./src/routes/chat');
+const authRoutes = require('./src/routes/auth');
 const { setupConversationRelay } = require('./src/routes/conversation-relay');
 
 const app = express();
@@ -63,6 +66,18 @@ app.use('/billing/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Session middleware
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'calva-dev-secret-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // set true behind HTTPS proxy
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+  }
+}));
+
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -103,6 +118,9 @@ app.use('/api', chatRoutes);
 
 // Onboarding
 app.use('/onboard', onboardRoutes);
+
+// Auth
+app.use('/auth', authRoutes);
 
 // Billing (Stripe)
 app.use('/billing', billingRoutes);

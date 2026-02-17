@@ -5,121 +5,227 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Get Started - Calva AI Receptionist</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .step-line.active { background-color: #9333ea; }
+    .template-card.selected { border-color: #9333ea; background-color: #faf5ff; }
+    .phone-card.selected { border-color: #9333ea; background-color: #faf5ff; }
+    .fade-in { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
 </head>
 <body class="bg-gray-50">
-
   <div class="min-h-screen py-12">
-    <div class="container mx-auto px-6">
-      
+    <div class="container mx-auto px-4 sm:px-6">
+
       <!-- Header -->
       <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">Get Started with Calva</h1>
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Get Started with Calva</h1>
         <p class="text-gray-600">Set up your AI receptionist in 5 minutes</p>
       </div>
 
       <!-- Progress Steps -->
-      <div class="max-w-3xl mx-auto mb-8">
-        <div class="flex items-center justify-between">
+      <div class="max-w-4xl mx-auto mb-8 overflow-x-auto">
+        <div class="flex items-center justify-between min-w-[600px] px-4">
           <div class="flex items-center">
-            <div id="step-1-circle" class="w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold">1</div>
-            <div class="ml-3">
-              <div class="font-semibold">Choose Template</div>
-            </div>
+            <div id="step-1-circle" class="w-9 h-9 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-sm shrink-0">1</div>
+            <div class="ml-2 text-sm font-semibold whitespace-nowrap">Account</div>
           </div>
-          <div class="flex-1 h-1 bg-gray-300 mx-4"></div>
+          <div id="line-1-2" class="flex-1 h-1 bg-gray-300 mx-2 step-line"></div>
           <div class="flex items-center">
-            <div id="step-2-circle" class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold">2</div>
-            <div class="ml-3">
-              <div class="font-semibold text-gray-500">Configure</div>
-            </div>
+            <div id="step-2-circle" class="w-9 h-9 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold text-sm shrink-0">2</div>
+            <div class="ml-2 text-sm font-semibold text-gray-500 whitespace-nowrap">Industry</div>
           </div>
-          <div class="flex-1 h-1 bg-gray-300 mx-4"></div>
+          <div id="line-2-3" class="flex-1 h-1 bg-gray-300 mx-2 step-line"></div>
           <div class="flex items-center">
-            <div id="step-3-circle" class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold">3</div>
-            <div class="ml-3">
-              <div class="font-semibold text-gray-500">Complete</div>
-            </div>
+            <div id="step-3-circle" class="w-9 h-9 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold text-sm shrink-0">3</div>
+            <div class="ml-2 text-sm font-semibold text-gray-500 whitespace-nowrap">Customize</div>
+          </div>
+          <div id="line-3-4" class="flex-1 h-1 bg-gray-300 mx-2 step-line"></div>
+          <div class="flex items-center">
+            <div id="step-4-circle" class="w-9 h-9 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold text-sm shrink-0">4</div>
+            <div class="ml-2 text-sm font-semibold text-gray-500 whitespace-nowrap">Phone</div>
+          </div>
+          <div id="line-4-5" class="flex-1 h-1 bg-gray-300 mx-2 step-line"></div>
+          <div class="flex items-center">
+            <div id="step-5-circle" class="w-9 h-9 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold text-sm shrink-0">5</div>
+            <div class="ml-2 text-sm font-semibold text-gray-500 whitespace-nowrap">Payment</div>
+          </div>
+          <div id="line-5-6" class="flex-1 h-1 bg-gray-300 mx-2 step-line"></div>
+          <div class="flex items-center">
+            <div id="step-6-circle" class="w-9 h-9 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold text-sm shrink-0">6</div>
+            <div class="ml-2 text-sm font-semibold text-gray-500 whitespace-nowrap">Go Live</div>
           </div>
         </div>
       </div>
 
-      <!-- Step 1: Choose Template -->
-      <div id="step-1" class="max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-8">
-        <h2 class="text-3xl font-bold mb-2 text-gray-900">Choose Your Industry Template</h2>
-        <p class="text-gray-600 mb-8">Select the template that best matches your business type</p>
-        <div id="templates-container" class="grid md:grid-cols-3 gap-6">
+      <!-- Step 1: Create Account -->
+      <div id="step-1" class="max-w-lg mx-auto bg-white rounded-lg shadow-lg p-8 fade-in">
+        <h2 class="text-2xl font-bold mb-2 text-gray-900">Create Your Account</h2>
+        <p class="text-gray-600 mb-6">Get started with your AI receptionist</p>
+
+        <div id="signup-form" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Business Name *</label>
+            <input id="business-name" type="text" required placeholder="Acme Plumbing"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+            <input id="signup-email" type="email" required placeholder="you@business.com"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Password *</label>
+            <input id="signup-password" type="password" required minlength="6" placeholder="At least 6 characters"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent">
+          </div>
+          <div id="signup-error" class="text-red-600 text-sm hidden"></div>
+          <button onclick="handleSignup()" id="signup-btn"
+                  class="w-full px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold shadow-md transition">
+            Create Account →
+          </button>
+          <p class="text-center text-sm text-gray-500">Already have an account? <a href="/login.html" class="text-purple-600 hover:underline">Log in</a></p>
+        </div>
+      </div>
+
+      <!-- Step 2: Choose Industry Template -->
+      <div id="step-2" class="hidden max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-8 fade-in">
+        <h2 class="text-2xl font-bold mb-2 text-gray-900">Choose Your Industry Template</h2>
+        <p class="text-gray-600 mb-6">Select the template that best matches your business type</p>
+        <div id="templates-container" class="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
           <p class="text-gray-500">Loading templates...</p>
         </div>
       </div>
 
-      <!-- Step 2: Configure -->
-      <div id="step-2" class="hidden max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-8">
-        <h2 class="text-3xl font-bold mb-2 text-gray-900">Configure Your AI Receptionist</h2>
-        <p class="text-gray-600 mb-8">Customize the settings for your business</p>
-        
-        <div id="config-form" class="space-y-6">
-          <!-- Dynamic form will be inserted here -->
+      <!-- Step 3: Configure -->
+      <div id="step-3" class="hidden max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-8 fade-in">
+        <h2 class="text-2xl font-bold mb-2 text-gray-900">Configure Your AI Receptionist</h2>
+        <p class="text-gray-600 mb-6">Customize the settings for your business</p>
+        <div id="config-form" class="space-y-6"></div>
+        <div class="flex justify-between mt-8 pt-6 border-t border-gray-200">
+          <button onclick="goToStep(2)" class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold transition">← Back</button>
+          <button onclick="goToStep(4)" class="px-8 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold shadow-md transition">Next: Phone Number →</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Phone Number -->
+      <div id="step-4" class="hidden max-w-lg mx-auto bg-white rounded-lg shadow-lg p-8 fade-in">
+        <h2 class="text-2xl font-bold mb-2 text-gray-900">Get Your Phone Number</h2>
+        <p class="text-gray-600 mb-6">We'll provision a dedicated phone number for your AI receptionist</p>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Preferred Area Code (optional)</label>
+            <input id="area-code" type="text" maxlength="3" placeholder="e.g. 212"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent">
+          </div>
+          <button onclick="searchPhoneNumbers()" id="search-phone-btn"
+                  class="w-full px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-semibold transition border border-gray-300">
+            🔍 Search Available Numbers
+          </button>
+          <div id="phone-results" class="space-y-2 hidden"></div>
+          <div id="phone-error" class="text-red-600 text-sm hidden"></div>
         </div>
 
-        <div class="flex justify-between mt-10 pt-6 border-t border-gray-200">
-          <button onclick="goToStep(1)" class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold transition">
-            ← Back
-          </button>
-          <button onclick="createAccount()" class="px-8 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold shadow-md hover:shadow-lg transition">
-            Create Account →
+        <div class="flex justify-between mt-8 pt-6 border-t border-gray-200">
+          <button onclick="goToStep(3)" class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold transition">← Back</button>
+          <button onclick="provisionAndContinue()" id="provision-btn"
+                  class="px-8 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed">
+            Provision & Continue →
           </button>
         </div>
       </div>
 
-      <!-- Step 3: Complete -->
-      <div id="step-3" class="hidden max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-10">
+      <!-- Step 5: Payment -->
+      <div id="step-5" class="hidden max-w-lg mx-auto bg-white rounded-lg shadow-lg p-8 fade-in">
+        <h2 class="text-2xl font-bold mb-2 text-gray-900">Choose Your Plan</h2>
+        <p class="text-gray-600 mb-6">Start with a 7-day free trial</p>
+
+        <div id="payment-content">
+          <div class="space-y-4">
+            <div onclick="selectPlan('starter')" class="plan-card border-2 border-gray-200 rounded-lg p-5 cursor-pointer hover:border-purple-600 transition">
+              <div class="flex justify-between items-center">
+                <div>
+                  <div class="font-bold text-lg">Starter</div>
+                  <div class="text-sm text-gray-600">100 calls/month</div>
+                </div>
+                <div class="text-2xl font-bold text-purple-600">$99<span class="text-sm text-gray-500">/mo</span></div>
+              </div>
+            </div>
+            <div onclick="selectPlan('pro')" class="plan-card border-2 border-purple-600 bg-purple-50 rounded-lg p-5 cursor-pointer hover:border-purple-700 transition">
+              <div class="flex justify-between items-center">
+                <div>
+                  <div class="font-bold text-lg">Pro <span class="bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full ml-1">Popular</span></div>
+                  <div class="text-sm text-gray-600">500 calls/month</div>
+                </div>
+                <div class="text-2xl font-bold text-purple-600">$297<span class="text-sm text-gray-500">/mo</span></div>
+              </div>
+            </div>
+            <div onclick="selectPlan('business')" class="plan-card border-2 border-gray-200 rounded-lg p-5 cursor-pointer hover:border-purple-600 transition">
+              <div class="flex justify-between items-center">
+                <div>
+                  <div class="font-bold text-lg">Business</div>
+                  <div class="text-sm text-gray-600">Unlimited calls</div>
+                </div>
+                <div class="text-2xl font-bold text-purple-600">$597<span class="text-sm text-gray-500">/mo</span></div>
+              </div>
+            </div>
+          </div>
+          <button onclick="handlePayment()" id="pay-btn"
+                  class="w-full mt-6 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold shadow-md transition">
+            Start Free Trial →
+          </button>
+        </div>
+        <div id="payment-skipped" class="hidden text-center py-8">
+          <div class="text-5xl mb-4">✅</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Payment Step Skipped</h3>
+          <p class="text-gray-600 mb-6">Stripe is not configured. Your account is active in demo mode.</p>
+          <button onclick="goToStep(6)" class="px-8 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold shadow-md transition">Continue →</button>
+        </div>
+
+        <div class="flex justify-start mt-6">
+          <button onclick="goToStep(4)" class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold transition">← Back</button>
+        </div>
+      </div>
+
+      <!-- Step 6: Go Live -->
+      <div id="step-6" class="hidden max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-10 fade-in">
         <div class="text-center">
           <div class="text-7xl mb-6">🎉</div>
-          <h2 class="text-4xl font-bold mb-4 text-gray-900">You're All Set!</h2>
-          <p class="text-gray-600 text-lg mb-10">Your AI receptionist is ready to answer calls.</p>
-          
-          <div class="bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-400 rounded-xl p-8 mb-10 text-left shadow-md">
-            <div class="flex items-center mb-3">
-              <span class="text-2xl mr-2">⚠️</span>
-              <div class="font-bold text-lg">Important: Save Your API Key</div>
+          <h2 class="text-3xl font-bold mb-4 text-gray-900">You're All Set!</h2>
+          <p class="text-gray-600 text-lg mb-8">Your AI receptionist is ready to answer calls.</p>
+
+          <div id="phone-display" class="bg-gradient-to-r from-purple-50 to-purple-100 border-2 border-purple-300 rounded-xl p-6 mb-8 hidden">
+            <div class="text-sm text-gray-600 mb-1">Your AI Receptionist Number</div>
+            <div id="final-phone" class="text-3xl font-bold text-purple-700"></div>
+          </div>
+
+          <div class="bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-400 rounded-xl p-6 mb-8 text-left">
+            <div class="flex items-center mb-2">
+              <span class="text-xl mr-2">⚠️</span>
+              <div class="font-bold">Save Your API Key</div>
             </div>
-            <p class="text-sm text-gray-700 mb-5">You won't be able to see this again!</p>
-            <div class="bg-white rounded-lg p-5 font-mono text-sm break-all border-2 border-yellow-500 shadow-inner">
+            <p class="text-sm text-gray-700 mb-3">You won't be able to see this again!</p>
+            <div class="bg-white rounded-lg p-4 font-mono text-sm break-all border border-yellow-500">
               <span id="api-key-display" class="text-purple-700 font-semibold"></span>
             </div>
-            <button onclick="copyApiKey()" class="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold shadow hover:shadow-md transition">
+            <button onclick="copyApiKey()" class="mt-3 px-5 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold transition text-sm">
               📋 Copy API Key
             </button>
           </div>
 
-          <div class="space-y-6 mb-10 text-left bg-gray-50 rounded-xl p-8">
-            <h3 class="font-bold text-xl text-gray-900 mb-4">Next Steps:</h3>
-            <div class="flex items-start bg-white p-4 rounded-lg shadow-sm">
-              <span class="text-3xl mr-4">1️⃣</span>
-              <div>
-                <div class="font-semibold text-lg text-gray-900">Configure Your Phone Number</div>
-                <div class="text-sm text-gray-600 mt-1">We'll assign you a dedicated phone number for your business</div>
-              </div>
-            </div>
-            <div class="flex items-start bg-white p-4 rounded-lg shadow-sm">
-              <span class="text-3xl mr-4">2️⃣</span>
-              <div>
-                <div class="font-semibold text-lg text-gray-900">Test Your AI Receptionist</div>
-                <div class="text-sm text-gray-600 mt-1">Call your number to test how your AI answers</div>
-              </div>
-            </div>
-            <div class="flex items-start bg-white p-4 rounded-lg shadow-sm">
-              <span class="text-3xl mr-4">3️⃣</span>
-              <div>
-                <div class="font-semibold text-lg text-gray-900">Go Live</div>
-                <div class="text-sm text-gray-600 mt-1">Share your new number with customers</div>
-              </div>
-            </div>
+          <div class="grid sm:grid-cols-2 gap-4 mb-8">
+            <a id="test-call-link" href="tel:" class="block px-6 py-4 bg-green-50 border-2 border-green-300 rounded-xl hover:bg-green-100 transition text-center">
+              <div class="text-3xl mb-2">📞</div>
+              <div class="font-semibold text-green-700">Test Call</div>
+              <div class="text-sm text-gray-600">Call your AI receptionist</div>
+            </a>
+            <a href="/dashboard.html" class="block px-6 py-4 bg-purple-50 border-2 border-purple-300 rounded-xl hover:bg-purple-100 transition text-center">
+              <div class="text-3xl mb-2">📊</div>
+              <div class="font-semibold text-purple-700">Dashboard</div>
+              <div class="text-sm text-gray-600">View calls & settings</div>
+            </a>
           </div>
-
-          <a href="/admin/dashboard" class="inline-block px-10 py-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-bold text-lg shadow-lg hover:shadow-xl transition transform hover:scale-105">
-            Go to Dashboard →
-          </a>
         </div>
       </div>
 
@@ -130,156 +236,182 @@
     let currentStep = 1;
     let selectedTemplate = null;
     let templates = [];
-    let createdApiKey = null;
+    let accountData = null; // { apiKey, tenantId, email }
+    let selectedPhone = null;
+    let selectedPlan = 'pro';
+    let provisionedPhone = null;
 
-    // Load templates on page load
-    loadTemplates();
+    // Check if already logged in
+    checkAuth();
+
+    async function checkAuth() {
+      try {
+        const res = await fetch('/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          accountData = { apiKey: data.tenant?.apiKey, tenantId: data.user.tenantId, email: data.user.email };
+          // Skip to step 2 if already signed up
+          if (data.tenant && data.tenant.industry === 'pending') {
+            goToStep(2);
+            loadTemplates();
+          } else if (data.tenant) {
+            // Already set up, go to dashboard
+            window.location.href = '/dashboard.html';
+          }
+        }
+      } catch (e) { /* not logged in */ }
+    }
+
+    async function handleSignup() {
+      const businessName = document.getElementById('business-name').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const errorEl = document.getElementById('signup-error');
+      const btn = document.getElementById('signup-btn');
+
+      errorEl.classList.add('hidden');
+
+      if (!businessName || !email || !password) {
+        errorEl.textContent = 'All fields are required';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Creating account...';
+
+      try {
+        const res = await fetch('/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, businessName })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          errorEl.textContent = data.error || 'Signup failed';
+          errorEl.classList.remove('hidden');
+          btn.disabled = false;
+          btn.textContent = 'Create Account →';
+          return;
+        }
+
+        accountData = { apiKey: data.apiKey, tenantId: data.tenantId, email };
+        loadTemplates();
+        goToStep(2);
+      } catch (e) {
+        errorEl.textContent = 'Network error. Please try again.';
+        errorEl.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = 'Create Account →';
+      }
+    }
 
     async function loadTemplates() {
       try {
         const response = await fetch('/onboard/templates');
         const data = await response.json();
         templates = data.templates;
-        
-        const container = document.getElementById('templates-container');
-        
-        // Icon mapping
+
         const iconMap = {
-          'plumbing_services': '🔧',
-          'legal_services': '⚖️',
-          'medical_office': '🏥',
-          'healthcare': '🏥',
-          'education': '🎓',
-          'auto_repair': '🚗',
-          'restaurant': '🍽️',
-          'salon_spa': '💇',
-          'real_estate': '🏠',
-          'veterinary': '🐾'
+          'plumbing_services': '🔧', 'legal_services': '⚖️', 'medical_office': '🏥',
+          'healthcare': '🏥', 'education': '🎓', 'auto_repair': '🚗',
+          'restaurant': '🍽️', 'salon_spa': '💇', 'real_estate': '🏠', 'veterinary': '🐾'
         };
-        
-        container.innerHTML = templates.map(template => `
-          <div onclick="selectTemplate('${template.name}')" 
-               class="template-card border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-purple-600 hover:shadow-lg transition transform hover:scale-105">
-            <div class="text-5xl mb-4">
-              ${iconMap[template.industry] || '💼'}
-            </div>
-            <h3 class="font-bold text-lg mb-2 text-gray-900">${template.displayName}</h3>
-            <p class="text-sm text-gray-600 capitalize">${template.industry.replace(/_/g, ' ')}</p>
+
+        const container = document.getElementById('templates-container');
+        container.innerHTML = templates.map(t => `
+          <div onclick="selectTemplate('${t.name}')"
+               class="template-card border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-purple-600 hover:shadow-lg transition">
+            <div class="text-4xl mb-3">${iconMap[t.industry] || '💼'}</div>
+            <h3 class="font-bold text-lg mb-1 text-gray-900">${t.displayName}</h3>
+            <p class="text-sm text-gray-600 capitalize">${t.industry.replace(/_/g, ' ')}</p>
           </div>
         `).join('');
       } catch (error) {
-        console.error('Failed to load templates:', error);
-        document.getElementById('templates-container').innerHTML = 
-          '<p class="text-red-500 col-span-3 text-center">Failed to load templates. Please refresh the page.</p>';
+        document.getElementById('templates-container').innerHTML =
+          '<p class="text-red-500 col-span-3 text-center">Failed to load templates. Please refresh.</p>';
       }
     }
 
     function selectTemplate(templateName) {
       selectedTemplate = templateName;
-      
-      // Update visual selection
-      document.querySelectorAll('.template-card').forEach(card => {
-        card.classList.remove('border-purple-600', 'bg-purple-50');
-      });
-      event.currentTarget.classList.add('border-purple-600', 'bg-purple-50');
-
-      // Show config form
+      document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
       showConfigForm();
-      
-      setTimeout(() => goToStep(2), 300);
+      setTimeout(() => goToStep(3), 300);
     }
 
     function showConfigForm() {
       const formContainer = document.getElementById('config-form');
-      
-      // Common fields for all templates
-      let formHtml = `
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Business Name *</label>
-          <input id="business-name" type="text" required 
-                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent">
-        </div>
-      `;
+      const businessName = document.getElementById('business-name')?.value || '';
 
-      // Template-specific fields
+      let formHtml = '';
+
       if (selectedTemplate === 'plumber') {
-        formHtml += `
+        formHtml = `
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Owner Name *</label>
-              <input id="owner-name" type="text" required 
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Owner Name *</label>
+              <input id="owner-name" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Emergency Phone *</label>
-              <input id="emergency-phone" type="tel" required placeholder="+1-555-0123"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Emergency Phone *</label>
+              <input id="emergency-phone" type="tel" required placeholder="+1-555-0123" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
           </div>
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">City, State *</label>
-              <input id="city-state" type="text" required placeholder="New York, NY"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">City, State *</label>
+              <input id="city-state" type="text" required placeholder="New York, NY" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Service Area *</label>
-              <input id="service-area" type="text" required placeholder="Manhattan and Brooklyn"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Service Area *</label>
+              <input id="service-area" type="text" required placeholder="Manhattan and Brooklyn" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
           </div>
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Business Hours *</label>
-              <input id="business-hours" type="text" required placeholder="Mon-Sat 7am-6pm"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Business Hours *</label>
+              <input id="business-hours" type="text" required placeholder="Mon-Sat 7am-6pm" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">License Number</label>
-              <input id="license-number" type="text" placeholder="Optional"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">License Number</label>
+              <input id="license-number" type="text" placeholder="Optional" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
-          </div>
-        `;
+          </div>`;
       } else if (selectedTemplate === 'law-firm') {
-        formHtml += `
+        formHtml = `
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Managing Partner Name *</label>
-              <input id="partner-name" type="text" required 
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Managing Partner *</label>
+              <input id="partner-name" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Emergency Phone *</label>
-              <input id="emergency-phone" type="tel" required 
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Emergency Phone *</label>
+              <input id="emergency-phone" type="tel" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
           </div>
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">City, State *</label>
-              <input id="city-state" type="text" required 
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">City, State *</label>
+              <input id="city-state" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Consultation Fee *</label>
-              <input id="consultation-fee" type="text" required placeholder="Free / $150"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Consultation Fee *</label>
+              <input id="consultation-fee" type="text" required placeholder="Free / $150" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Business Hours *</label>
-            <input id="business-hours" type="text" required 
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
-          </div>
-        `;
+            <label class="block text-sm font-medium text-gray-700 mb-1">Business Hours *</label>
+            <input id="business-hours" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+          </div>`;
       } else if (selectedTemplate === 'school') {
-        formHtml += `
+        formHtml = `
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">School Type *</label>
-              <select id="school-type" required 
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">School Type *</label>
+              <select id="school-type" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
                 <option value="">Select type...</option>
                 <option value="Public Elementary">Public Elementary</option>
                 <option value="Public Middle School">Public Middle School</option>
@@ -290,124 +422,238 @@
               </select>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Grade Levels *</label>
-              <input id="grade-levels" type="text" required placeholder="K-5 or 6-8 or 9-12"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Grade Levels *</label>
+              <input id="grade-levels" type="text" required placeholder="K-5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
           </div>
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Principal Name *</label>
-              <input id="principal-name" type="text" required placeholder="Dr. Sarah Martinez"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Principal Name *</label>
+              <input id="principal-name" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">School District *</label>
-              <input id="school-district" type="text" required placeholder="Springfield Public Schools"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">School District *</label>
+              <input id="school-district" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
           </div>
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">School Hours *</label>
-              <input id="school-hours" type="text" required placeholder="8:00 AM - 3:00 PM"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">School Hours *</label>
+              <input id="school-hours" type="text" required placeholder="8:00 AM - 3:00 PM" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Office Hours *</label>
-              <input id="office-hours" type="text" required placeholder="7:30 AM - 4:30 PM"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Office Hours *</label>
+              <input id="office-hours" type="text" required placeholder="7:30 AM - 4:30 PM" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Address *</label>
-            <input id="address" type="text" required placeholder="456 Education Lane, Springfield, IL 62701"
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Address *</label>
+            <input id="address" type="text" required placeholder="456 Education Lane, Springfield, IL" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+          </div>`;
+      } else {
+        formHtml = `
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Contact Phone *</label>
+            <input id="emergency-phone" type="tel" required placeholder="+1-555-0123" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
           </div>
-        `;
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Business Hours *</label>
+            <input id="business-hours" type="text" required placeholder="Mon-Fri 9am-5pm" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+          </div>`;
       }
 
       formContainer.innerHTML = formHtml;
     }
 
-    async function createAccount() {
-      // Collect form data
-      const businessName = document.getElementById('business-name').value.trim();
-      
-      if (!businessName) {
-        alert('Please enter your business name');
-        return;
-      }
+    async function searchPhoneNumbers() {
+      const areaCode = document.getElementById('area-code').value.trim();
+      const btn = document.getElementById('search-phone-btn');
+      const resultsDiv = document.getElementById('phone-results');
+      const errorEl = document.getElementById('phone-error');
 
-      // Build customizations object based on template
-      const customizations = {};
-      
-      if (selectedTemplate === 'plumber') {
-        customizations.BUSINESS_NAME = businessName;
-        customizations.OWNER_NAME = document.getElementById('owner-name').value;
-        customizations.EMERGENCY_PHONE = document.getElementById('emergency-phone').value;
-        customizations.CITY_STATE = document.getElementById('city-state').value;
-        customizations.SERVICE_AREA = document.getElementById('service-area').value;
-        customizations.BUSINESS_HOURS = document.getElementById('business-hours').value;
-        customizations.LICENSE_NUMBER = document.getElementById('license-number').value || 'N/A';
-      } else if (selectedTemplate === 'law-firm') {
-        customizations.FIRM_NAME = businessName;
-        customizations.PARTNER_NAME = document.getElementById('partner-name').value;
-        customizations.EMERGENCY_PHONE = document.getElementById('emergency-phone').value;
-        customizations.CITY_STATE = document.getElementById('city-state').value;
-        customizations.CONSULTATION_FEE = document.getElementById('consultation-fee').value;
-        customizations.BUSINESS_HOURS = document.getElementById('business-hours').value;
-      } else if (selectedTemplate === 'school') {
-        customizations.SCHOOL_NAME = businessName;
-        customizations.SCHOOL_TYPE = document.getElementById('school-type').value;
-        customizations.GRADE_LEVELS = document.getElementById('grade-levels').value;
-        customizations.PRINCIPAL_NAME = document.getElementById('principal-name').value;
-        customizations.SCHOOL_DISTRICT = document.getElementById('school-district').value;
-        customizations.SCHOOL_HOURS = document.getElementById('school-hours').value;
-        customizations.OFFICE_HOURS = document.getElementById('office-hours').value;
-        customizations.ADDRESS = document.getElementById('address').value;
-      }
+      btn.disabled = true;
+      btn.textContent = 'Searching...';
+      errorEl.classList.add('hidden');
 
       try {
-        const response = await fetch('/onboard/create', {
+        const url = areaCode ? `/onboard/phone-numbers/search?areaCode=${areaCode}` : '/onboard/phone-numbers/search';
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!res.ok || !data.numbers || data.numbers.length === 0) {
+          errorEl.textContent = 'No numbers found. Try a different area code.';
+          errorEl.classList.remove('hidden');
+          resultsDiv.classList.add('hidden');
+          btn.disabled = false;
+          btn.textContent = '🔍 Search Available Numbers';
+          return;
+        }
+
+        resultsDiv.innerHTML = data.numbers.map(n => `
+          <div onclick="pickPhone('${n.phoneNumber}', this)" class="phone-card border-2 border-gray-200 rounded-lg p-3 cursor-pointer hover:border-purple-600 transition flex justify-between items-center">
+            <div>
+              <div class="font-semibold">${n.friendlyName || n.phoneNumber}</div>
+              <div class="text-sm text-gray-500">${n.locality || ''} ${n.region || ''}</div>
+            </div>
+            <div class="text-purple-600 font-bold">Select</div>
+          </div>
+        `).join('');
+        resultsDiv.classList.remove('hidden');
+      } catch (e) {
+        errorEl.textContent = 'Failed to search. Try again.';
+        errorEl.classList.remove('hidden');
+      }
+
+      btn.disabled = false;
+      btn.textContent = '🔍 Search Available Numbers';
+    }
+
+    function pickPhone(phone, el) {
+      selectedPhone = phone;
+      document.querySelectorAll('.phone-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    async function provisionAndContinue() {
+      const btn = document.getElementById('provision-btn');
+      const errorEl = document.getElementById('phone-error');
+      errorEl.classList.add('hidden');
+
+      // Build config and create the tenant properly via onboard/create
+      const businessName = document.getElementById('business-name')?.value?.trim() || 'My Business';
+      const areaCode = document.getElementById('area-code').value.trim();
+
+      // Collect customizations
+      const customizations = {};
+      if (selectedTemplate === 'plumber') {
+        customizations.BUSINESS_NAME = businessName;
+        customizations.OWNER_NAME = document.getElementById('owner-name')?.value || '';
+        customizations.EMERGENCY_PHONE = document.getElementById('emergency-phone')?.value || '';
+        customizations.CITY_STATE = document.getElementById('city-state')?.value || '';
+        customizations.SERVICE_AREA = document.getElementById('service-area')?.value || '';
+        customizations.BUSINESS_HOURS = document.getElementById('business-hours')?.value || '';
+        customizations.LICENSE_NUMBER = document.getElementById('license-number')?.value || 'N/A';
+      } else if (selectedTemplate === 'law-firm') {
+        customizations.FIRM_NAME = businessName;
+        customizations.PARTNER_NAME = document.getElementById('partner-name')?.value || '';
+        customizations.EMERGENCY_PHONE = document.getElementById('emergency-phone')?.value || '';
+        customizations.CITY_STATE = document.getElementById('city-state')?.value || '';
+        customizations.CONSULTATION_FEE = document.getElementById('consultation-fee')?.value || '';
+        customizations.BUSINESS_HOURS = document.getElementById('business-hours')?.value || '';
+      } else if (selectedTemplate === 'school') {
+        customizations.SCHOOL_NAME = businessName;
+        customizations.SCHOOL_TYPE = document.getElementById('school-type')?.value || '';
+        customizations.GRADE_LEVELS = document.getElementById('grade-levels')?.value || '';
+        customizations.PRINCIPAL_NAME = document.getElementById('principal-name')?.value || '';
+        customizations.SCHOOL_DISTRICT = document.getElementById('school-district')?.value || '';
+        customizations.SCHOOL_HOURS = document.getElementById('school-hours')?.value || '';
+        customizations.OFFICE_HOURS = document.getElementById('office-hours')?.value || '';
+        customizations.ADDRESS = document.getElementById('address')?.value || '';
+      } else {
+        customizations.EMERGENCY_PHONE = document.getElementById('emergency-phone')?.value || '';
+        customizations.BUSINESS_HOURS = document.getElementById('business-hours')?.value || '';
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Provisioning...';
+
+      try {
+        const res = await fetch('/onboard/create', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             businessName,
             templateName: selectedTemplate,
-            customizations
+            businessConfig: customizations,
+            areaCode: areaCode || undefined
           })
         });
+        const data = await res.json();
 
-        const data = await response.json();
-
-        if (response.ok) {
-          createdApiKey = data.api_key;
-          document.getElementById('api-key-display').textContent = createdApiKey;
-          localStorage.setItem('calva_api_key', createdApiKey);
-          goToStep(3);
-        } else {
-          alert('Failed to create account: ' + (data.message || data.error));
+        if (!res.ok) {
+          errorEl.textContent = data.error || 'Failed to provision';
+          errorEl.classList.remove('hidden');
+          btn.disabled = false;
+          btn.textContent = 'Provision & Continue →';
+          return;
         }
-      } catch (error) {
-        console.error('Account creation error:', error);
-        alert('Failed to create account. Please try again.');
+
+        // Update account data with the real tenant info
+        provisionedPhone = data.phone_number;
+        if (data.api_key) accountData.apiKey = data.api_key;
+
+        goToStep(5);
+      } catch (e) {
+        errorEl.textContent = 'Network error. Please try again.';
+        errorEl.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = 'Provision & Continue →';
+      }
+    }
+
+    function selectPlan(plan) {
+      selectedPlan = plan;
+      document.querySelectorAll('.plan-card').forEach(c => {
+        c.classList.remove('border-purple-600', 'bg-purple-50');
+        c.classList.add('border-gray-200');
+      });
+      event.currentTarget.classList.remove('border-gray-200');
+      event.currentTarget.classList.add('border-purple-600', 'bg-purple-50');
+    }
+
+    async function handlePayment() {
+      const btn = document.getElementById('pay-btn');
+      btn.disabled = true;
+      btn.textContent = 'Processing...';
+
+      try {
+        // Check billing status first
+        const statusRes = await fetch('/billing/status');
+        const statusData = await statusRes.json();
+
+        if (statusData.status === 'skipped' || statusData.paid) {
+          // Skip payment
+          goToStep(6);
+          return;
+        }
+
+        // Try Stripe checkout
+        const res = await fetch('/billing/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            plan: selectedPlan,
+            email: accountData?.email || '',
+            businessName: document.getElementById('business-name')?.value || 'My Business'
+          })
+        });
+        const data = await res.json();
+
+        if (data.skipped) {
+          goToStep(6);
+          return;
+        }
+
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          goToStep(6);
+        }
+      } catch (e) {
+        // If stripe fails, skip payment
+        goToStep(6);
       }
     }
 
     function goToStep(step) {
-      // Hide all steps
-      document.getElementById('step-1').classList.add('hidden');
-      document.getElementById('step-2').classList.add('hidden');
-      document.getElementById('step-3').classList.add('hidden');
-
-      // Show target step
+      // Hide all
+      for (let i = 1; i <= 6; i++) {
+        document.getElementById(`step-${i}`).classList.add('hidden');
+      }
       document.getElementById(`step-${step}`).classList.remove('hidden');
 
-      // Update progress circles
-      for (let i = 1; i <= 3; i++) {
+      // Update circles
+      for (let i = 1; i <= 6; i++) {
         const circle = document.getElementById(`step-${i}-circle`);
         if (i <= step) {
           circle.classList.remove('bg-gray-300', 'text-gray-600');
@@ -417,18 +663,57 @@
           circle.classList.add('bg-gray-300', 'text-gray-600');
         }
       }
+      // Update lines
+      for (let i = 1; i <= 5; i++) {
+        const line = document.getElementById(`line-${i}-${i+1}`);
+        if (line) {
+          if (i < step) line.classList.add('active');
+          else line.classList.remove('active');
+        }
+      }
+
+      // Step-specific logic
+      if (step === 5) {
+        checkPaymentStatus();
+      }
+      if (step === 6) {
+        finalizeGoLive();
+      }
 
       currentStep = step;
     }
 
+    async function checkPaymentStatus() {
+      try {
+        const res = await fetch('/billing/status');
+        const data = await res.json();
+        if (data.status === 'skipped') {
+          document.getElementById('payment-content').classList.add('hidden');
+          document.getElementById('payment-skipped').classList.remove('hidden');
+        }
+      } catch (e) { /* show normal payment */ }
+    }
+
+    function finalizeGoLive() {
+      // Show API key
+      if (accountData?.apiKey) {
+        document.getElementById('api-key-display').textContent = accountData.apiKey;
+      }
+      // Show phone
+      if (provisionedPhone) {
+        document.getElementById('phone-display').classList.remove('hidden');
+        document.getElementById('final-phone').textContent = provisionedPhone;
+        document.getElementById('test-call-link').href = `tel:${provisionedPhone}`;
+      }
+    }
+
     function copyApiKey() {
-      navigator.clipboard.writeText(createdApiKey);
-      event.target.textContent = 'Copied!';
-      setTimeout(() => {
-        event.target.textContent = 'Copy API Key';
-      }, 2000);
+      const key = accountData?.apiKey || '';
+      navigator.clipboard.writeText(key);
+      const btn = event.target;
+      btn.textContent = '✅ Copied!';
+      setTimeout(() => btn.textContent = '📋 Copy API Key', 2000);
     }
   </script>
-
 </body>
 </html>

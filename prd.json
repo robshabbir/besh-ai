@@ -12,7 +12,7 @@
         "Winner selected based on naturalness score 8+/10",
         "Winner deployed to production"
       ],
-      "passes": false,
+      "passes": true,
       "priority": "critical"
     },
     {
@@ -52,7 +52,7 @@
         "Phone number provisioned on signup",
         "Phone stored in database",
         "Webhook configured for incoming calls",
-        "Test: signup → get phone number"
+        "Test: signup \u2192 get phone number"
       ],
       "passes": false,
       "priority": "high"
@@ -60,7 +60,7 @@
     {
       "id": 5,
       "title": "Template customization flow",
-      "description": "After signup, show customization page: business greeting (text), hours (time picker), top 3 FAQs (text areas), personality slider (formal ↔ friendly).",
+      "description": "After signup, show customization page: business greeting (text), hours (time picker), top 3 FAQs (text areas), personality slider (formal \u2194 friendly).",
       "acceptanceCriteria": [
         "Customization page exists",
         "All fields render correctly",
@@ -88,7 +88,7 @@
     {
       "id": 7,
       "title": "Call history page",
-      "description": "Display table of calls: date, time, caller, duration, status. Click row → see transcript + recording player. Export to CSV.",
+      "description": "Display table of calls: date, time, caller, duration, status. Click row \u2192 see transcript + recording player. Export to CSV.",
       "acceptanceCriteria": [
         "Call history table renders",
         "Data fetched from database",
@@ -117,7 +117,7 @@
     {
       "id": 9,
       "title": "Settings page (edit greeting/hours/FAQs)",
-      "description": "Settings page where business owner can edit greeting, hours, FAQs, personality. Save button → updates live AI immediately.",
+      "description": "Settings page where business owner can edit greeting, hours, FAQs, personality. Save button \u2192 updates live AI immediately.",
       "acceptanceCriteria": [
         "Settings page loads current settings",
         "All fields editable",
@@ -131,7 +131,7 @@
     {
       "id": 10,
       "title": "Stripe payment integration",
-      "description": "Add Stripe Checkout for $99/mo subscription. Payment successful → activate account. Billing page shows subscription status.",
+      "description": "Add Stripe Checkout for $99/mo subscription. Payment successful \u2192 activate account. Billing page shows subscription status.",
       "acceptanceCriteria": [
         "Stripe Checkout session created",
         "Payment flow completes",
