@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Calva AI Receptionist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+  <div class="min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow">
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex justify-between items-center">
+          <div class="text-2xl font-bold text-purple-600">Calva Dashboard</div>
+          <div class="flex items-center gap-4">
+            <span id="tenant-name" class="text-gray-700"></span>
+            <a href="/" class="text-gray-600 hover:text-gray-900">Home</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Login Prompt (shown initially) -->
+    <div id="login-section" class="container mx-auto px-6 py-12">
+      <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
+        <h2 class="text-2xl font-bold mb-6">Access Dashboard</h2>
+        <p class="text-gray-600 mb-6">Enter your API key to access your dashboard.</p>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">API Key</label>
+            <input 
+              type="password" 
+              id="api-key-input"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              placeholder="calva_..."
+            >
+          </div>
+          <button 
+            onclick="login()"
+            class="w-full bg-purple-600 text-white py-2 rounded-lg font-semibold hover:bg-purple-700"
+          >
+            Access Dashboard
+          </button>
+          <p id="login-error" class="text-red-500 text-sm hidden"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Dashboard (hidden initially) -->
+    <div id="dashboard-section" class="hidden">
+      
+      <!-- Stats -->
+      <div class="container mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-gray-500 text-sm mb-2">Total Calls</div>
+            <div id="stat-calls" class="text-3xl font-bold text-gray-900">0</div>
+          </div>
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-gray-500 text-sm mb-2">Total Bookings</div>
+            <div id="stat-bookings" class="text-3xl font-bold text-purple-600">0</div>
+          </div>
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-gray-500 text-sm mb-2">Pending</div>
+            <div id="stat-pending" class="text-3xl font-bold text-yellow-600">0</div>
+          </div>
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-gray-500 text-sm mb-2">Emergencies</div>
+            <div id="stat-emergencies" class="text-3xl font-bold text-red-600">0</div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="bg-white rounded-lg shadow">
+          <div class="border-b border-gray-200">
+            <nav class="flex">
+              <button onclick="showTab('bookings')" class="tab-button px-6 py-4 font-semibold border-b-2 border-purple-600 text-purple-600">
+                Bookings
+              </button>
+              <button onclick="showTab('calls')" class="tab-button px-6 py-4 font-semibold text-gray-600 hover:text-gray-900">
+                Call History
+              </button>
+              <button onclick="showTab('analytics')" class="tab-button px-6 py-4 font-semibold text-gray-600 hover:text-gray-900">
+                Analytics
+              </button>
+              <button onclick="showTab('voicemails')" class="tab-button px-6 py-4 font-semibold text-gray-600 hover:text-gray-900">
+                Voicemails
+              </button>
+              <button onclick="showTab('knowledge')" class="tab-button px-6 py-4 font-semibold text-gray-600 hover:text-gray-900">
+                Business Info
+              </button>
+              <button onclick="showTab('settings')" class="tab-button px-6 py-4 font-semibold text-gray-600 hover:text-gray-900">
+                Settings
+              </button>
+              <button onclick="showTab('widget')" class="tab-button px-6 py-4 font-semibold text-gray-600 hover:text-gray-900">
+                Chat Widget
+              </button>
+              <button onclick="showTab('test')" class="tab-button px-6 py-4 font-semibold text-gray-600 hover:text-gray-900 bg-green-50 hover:bg-green-100">
+                🧪 Test Your AI
+              </button>
+            </nav>
+          </div>
+
+          <!-- Bookings Tab -->
+          <div id="tab-bookings" class="p-6">
+            <h3 class="text-xl font-bold mb-4">Recent Bookings</h3>
+            <div id="bookings-list" class="space-y-4">
+              <p class="text-gray-500">Loading...</p>
+            </div>
+          </div>
+
+          <!-- Calls Tab -->
+          <div id="tab-calls" class="p-6 hidden">
+            <h3 class="text-xl font-bold mb-4">Call History</h3>
+            <div id="calls-list" class="space-y-4">
+              <p class="text-gray-500">Loading...</p>
+            </div>
+          </div>
+
+          <!-- Analytics Tab -->
+          <div id="tab-analytics" class="p-6 hidden">
+            <h3 class="text-xl font-bold mb-6">Call Analytics</h3>
+            
+            <!-- Time Period Selector -->
+            <div class="mb-6">
+              <div class="inline-flex rounded-lg border border-gray-200">
+                <button onclick="showAnalyticsPeriod('today')" class="analytics-period-btn px-4 py-2 bg-purple-600 text-white rounded-l-lg font-medium">
+                  Today
+                </button>
+                <button onclick="showAnalyticsPeriod('week')" class="analytics-period-btn px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">
+                  This Week
+                </button>
+                <button onclick="showAnalyticsPeriod('month')" class="analytics-period-btn px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-r-lg font-medium">
+                  This Month
+                </button>
+              </div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+              <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+                <div class="text-blue-600 text-sm font-medium mb-1">Total Calls</div>
+                <div id="analytics-total-calls" class="text-3xl font-bold text-blue-900">0</div>
+              </div>
+              <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
+                <div class="text-green-600 text-sm font-medium mb-1">Avg Duration</div>
+                <div id="analytics-avg-duration" class="text-3xl font-bold text-green-900">0s</div>
+              </div>
+              <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
+                <div class="text-purple-600 text-sm font-medium mb-1">With Bookings</div>
+                <div id="analytics-bookings" class="text-3xl font-bold text-purple-900">0</div>
+              </div>
+              <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4 border border-orange-200">
+                <div class="text-orange-600 text-sm font-medium mb-1">Busiest Hour</div>
+                <div id="analytics-busiest-hour" class="text-3xl font-bold text-orange-900">--</div>
+              </div>
+            </div>
+            
+            <!-- Calls Chart -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+              <h4 class="font-semibold text-lg mb-4">Calls Over Time (Last 7 Days)</h4>
+              <div id="calls-chart" class="h-64"></div>
+            </div>
+            
+            <!-- Recent Calls Table -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+              <h4 class="font-semibold text-lg mb-4">Recent Calls</h4>
+              <div class="overflow-x-auto">
+                <table class="w-full">
+                  <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Caller</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Intent</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recording</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Transferred</th>
+                    </tr>
+                  </thead>
+                  <tbody id="analytics-calls-table" class="divide-y divide-gray-200">
+                    <tr><td colspan="6" class="px-4 py-8 text-center text-gray-500">Loading...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Voicemails Tab -->
+          <div id="tab-voicemails" class="p-6 hidden">
+            <h3 class="text-xl font-bold mb-4">Voicemails</h3>
+            <div id="voicemails-list" class="space-y-4">
+              <p class="text-gray-500">Loading...</p>
+            </div>
+          </div>
+
+          <!-- Business Info / Knowledge Base Tab -->
+          <div id="tab-knowledge" class="p-6 hidden">
+            <h3 class="text-xl font-bold mb-4">Business Information & Knowledge Base</h3>
+            <p class="text-gray-600 mb-4">
+              Add information about your business, services, pricing, FAQs, policies, etc. 
+              The AI will use this to answer caller questions accurately.
+            </p>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Business Knowledge Base
+                  <span class="text-gray-500 font-normal">(FAQ, Services, Pricing, Policies, etc.)</span>
+                </label>
+                <textarea 
+                  id="knowledge-base" 
+                  rows="15"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent font-mono text-sm"
+                  placeholder="Example:
+
+Services:
+- Emergency plumbing: $150 service call + labor
+- Drain cleaning: $99-$299 depending on severity
+- Water heater installation: Starting at $1200
+
+Hours:
+- Mon-Fri: 8am-6pm
+- Sat: 9am-3pm
+- Emergency service available 24/7
+
+Policies:
+- We accept cash, check, and all major credit cards
+- Senior discount: 10% off
+- Free estimates on major jobs
+
+Common Questions:
+Q: Do you offer same-day service?
+A: Yes! For most repairs we can come out same day if you call before noon.
+
+Q: Are you licensed and insured?
+A: Yes, fully licensed and insured in NYC.
+"
+                ></textarea>
+              </div>
+              <div class="flex gap-3">
+                <button 
+                  onclick="saveKnowledgeBase()"
+                  class="px-6 py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700"
+                >
+                  Save Knowledge Base
+                </button>
+                <span id="knowledge-save-status" class="text-sm text-gray-600 flex items-center"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Widget Tab -->
+          <div id="tab-widget" class="p-6 hidden">
+            <h3 class="text-xl font-bold mb-4">Embeddable Chat Widget</h3>
+            <p class="text-gray-600 mb-6">
+              Add Calva's AI chat to your website. Uses the same knowledge base as your voice receptionist.
+            </p>
+            
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+              <h4 class="font-semibold mb-3">📋 Installation</h4>
+              <p class="text-sm text-gray-700 mb-3">
+                Copy this code and paste it right before the closing <code>&lt;/body&gt;</code> tag on your website:
+              </p>
+              
+              <div class="bg-gray-900 rounded-lg p-4 relative">
+                <code class="text-green-400 text-sm font-mono" id="widget-embed-code">
+                  &lt;script src="<span id="widget-url">loading...</span>"&gt;&lt;/script&gt;
+                </code>
+                <button 
+                  onclick="copyWidgetCode()"
+                  class="absolute top-2 right-2 px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700"
+                  id="copy-widget-btn"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="border border-gray-200 rounded-lg p-6">
+                <h4 class="font-semibold mb-3">✨ Features</h4>
+                <ul class="space-y-2 text-sm text-gray-600">
+                  <li>✓ Instant AI responses</li>
+                  <li>✓ Uses your business knowledge base</li>
+                  <li>✓ Mobile responsive</li>
+                  <li>✓ Session persistence</li>
+                  <li>✓ 60 messages/min rate limit</li>
+                </ul>
+              </div>
+              
+              <div class="border border-gray-200 rounded-lg p-6">
+                <h4 class="font-semibold mb-3">📊 Stats</h4>
+                <div class="space-y-2 text-sm">
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Active chats:</span>
+                    <span id="chat-active" class="font-semibold">-</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Total messages:</span>
+                    <span id="chat-messages" class="font-semibold">-</span>
+                  </div>
+                  <button 
+                    onclick="loadChatStats()" 
+                    class="text-xs text-blue-600 hover:underline"
+                  >
+                    Refresh stats
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="text-center">
+              <a 
+                href="/widget-demo.html" 
+                target="_blank"
+                class="inline-block px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700"
+              >
+                🎨 View Live Demo
+              </a>
+            </div>
+          </div>
+
+          <!-- Test Your AI Tab -->
+          <div id="tab-test" class="p-6 hidden">
+            <h3 class="text-xl font-bold mb-4">🧪 Test Your AI Receptionist</h3>
+            <p class="text-gray-600 mb-6">
+              Try out your AI receptionist without making a real phone call. Type a message and see how it responds based on your business info and knowledge base.
+            </p>
+            
+            <div class="max-w-3xl mx-auto">
+              <!-- Test Chat Interface -->
+              <div class="bg-white border border-gray-200 rounded-lg shadow-lg mb-4">
+                <!-- Chat History -->
+                <div id="test-chat-history" class="p-6 min-h-[400px] max-h-[600px] overflow-y-auto bg-gray-50">
+                  <div class="text-center text-gray-500 py-12">
+                    <div class="text-4xl mb-3">💬</div>
+                    <p>Start a conversation to test your AI</p>
+                    <p class="text-sm mt-2">Try asking about business hours, services, or booking an appointment</p>
+                  </div>
+                </div>
+                
+                <!-- Input Form -->
+                <div class="p-4 bg-white border-t border-gray-200">
+                  <form onsubmit="sendTestMessage(event)" class="flex gap-2">
+                    <input 
+                      type="text" 
+                      id="test-message-input"
+                      placeholder="Type a message... (e.g., 'What are your hours?')"
+                      class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                      required
+                    >
+                    <button 
+                      type="submit"
+                      id="test-send-btn"
+                      class="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 whitespace-nowrap"
+                    >
+                      Send
+                    </button>
+                  </form>
+                </div>
+              </div>
+              
+              <!-- Quick Test Prompts -->
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 class="font-semibold text-sm mb-3">💡 Try these test prompts:</h4>
+                <div class="flex flex-wrap gap-2">
+                  <button onclick="fillTestPrompt('What are your business hours?')" class="px-3 py-1 bg-white border border-blue-300 rounded-full text-sm hover:bg-blue-100">
+                    Business hours?
+                  </button>
+                  <button onclick="fillTestPrompt('I need to book an appointment')" class="px-3 py-1 bg-white border border-blue-300 rounded-full text-sm hover:bg-blue-100">
+                    Book appointment
+                  </button>
+                  <button onclick="fillTestPrompt('How much does it cost?')" class="px-3 py-1 bg-white border border-blue-300 rounded-full text-sm hover:bg-blue-100">
+                    Pricing
+                  </button>
+                  <button onclick="fillTestPrompt('What services do you offer?')" class="px-3 py-1 bg-white border border-blue-300 rounded-full text-sm hover:bg-blue-100">
+                    Services
+                  </button>
+                  <button onclick="fillTestPrompt('Do you do emergency calls?')" class="px-3 py-1 bg-white border border-blue-300 rounded-full text-sm hover:bg-blue-100">
+                    Emergency
+                  </button>
+                  <button onclick="clearTestChat()" class="px-3 py-1 bg-red-100 border border-red-300 rounded-full text-sm hover:bg-red-200 ml-auto">
+                    Clear chat
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Info Box -->
+              <div class="mt-4 bg-green-50 border border-green-200 rounded-lg p-4 text-sm">
+                <p class="text-green-800">
+                  <strong>✓ Safe Testing:</strong> These are simulated conversations. No real calls are made, no charges apply.
+                  The AI uses your configured business info and knowledge base.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings Tab -->
+          <div id="tab-settings" class="p-6 hidden">
+            <h3 class="text-xl font-bold mb-4">Business Settings</h3>
+            
+            <div class="space-y-6">
+              <!-- Business Info -->
+              <div class="border-b pb-6">
+                <h4 class="font-semibold text-lg mb-4">Business Information</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Business Name</label>
+                    <input id="settings-business-name" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Business Phone</label>
+                    <input id="settings-business-phone" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Business Email</label>
+                    <input id="settings-business-email" type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Industry</label>
+                    <input id="settings-industry" type="text" disabled class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      Transfer Phone Number
+                      <span class="text-gray-500 font-normal text-xs">(For human handoff)</span>
+                    </label>
+                    <input id="settings-transfer-phone" type="tel" placeholder="+1234567890" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Owner Name</label>
+                    <input id="settings-owner-name" type="text" placeholder="Used when transfer unavailable" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Greeting Message -->
+              <div class="border-b pb-6">
+                <h4 class="font-semibold text-lg mb-4">AI Greeting</h4>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Greeting Message
+                    <span class="text-gray-500 font-normal">(What the AI says when answering the phone)</span>
+                  </label>
+                  <input 
+                    id="settings-greeting" 
+                    type="text" 
+                    placeholder="Hey there, thanks for calling [Business Name]. What's going on?"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600"
+                  >
+                </div>
+              </div>
+
+              <!-- Business Hours -->
+              <div class="border-b pb-6">
+                <h4 class="font-semibold text-lg mb-4">Business Hours</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  ${['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => `
+                    <div class="flex items-center gap-3">
+                      <label class="w-24 text-sm font-medium text-gray-700">${day}</label>
+                      <input 
+                        id="hours-${day.toLowerCase()}-open" 
+                        type="time" 
+                        class="px-3 py-1 border border-gray-300 rounded"
+                      >
+                      <span class="text-gray-500">to</span>
+                      <input 
+                        id="hours-${day.toLowerCase()}-close" 
+                        type="time" 
+                        class="px-3 py-1 border border-gray-300 rounded"
+                      >
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Feature Toggles -->
+              <div class="border-b pb-6">
+                <h4 class="font-semibold text-lg mb-4">Features</h4>
+                <div class="space-y-3">
+                  <label class="flex items-center gap-3 cursor-pointer">
+                    <input id="toggle-booking" type="checkbox" class="w-5 h-5 text-purple-600 rounded">
+                    <div>
+                      <div class="font-medium">Appointment Booking</div>
+                      <div class="text-sm text-gray-500">Allow AI to schedule appointments</div>
+                    </div>
+                  </label>
+                  <label class="flex items-center gap-3 cursor-pointer">
+                    <input id="toggle-sms" type="checkbox" class="w-5 h-5 text-purple-600 rounded">
+                    <div>
+                      <div class="font-medium">SMS Notifications</div>
+                      <div class="text-sm text-gray-500">Send SMS alerts to owner for new calls/bookings</div>
+                    </div>
+                  </label>
+                  <label class="flex items-center gap-3 cursor-pointer">
+                    <input id="toggle-after-hours" type="checkbox" class="w-5 h-5 text-purple-600 rounded">
+                    <div>
+                      <div class="font-medium">After-Hours Mode</div>
+                      <div class="text-sm text-gray-500">Different AI behavior outside business hours</div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Read-only Info -->
+              <div>
+                <h4 class="font-semibold text-lg mb-4">Account Info</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">API Key</label>
+                    <input id="api-key-display" type="password" disabled class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Twilio Phone Number</label>
+                    <input id="phone-number" type="text" disabled class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Save Button -->
+              <div class="flex gap-3 pt-4">
+                <button 
+                  onclick="saveSettings()"
+                  class="px-6 py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700"
+                >
+                  Save All Settings
+                </button>
+                <span id="settings-save-status" class="text-sm text-gray-600 flex items-center"></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let apiKey = localStorage.getItem('calva_api_key');
+    let dashboardData = null;
+
+    // Auto-login if API key exists
+    if (apiKey) {
+      loadDashboard();
+    }
+
+    function login() {
+      const input = document.getElementById('api-key-input');
+      apiKey = input.value.trim();
+      
+      if (!apiKey) {
+        showError('Please enter your API key');
+        return;
+      }
+
+      localStorage.setItem('calva_api_key', apiKey);
+      loadDashboard();
+    }
+
+    async function loadDashboard() {
+      try {
+        const response = await fetch('/admin/dashboard/data', {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`
+          }
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            showError('Invalid API key');
+            localStorage.removeItem('calva_api_key');
+            return;
+          }
+          throw new Error('Failed to load dashboard');
+        }
+
+        dashboardData = await response.json();
+        
+        // Hide login, show dashboard
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('dashboard-section').classList.remove('hidden');
+
+        // Update UI
+        updateStats();
+        updateBookings();
+        updateCalls();
+        updateSettings();
+
+      } catch (error) {
+        console.error('Dashboard load error:', error);
+        showError('Failed to load dashboard. Please try again.');
+      }
+    }
+
+    function showError(message) {
+      const errorEl = document.getElementById('login-error');
+      errorEl.textContent = message;
+      errorEl.classList.remove('hidden');
+    }
+
+    function updateStats() {
+      document.getElementById('tenant-name').textContent = dashboardData.tenant.name;
+      document.getElementById('stat-calls').textContent = dashboardData.stats.totalCalls;
+      document.getElementById('stat-bookings').textContent = dashboardData.stats.totalBookings;
+      document.getElementById('stat-pending').textContent = dashboardData.stats.pendingBookings;
+      document.getElementById('stat-emergencies').textContent = dashboardData.stats.emergencyCalls;
+    }
+
+    function updateBookings() {
+      const container = document.getElementById('bookings-list');
+      
+      if (dashboardData.bookings.length === 0) {
+        container.innerHTML = '<p class="text-gray-500">No bookings yet</p>';
+        return;
+      }
+
+      container.innerHTML = dashboardData.bookings.map(booking => `
+        <div class="border border-gray-200 rounded-lg p-4">
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="font-semibold">${booking.customer_name}</div>
+              <div class="text-sm text-gray-600">${booking.customer_phone}</div>
+              <div class="text-sm text-gray-600 mt-1"><strong>Service:</strong> ${booking.service}</div>
+              ${booking.preferred_time ? `<div class="text-sm text-gray-600"><strong>Time:</strong> ${booking.preferred_time}</div>` : ''}
+            </div>
+            <div>
+              <span class="px-3 py-1 rounded-full text-sm font-semibold ${
+                booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                booking.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                booking.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                'bg-gray-100 text-gray-800'
+              }">
+                ${booking.status}
+              </span>
+            </div>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button onclick="updateStatus(${booking.id}, 'confirmed')" class="text-sm px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">Confirm</button>
+            <button onclick="updateStatus(${booking.id}, 'cancelled')" class="text-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">Cancel</button>
+            <button onclick="updateStatus(${booking.id}, 'completed')" class="text-sm px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700">Complete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateCalls() {
+      const container = document.getElementById('calls-list');
+      
+      if (dashboardData.calls.length === 0) {
+        container.innerHTML = '<p class="text-gray-500">No calls yet</p>';
+        return;
+      }
+
+      container.innerHTML = dashboardData.calls.map(call => `
+        <div class="border border-gray-200 rounded-lg p-4">
+          <div class="flex justify-between items-start mb-3">
+            <div>
+              <div class="font-semibold">${call.caller_phone}</div>
+              <div class="text-sm text-gray-600">Intent: ${call.intent || 'Unknown'}</div>
+              <div class="text-sm text-gray-600">Duration: ${call.duration_seconds || 0}s</div>
+            </div>
+            <div class="text-sm text-gray-500">
+              ${new Date(call.created_at * 1000).toLocaleString()}
+            </div>
+          </div>
+          
+          ${call.recording_url ? `
+            <div class="mt-2 mb-3">
+              <div class="flex items-center gap-2">
+                <button 
+                  onclick="toggleRecording('${call.call_sid}')"
+                  class="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 flex items-center gap-1"
+                >
+                  <span id="play-icon-${call.call_sid}">▶</span>
+                  <span>Play Recording</span>
+                </button>
+                <span class="text-xs text-gray-500">${call.recording_duration || 0}s</span>
+              </div>
+              <audio 
+                id="audio-${call.call_sid}" 
+                src="${call.recording_url}.mp3" 
+                class="hidden w-full mt-2"
+                onended="stopRecording('${call.call_sid}')"
+              ></audio>
+            </div>
+          ` : ''}
+          
+          ${call.transcript && call.transcript.length > 0 ? `
+            <div class="mt-3 border-t pt-3">
+              <button 
+                onclick="toggleTranscript('${call.call_sid}')"
+                class="text-sm font-medium text-purple-600 hover:text-purple-700 mb-2"
+              >
+                <span id="transcript-toggle-${call.call_sid}">+ Show Transcript</span>
+              </button>
+              <div id="transcript-${call.call_sid}" class="hidden bg-gray-50 rounded p-3 text-sm space-y-2 max-h-64 overflow-y-auto">
+                ${call.transcript.map(msg => `
+                  <div class="${msg.role === 'user' ? 'text-blue-900' : 'text-gray-900'}">
+                    <strong>${msg.role === 'user' ? 'Caller' : 'AI'}:</strong> ${msg.content}
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function toggleRecording(callSid) {
+      const audio = document.getElementById(`audio-${callSid}`);
+      const icon = document.getElementById(`play-icon-${callSid}`);
+      
+      if (audio.paused) {
+        // Stop all other recordings first
+        document.querySelectorAll('audio').forEach(a => {
+          if (a.id !== `audio-${callSid}`) {
+            a.pause();
+            a.currentTime = 0;
+            const otherIcon = document.getElementById(`play-icon-${a.id.replace('audio-', '')}`);
+            if (otherIcon) otherIcon.textContent = '▶';
+          }
+        });
+        
+        audio.play();
+        icon.textContent = '⏸';
+        audio.classList.remove('hidden');
+      } else {
+        audio.pause();
+        icon.textContent = '▶';
+      }
+    }
+
+    function stopRecording(callSid) {
+      const icon = document.getElementById(`play-icon-${callSid}`);
+      const audio = document.getElementById(`audio-${callSid}`);
+      icon.textContent = '▶';
+      audio.currentTime = 0;
+    }
+
+    function toggleTranscript(callSid) {
+      const transcript = document.getElementById(`transcript-${callSid}`);
+      const toggle = document.getElementById(`transcript-toggle-${callSid}`);
+      
+      if (transcript.classList.contains('hidden')) {
+        transcript.classList.remove('hidden');
+        toggle.textContent = '− Hide Transcript';
+      } else {
+        transcript.classList.add('hidden');
+        toggle.textContent = '+ Show Transcript';
+      }
+    }
+
+    function updateSettings() {
+      // Load full config from server
+      fetch('/admin/tenant-config', {
+        headers: { 'Authorization': `Bearer ${apiKey}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        const config = data.config || {};
+        const businessConfig = config.businessConfig || {};
+        const hours = config.businessHours || {};
+        const features = config.features || {};
+        
+        // Business info
+        document.getElementById('settings-business-name').value = businessConfig.name || '';
+        document.getElementById('settings-business-phone').value = businessConfig.phone || '';
+        document.getElementById('settings-business-email').value = businessConfig.email || '';
+        document.getElementById('settings-industry').value = dashboardData.tenant.industry || '';
+        document.getElementById('settings-transfer-phone').value = config.transferPhone || businessConfig.ownerPhone || '';
+        document.getElementById('settings-owner-name').value = businessConfig.ownerName || '';
+        
+        // Greeting
+        document.getElementById('settings-greeting').value = config.greeting || '';
+        
+        // Business hours
+        ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(day => {
+          const dayHours = hours[day] || {};
+          document.getElementById(`hours-${day}-open`).value = dayHours.open || '';
+          document.getElementById(`hours-${day}-close`).value = dayHours.close || '';
+        });
+        
+        // Features
+        document.getElementById('toggle-booking').checked = features.bookingEnabled !== false; // default true
+        document.getElementById('toggle-sms').checked = features.smsNotifications !== false; // default true
+        document.getElementById('toggle-after-hours').checked = features.afterHoursMode || false;
+        
+        // Read-only
+        document.getElementById('phone-number').value = dashboardData.tenant.phone_number || 'Not configured';
+        document.getElementById('api-key-display').value = apiKey;
+      })
+      .catch(err => console.error('Failed to load settings:', err));
+    }
+
+    async function saveSettings() {
+      const statusEl = document.getElementById('settings-save-status');
+      statusEl.textContent = 'Saving...';
+      statusEl.className = 'text-sm text-gray-600 flex items-center';
+      
+      try {
+        // Collect all settings
+        const settings = {
+          businessConfig: {
+            name: document.getElementById('settings-business-name').value,
+            phone: document.getElementById('settings-business-phone').value,
+            email: document.getElementById('settings-business-email').value,
+            ownerPhone: document.getElementById('settings-transfer-phone').value,
+            ownerName: document.getElementById('settings-owner-name').value
+          },
+          transferPhone: document.getElementById('settings-transfer-phone').value,
+          greeting: document.getElementById('settings-greeting').value,
+          businessHours: {},
+          features: {
+            bookingEnabled: document.getElementById('toggle-booking').checked,
+            smsNotifications: document.getElementById('toggle-sms').checked,
+            afterHoursMode: document.getElementById('toggle-after-hours').checked
+          }
+        };
+        
+        // Collect business hours
+        ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(day => {
+          const open = document.getElementById(`hours-${day}-open`).value;
+          const close = document.getElementById(`hours-${day}-close`).value;
+          if (open && close) {
+            settings.businessHours[day] = { open, close };
+          }
+        });
+        
+        const response = await fetch('/admin/tenant/settings', {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ settings })
+        });
+
+        if (response.ok) {
+          statusEl.textContent = '✓ Settings saved successfully!';
+          statusEl.className = 'text-sm text-green-600 flex items-center';
+          setTimeout(() => { statusEl.textContent = ''; }, 3000);
+        } else {
+          throw new Error('Failed to save');
+        }
+      } catch (error) {
+        console.error('Save error:', error);
+        statusEl.textContent = '✗ Failed to save settings';
+        statusEl.className = 'text-sm text-red-600 flex items-center';
+      }
+    }
+
+    function updateKnowledgeBase() {
+      // Load knowledge base from tenant config if it exists
+      fetch('/admin/tenant-config', {
+        headers: { 'Authorization': `Bearer ${apiKey}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        const kb = data.config?.knowledgeBase || '';
+        document.getElementById('knowledge-base').value = kb;
+      })
+      .catch(err => console.error('Failed to load knowledge base:', err));
+    }
+
+    async function saveKnowledgeBase() {
+      const knowledgeBase = document.getElementById('knowledge-base').value;
+      const statusEl = document.getElementById('knowledge-save-status');
+      
+      statusEl.textContent = 'Saving...';
+      statusEl.className = 'text-sm text-gray-600 flex items-center';
+      
+      try {
+        const response = await fetch('/admin/tenant/knowledge', {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ knowledgeBase })
+        });
+
+        if (response.ok) {
+          statusEl.textContent = '✓ Saved successfully!';
+          statusEl.className = 'text-sm text-green-600 flex items-center';
+          setTimeout(() => { statusEl.textContent = ''; }, 3000);
+        } else {
+          throw new Error('Failed to save');
+        }
+      } catch (error) {
+        console.error('Save error:', error);
+        statusEl.textContent = '✗ Failed to save';
+        statusEl.className = 'text-sm text-red-600 flex items-center';
+      }
+    }
+
+    async function updateStatus(bookingId, status) {
+      try {
+        const response = await fetch(`/admin/bookings/${bookingId}`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status })
+        });
+
+        if (response.ok) {
+          loadDashboard(); // Reload data
+        } else {
+          alert('Failed to update booking status');
+        }
+      } catch (error) {
+        console.error('Update error:', error);
+        alert('Failed to update booking status');
+      }
+    }
+
+    let analyticsData = null;
+    let currentAnalyticsPeriod = 'today';
+
+    function showTab(tabName) {
+      // Hide all tabs
+      document.getElementById('tab-bookings').classList.add('hidden');
+      document.getElementById('tab-calls').classList.add('hidden');
+      document.getElementById('tab-analytics').classList.add('hidden');
+      document.getElementById('tab-voicemails').classList.add('hidden');
+      document.getElementById('tab-knowledge').classList.add('hidden');
+      document.getElementById('tab-settings').classList.add('hidden');
+      document.getElementById('tab-widget').classList.add('hidden');
+      document.getElementById('tab-test').classList.add('hidden');
+
+      // Show selected tab
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+
+      // Load tab-specific data
+      if (tabName === 'knowledge') {
+        updateKnowledgeBase();
+      } else if (tabName === 'settings') {
+        updateSettings();
+      } else if (tabName === 'analytics') {
+        loadAnalytics();
+      } else if (tabName === 'voicemails') {
+        loadVoicemails();
+      } else if (tabName === 'widget') {
+        loadWidgetInfo();
+      } else if (tabName === 'test') {
+        // Test tab is ready to use immediately
+      }
+
+      // Update tab button styles
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('border-purple-600', 'text-purple-600');
+        btn.classList.add('text-gray-600');
+      });
+      event.target.classList.add('border-purple-600', 'text-purple-600');
+      event.target.classList.remove('text-gray-600');
+    }
+    
+    function loadWidgetInfo() {
+      // Set widget URL with API key
+      const baseUrl = window.location.origin;
+      const widgetUrl = `${baseUrl}/widget.js?key=${apiKey}`;
+      document.getElementById('widget-url').textContent = widgetUrl;
+      
+      // Load stats
+      loadChatStats();
+    }
+    
+    async function loadChatStats() {
+      try {
+        const response = await fetch('/api/chat/stats', {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('chat-active').textContent = data.activeSessions || 0;
+          document.getElementById('chat-messages').textContent = data.totalMessages || 0;
+        }
+      } catch (error) {
+        console.error('Failed to load chat stats:', error);
+      }
+    }
+    
+    function copyWidgetCode() {
+      const code = '<script src="' + document.getElementById('widget-url').textContent + '"><\/script>';
+      const btn = document.getElementById('copy-widget-btn');
+      
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = 'Copied!';
+        btn.className = 'absolute top-2 right-2 px-3 py-1 bg-green-600 text-white rounded text-xs';
+        
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.className = 'absolute top-2 right-2 px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700';
+        }, 2000);
+      });
+    }
+
+    async function loadAnalytics() {
+      try {
+        const response = await fetch('/admin/analytics', {
+          headers: { 'Authorization': `Bearer ${apiKey}` }
+        });
+        
+        if (!response.ok) throw new Error('Failed to load analytics');
+        
+        analyticsData = await response.json();
+        showAnalyticsPeriod(currentAnalyticsPeriod);
+        renderCallsChart(analyticsData.chart.calls_by_day);
+        renderAnalyticsTable(analyticsData.recent_calls);
+      } catch (error) {
+        console.error('Analytics load error:', error);
+      }
+    }
+
+    function showAnalyticsPeriod(period) {
+      currentAnalyticsPeriod = period;
+      
+      if (!analyticsData) return;
+      
+      const stats = analyticsData.stats[period];
+      
+      document.getElementById('analytics-total-calls').textContent = stats.total_calls;
+      document.getElementById('analytics-avg-duration').textContent = stats.avg_duration + 's';
+      document.getElementById('analytics-bookings').textContent = stats.calls_with_bookings;
+      
+      const busiestHour = analyticsData.stats.busiest_hour;
+      const hour = parseInt(busiestHour.hour);
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const hour12 = hour === 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+      document.getElementById('analytics-busiest-hour').textContent = 
+        busiestHour.count > 0 ? `${hour12}${ampm}` : '--';
+      
+      // Update button styles
+      document.querySelectorAll('.analytics-period-btn').forEach(btn => {
+        btn.classList.remove('bg-purple-600', 'text-white');
+        btn.classList.add('text-gray-700', 'hover:bg-gray-50');
+      });
+      event.target.classList.remove('text-gray-700', 'hover:bg-gray-50');
+      event.target.classList.add('bg-purple-600', 'text-white');
+    }
+
+    function renderCallsChart(callsByDay) {
+      const chartEl = document.getElementById('calls-chart');
+      
+      if (!callsByDay || callsByDay.length === 0) {
+        chartEl.innerHTML = '<p class="text-gray-500 text-center py-8">No call data available</p>';
+        return;
+      }
+      
+      // Reverse to show oldest to newest
+      const data = [...callsByDay].reverse();
+      const maxCalls = Math.max(...data.map(d => d.count), 1);
+      
+      const barWidth = Math.floor((chartEl.clientWidth || 800) / data.length) - 10;
+      const chartHeight = 240;
+      
+      let html = '<div class="flex items-end justify-around h-full gap-2">';
+      
+      data.forEach(day => {
+        const barHeight = (day.count / maxCalls) * (chartHeight - 40);
+        const date = new Date(day.date);
+        const dayLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        
+        html += `
+          <div class="flex flex-col items-center flex-1">
+            <div class="text-sm font-semibold text-purple-900 mb-1">${day.count}</div>
+            <div class="bg-gradient-to-t from-purple-600 to-purple-400 rounded-t w-full" 
+                 style="height: ${barHeight}px; min-height: 4px;"></div>
+            <div class="text-xs text-gray-600 mt-2">${dayLabel}</div>
+          </div>
+        `;
+      });
+      
+      html += '</div>';
+      chartEl.innerHTML = html;
+    }
+
+    function renderAnalyticsTable(calls) {
+      const tableEl = document.getElementById('analytics-calls-table');
+      
+      if (!calls || calls.length === 0) {
+        tableEl.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-500">No calls yet</td></tr>';
+        return;
+      }
+      
+      tableEl.innerHTML = calls.map(call => {
+        const date = new Date(call.created_at * 1000);
+        const timeStr = date.toLocaleString('en-US', { 
+          month: 'short', 
+          day: 'numeric', 
+          hour: 'numeric', 
+          minute: '2-digit' 
+        });
+        
+        return `
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3 text-sm text-gray-900">${timeStr}</td>
+            <td class="px-4 py-3 text-sm text-gray-900">${call.caller_phone}</td>
+            <td class="px-4 py-3 text-sm text-gray-900">${call.duration_seconds || 0}s</td>
+            <td class="px-4 py-3 text-sm">
+              <span class="px-2 py-1 rounded-full text-xs font-medium ${
+                call.intent === 'booking' ? 'bg-green-100 text-green-800' :
+                call.intent === 'emergency' ? 'bg-red-100 text-red-800' :
+                'bg-gray-100 text-gray-800'
+              }">
+                ${call.intent || 'unknown'}
+              </span>
+            </td>
+            <td class="px-4 py-3 text-sm text-center">
+              ${call.recording_available ? 
+                '<span class="text-green-600">✓</span>' : 
+                '<span class="text-gray-400">—</span>'}
+            </td>
+            <td class="px-4 py-3 text-sm text-center">
+              ${call.transferred ? 
+                '<span class="text-blue-600">✓</span>' : 
+                '<span class="text-gray-400">—</span>'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function loadVoicemails() {
+      if (!analyticsData) {
+        // If analytics not loaded yet, load it
+        try {
+          const response = await fetch('/admin/analytics', {
+            headers: { 'Authorization': `Bearer ${apiKey}` }
+          });
+          if (response.ok) {
+            analyticsData = await response.json();
+          }
+        } catch (e) {
+          console.error('Failed to load analytics:', e);
+        }
+      }
+      
+      const voicemails = analyticsData?.voicemails || [];
+      const container = document.getElementById('voicemails-list');
+      
+      if (voicemails.length === 0) {
+        container.innerHTML = '<p class="text-gray-500">No voicemails yet</p>';
+        return;
+      }
+      
+      container.innerHTML = voicemails.map(vm => {
+        const date = new Date(vm.created_at * 1000);
+        const timeStr = date.toLocaleString('en-US', { 
+          dateStyle: 'medium', 
+          timeStyle: 'short' 
+        });
+        const durationMin = Math.floor(vm.duration / 60);
+        const durationSec = vm.duration % 60;
+        
+        return `
+          <div class="border border-gray-200 rounded-lg p-4 bg-white">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <div class="font-semibold text-gray-900">📞 ${vm.caller_phone}</div>
+                <div class="text-sm text-gray-600">${timeStr}</div>
+                <div class="text-sm text-gray-500">Duration: ${durationMin}:${durationSec.toString().padStart(2, '0')}</div>
+              </div>
+            </div>
+            <div class="mt-3">
+              <audio controls class="w-full" src="${vm.recording_url}.mp3"></audio>
+            </div>
+            ${vm.transcription ? `
+              <div class="mt-3 p-3 bg-gray-50 rounded text-sm text-gray-700">
+                <strong>Transcription:</strong> ${vm.transcription}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // Test Your AI functions
+    async function sendTestMessage(event) {
+      event.preventDefault();
+      
+      const input = document.getElementById('test-message-input');
+      const message = input.value.trim();
+      const sendBtn = document.getElementById('test-send-btn');
+      const chatHistory = document.getElementById('test-chat-history');
+      
+      if (!message) return;
+      
+      // Clear placeholder if first message
+      if (chatHistory.querySelector('.text-center')) {
+        chatHistory.innerHTML = '';
+      }
+      
+      // Add user message
+      appendTestMessage('user', message);
+      input.value = '';
+      
+      // Disable input while processing
+      input.disabled = true;
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Thinking...';
+      
+      try {
+        const response = await fetch('/api/simulate-call', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: message,
+            apiKey: apiKey
+          })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Simulation failed');
+        }
+        
+        const data = await response.json();
+        
+        // Add AI response
+        appendTestMessage('ai', data.response.text, data.response.intent);
+        
+      } catch (error) {
+        console.error('Test error:', error);
+        appendTestMessage('error', 'Sorry, I encountered an error. Please try again.');
+      } finally {
+        // Re-enable input
+        input.disabled = false;
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Send';
+        input.focus();
+      }
+    }
+    
+    function appendTestMessage(type, text, intent = null) {
+      const chatHistory = document.getElementById('test-chat-history');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `mb-4 ${type === 'user' ? 'text-right' : 'text-left'}`;
+      
+      if (type === 'user') {
+        messageDiv.innerHTML = `
+          <div class="inline-block max-w-[70%] bg-purple-600 text-white rounded-lg px-4 py-2">
+            <div class="text-sm">${escapeHtml(text)}</div>
+          </div>
+        `;
+      } else if (type === 'ai') {
+        const intentBadge = intent ? `<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">${intent}</span>` : '';
+        messageDiv.innerHTML = `
+          <div class="inline-block max-w-[70%] bg-gray-200 text-gray-900 rounded-lg px-4 py-2">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-sm font-semibold">🤖 AI Receptionist</span>
+              ${intentBadge}
+            </div>
+            <div class="text-sm">${escapeHtml(text)}</div>
+          </div>
+        `;
+      } else if (type === 'error') {
+        messageDiv.innerHTML = `
+          <div class="inline-block max-w-[70%] bg-red-100 text-red-800 rounded-lg px-4 py-2">
+            <div class="text-sm">⚠️ ${escapeHtml(text)}</div>
+          </div>
+        `;
+      }
+      
+      chatHistory.appendChild(messageDiv);
+      
+      // Scroll to bottom
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+    
+    function fillTestPrompt(prompt) {
+      document.getElementById('test-message-input').value = prompt;
+      document.getElementById('test-message-input').focus();
+    }
+    
+    function clearTestChat() {
+      const chatHistory = document.getElementById('test-chat-history');
+      chatHistory.innerHTML = `
+        <div class="text-center text-gray-500 py-12">
+          <div class="text-4xl mb-3">💬</div>
+          <p>Start a conversation to test your AI</p>
+          <p class="text-sm mt-2">Try asking about business hours, services, or booking an appointment</p>
+        </div>
+      `;
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+
+</body>
+</html>

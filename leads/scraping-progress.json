@@ -1,0 +1,292 @@
+{
+  "plumbers": [
+    {
+      "name": "NYC Sewer and Drain Pro Solutions",
+      "industry": "Plumber",
+      "phone": "(718) 500-5717",
+      "address": "192 Essex Street, NYC",
+      "rating": "4.9",
+      "hours": "Open 24 hours",
+      "signal": "24/7 availability - may still miss calls during high volume",
+      "website": "nycseweranddrain.com",
+      "priority": "medium"
+    },
+    {
+      "name": "Flushing Plumbing Corp",
+      "industry": "Plumber",
+      "phone": null,
+      "address": "73-04 Metropolitan Ave, NYC",
+      "rating": "5.0",
+      "hours": "Closed \u00b7 Opens 9 AM",
+      "signal": "Limited hours - needs after-hours coverage",
+      "website": "flushingplumbingcorp.com",
+      "priority": "high"
+    },
+    {
+      "name": "Kew Forest Plumbing",
+      "industry": "Plumber",
+      "phone": "(718) 456-0800",
+      "address": "67-54 73rd Pl, NYC",
+      "rating": "3.0",
+      "hours": "Closed \u00b7 Opens 7 AM",
+      "signal": "Low rating + limited hours - likely missing calls",
+      "website": "kewforestplumbing.com",
+      "priority": "high"
+    },
+    {
+      "name": "E Mule & Son Plumbing",
+      "industry": "Plumber",
+      "phone": "(718) 326-4646",
+      "address": "75-55 Metropolitan Ave, NYC",
+      "rating": "4.6",
+      "hours": "Not listed",
+      "signal": "No hours listed, basic website",
+      "website": "emuleandsonplumbingandheating.com",
+      "priority": "medium"
+    },
+    {
+      "name": "Landmark Plumbing and Heating",
+      "industry": "Plumber",
+      "phone": "(718) 235-0500",
+      "address": "69-45 76th St, NYC",
+      "rating": "No reviews",
+      "hours": "Closed \u00b7 Opens 7 AM",
+      "signal": "No reviews, limited hours - new/small business",
+      "website": "landmarkplumbing.nyc",
+      "priority": "high"
+    },
+    {
+      "name": "718 Sewer and Drain",
+      "industry": "Plumber",
+      "phone": "(718) 729-4995",
+      "address": "61-46 70th St, NYC",
+      "rating": "4.8",
+      "hours": "Closed \u00b7 Opens 7 AM",
+      "signal": "Limited hours - needs after-hours coverage",
+      "website": "plumberinqueens.com",
+      "priority": "medium"
+    },
+    {
+      "name": "Kew Forest Plumbing & Heating, Inc.",
+      "industry": "Plumber",
+      "phone": "(718) 456-0800",
+      "address": "70-02 70th Ave, NYC",
+      "rating": "4.4",
+      "hours": "Closed \u00b7 Opens 7 AM",
+      "signal": "Limited hours - needs after-hours coverage",
+      "website": "kewforestplumbing.com",
+      "priority": "medium"
+    },
+    {
+      "name": "Garofalo Master Plumbing & Heating",
+      "industry": "Plumber",
+      "phone": "(718) 418-3679",
+      "address": "66-70 69th St, NYC",
+      "rating": "4.4",
+      "hours": "Not listed",
+      "signal": "No website visible, no hours listed",
+      "website": null,
+      "priority": "high"
+    },
+    {
+      "name": "Maxwell Plumb Mechanical Corp.",
+      "industry": "Plumber",
+      "phone": "(718) 509-6398",
+      "address": "71-20 80th St, NYC",
+      "rating": "4.7",
+      "hours": "Open 24 hours",
+      "signal": "24/7 but small business may miss calls",
+      "website": "maxwellplumb.com",
+      "priority": "low"
+    },
+    {
+      "name": "RR Plumbing Roto-Rooter",
+      "industry": "Plumber",
+      "phone": "(212) 687-1215",
+      "address": "450 7th Ave Ste B, NYC",
+      "rating": "4.8",
+      "hours": "Open 24 hours",
+      "signal": "Franchise - likely has systems in place",
+      "website": "rotorooter.com",
+      "priority": "low"
+    },
+    {
+      "name": "24 Hours Plumbing",
+      "industry": "Plumber",
+      "phone": "(917) 965-8298",
+      "address": "103-10 Queens Blvd, NYC",
+      "rating": "4.5",
+      "hours": "Open 24 hours",
+      "signal": "24/7 but may still miss calls during high volume",
+      "website": "24hoursplumbing.com",
+      "priority": "medium"
+    },
+    {
+      "name": "Allied Plumbing & Heating Corporation",
+      "industry": "HVAC",
+      "phone": "(718) 326-0181",
+      "address": "71-05 Metropolitan Ave, NYC",
+      "rating": "4.4",
+      "hours": "Open 24 hours",
+      "signal": "HVAC contractor, 24/7 availability",
+      "website": "alliedplumbingandheating.com",
+      "priority": "medium"
+    },
+    {
+      "name": "Plumbing NYC",
+      "industry": "Plumber",
+      "phone": "(646) 580-7524",
+      "address": "510 W 45th St apt 11g, NYC",
+      "rating": "4.8",
+      "hours": "Open 24 hours",
+      "signal": "Apartment-based business - likely solo operator",
+      "website": "plumbingnyc.com",
+      "priority": "high"
+    },
+    {
+      "name": "NYC 24/7 Plumbing Pros",
+      "industry": "Plumber",
+      "phone": "(332) 233-7070",
+      "address": "116-118 E 55th St, NYC",
+      "rating": "4.3",
+      "hours": "Open 24 hours",
+      "signal": "No wheelchair access, moderate rating",
+      "website": null,
+      "priority": "medium"
+    },
+    {
+      "name": "NYC Plumbing Services /Mentor Mechanical",
+      "industry": "Plumber",
+      "phone": "(718) 804-5781",
+      "address": "319 E 75th St, NYC",
+      "rating": "4.9",
+      "hours": "Open 24 hours",
+      "signal": "24/7 availability, high rating",
+      "website": "mentormechanicalcorp.com",
+      "priority": "low"
+    },
+    {
+      "name": "ADV Mechanical Services",
+      "industry": "Plumber",
+      "phone": "(718) 839-2100",
+      "address": "445 Park Avenue, NYC",
+      "rating": "4.8",
+      "hours": "Open 24 hours",
+      "signal": "24/7 but sponsored ad suggests marketing budget",
+      "website": "advmechanicalservices.com",
+      "priority": "low"
+    }
+  ],
+  "electricians": [
+    {
+      "name": "Forest Hills Electrical Contracting Inc.",
+      "industry": "Electrician",
+      "phone": "(718) 894-4113",
+      "address": "67-54 73rd Place, NYC",
+      "rating": "3.8",
+      "hours": "Closed \u00b7 Opens 8 AM",
+      "signal": "Lower rating + limited hours - likely phone issues",
+      "website": "foresthillselectric.com",
+      "priority": "high"
+    },
+    {
+      "name": "Mauceri Electric",
+      "industry": "Electrician",
+      "phone": "(347) 305-6091",
+      "address": "75-02 67th Dr, NYC",
+      "rating": "4.0",
+      "hours": "Closed \u00b7 Opens 6:30 AM",
+      "signal": "Limited hours - needs after-hours coverage",
+      "website": "maucerielectric.com",
+      "priority": "high"
+    },
+    {
+      "name": "Tosi Electric",
+      "industry": "Electrician",
+      "phone": "(646) 842-3181",
+      "address": "70-45 65th Pl, NYC",
+      "rating": "5.0",
+      "hours": "Closed \u00b7 Opens 6 AM",
+      "signal": "Limited hours, no website visible",
+      "website": null,
+      "priority": "high"
+    },
+    {
+      "name": "Power Flow Electric",
+      "industry": "Electrician",
+      "phone": "(718) 690-2750",
+      "address": "83-18 Parsons Boulevard, NYC",
+      "rating": "5.0",
+      "hours": "Open 24 hours",
+      "signal": "24/7 but sponsored ad suggests well-funded",
+      "website": "powerflowelectrics.com",
+      "priority": "low"
+    },
+    {
+      "name": "ELectric A/C Inc",
+      "industry": "Electrician",
+      "phone": "(718) 374-6757",
+      "address": "69-59 75th St, NYC",
+      "rating": "5.0",
+      "hours": "Open 24 hours",
+      "signal": "24/7 availability",
+      "website": "electricacinc.com",
+      "priority": "low"
+    },
+    {
+      "name": "Forest Hills Electrical",
+      "industry": "Electrician/Contractor",
+      "phone": "(718) 894-4113",
+      "address": "67-54 73rd Pl, NYC",
+      "rating": "5.0",
+      "hours": "Not listed",
+      "signal": "No hours listed",
+      "website": "foresthillselectric.com",
+      "priority": "medium"
+    },
+    {
+      "name": "NYC Precision Electrical LLC",
+      "industry": "Electrician",
+      "phone": "(516) 300-0192",
+      "address": "118-66 Metropolitan Ave Apt 3d, NYC",
+      "rating": "5.0",
+      "hours": "Open 24 hours",
+      "signal": "Apartment-based - likely solo operator",
+      "website": "nycprecisionelectrical.com",
+      "priority": "high"
+    },
+    {
+      "name": "Power Electric NY",
+      "industry": "Electrician",
+      "phone": "(929) 422-9063",
+      "address": "110 N 1st St, NYC",
+      "rating": "5.0",
+      "hours": "Open 24 hours",
+      "signal": "24/7 availability",
+      "website": "powerelectricnyinc.com",
+      "priority": "low"
+    },
+    {
+      "name": "New York City Electricians",
+      "industry": "Electrician",
+      "phone": "(646) 340-9882",
+      "address": "50 St Marks Pl, NYC",
+      "rating": "4.7",
+      "hours": "Open 24 hours",
+      "signal": "24/7 availability",
+      "website": "newyorkcityelectricianss.com",
+      "priority": "low"
+    },
+    {
+      "name": "Electrician NYC LLC",
+      "industry": "Electrician",
+      "phone": "(212) 547-8867",
+      "address": "489 5th Ave Lobby, NYC",
+      "rating": "4.9",
+      "hours": "Open 24 hours",
+      "signal": "24/7 availability, well-established",
+      "website": "electriciannyc.com",
+      "priority": "low"
+    }
+  ]
+}

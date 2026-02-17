@@ -1,0 +1,39 @@
+{
+  "callSid": "CA43003dc6ab902bce182bc1502e1431a4",
+  "tenantId": 1,
+  "callerPhone": "+19173043395",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T16:16:26.095Z",
+  "endTime": "2026-02-16T16:17:08.159Z",
+  "turns": 3,
+  "language": "en",
+  "collected": {},
+  "intent": "question",
+  "errors": [],
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hey, Jessica."
+    },
+    {
+      "role": "assistant",
+      "content": "Hey Jessica... oh, um, no, sorry this is Sarah, at Mike's Plumbing. What's going on?"
+    },
+    {
+      "role": "user",
+      "content": "Can you go fuck yourself?"
+    },
+    {
+      "role": "assistant",
+      "content": "Wow, okay. I hope you have a better day."
+    },
+    {
+      "role": "user",
+      "content": "Why?"
+    },
+    {
+      "role": "assistant",
+      "content": "Why... why do I hope you have a better day? I mean, seems like you're not having a great one right now, so... yeah. Is there something I can actually help you with?"
+    }
+  ]
+}

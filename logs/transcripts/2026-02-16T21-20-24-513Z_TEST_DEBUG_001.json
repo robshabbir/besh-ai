@@ -1,0 +1,14 @@
+{
+  "callSid": "TEST_DEBUG_001",
+  "tenantId": 1,
+  "callerPhone": "+15551234567",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T21:20:19.516Z",
+  "endTime": "2026-02-16T21:20:24.513Z",
+  "turns": 0,
+  "language": "en",
+  "collected": {},
+  "intent": null,
+  "errors": [],
+  "messages": []
+}

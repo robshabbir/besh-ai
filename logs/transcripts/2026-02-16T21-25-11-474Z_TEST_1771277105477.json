@@ -1,0 +1,25 @@
+{
+  "callSid": "TEST_1771277105477",
+  "tenantId": 1,
+  "callerPhone": "+13472449656",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T21:25:05.477Z",
+  "endTime": "2026-02-16T21:25:11.474Z",
+  "turns": 1,
+  "language": "en",
+  "collected": {
+    "service": "leak"
+  },
+  "intent": "question",
+  "errors": [],
+  "messages": [
+    {
+      "role": "user",
+      "content": "How much to fix a leaky faucet?"
+    },
+    {
+      "role": "assistant",
+      "content": "Like one-fifty to three-fifty."
+    }
+  ]
+}

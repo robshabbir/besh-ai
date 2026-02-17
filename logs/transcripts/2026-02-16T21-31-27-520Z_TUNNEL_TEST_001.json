@@ -1,0 +1,25 @@
+{
+  "callSid": "TUNNEL_TEST_001",
+  "tenantId": 1,
+  "callerPhone": "+13472449656",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T21:31:19.837Z",
+  "endTime": "2026-02-16T21:31:27.520Z",
+  "turns": 1,
+  "language": "en",
+  "collected": {
+    "service": "leak"
+  },
+  "intent": "question",
+  "errors": [],
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hey I got a leaky pipe"
+    },
+    {
+      "role": "assistant",
+      "content": "What's your name?"
+    }
+  ]
+}

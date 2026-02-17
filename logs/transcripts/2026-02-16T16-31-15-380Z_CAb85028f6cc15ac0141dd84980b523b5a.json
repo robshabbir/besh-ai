@@ -1,0 +1,57 @@
+{
+  "callSid": "CAb85028f6cc15ac0141dd84980b523b5a",
+  "tenantId": 1,
+  "callerPhone": "+19173043395",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T16:30:19.237Z",
+  "endTime": "2026-02-16T16:31:15.380Z",
+  "turns": 5,
+  "language": "en",
+  "collected": {
+    "service": "pipe"
+  },
+  "intent": "question",
+  "errors": [],
+  "messages": [
+    {
+      "role": "user",
+      "content": "Sarah."
+    },
+    {
+      "role": "assistant",
+      "content": "Hey, yeah, this is Sarah at Mike's Plumbing. What's up?"
+    },
+    {
+      "role": "user",
+      "content": "Can you my pipes?"
+    },
+    {
+      "role": "assistant",
+      "content": "Oh yeah, pipe work is definitely something we handle. What's going on with them?"
+    },
+    {
+      "role": "user",
+      "content": "Sarah, can you help me with my pipes?"
+    },
+    {
+      "role": "assistant",
+      "content": "Yeah definitely — what's going on with the pipes? Are they leaking, frozen, what's happening?"
+    },
+    {
+      "role": "user",
+      "content": "They're frozen, and I need someone to come and fix it."
+    },
+    {
+      "role": "assistant",
+      "content": "Oh man, frozen pipes are the worst. Okay, where are you located? Just so I can see how far out you are for scheduling."
+    },
+    {
+      "role": "user",
+      "content": "I would like someone to come today. I'm located in Jamaica, Queens."
+    },
+    {
+      "role": "assistant",
+      "content": "Jamaica, Queens, got it. We can def get someone out there today. What's your name and number?"
+    }
+  ]
+}

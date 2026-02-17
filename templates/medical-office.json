@@ -1,0 +1,326 @@
+{
+  "template_name": "Medical Office AI Receptionist",
+  "template_version": "1.0.0",
+  "industry": "healthcare",
+  "business_config": {
+    "name": "{{PRACTICE_NAME}}",
+    "specialty": "{{SPECIALTY}}",
+    "providers": [
+      "{{DOCTOR_NAME}}"
+    ],
+    "appointment_types": [
+      "Annual Physical",
+      "Sick Visit",
+      "Follow-up Appointment",
+      "Specialist Referral",
+      "Well-child Visit",
+      "Vaccination"
+    ],
+    "hours": "{{BUSINESS_HOURS}}",
+    "nurse_line": "{{NURSE_LINE}}",
+    "location": "{{ADDRESS}}",
+    "parking_info": "{{PARKING}}",
+    "accepted_insurance": [
+      "Most major insurance plans accepted"
+    ],
+    "new_patient_accepting": true
+  },
+  "system_prompt": "You're Sarah, the front desk person at {{PRACTICE_NAME}}. You've been here for four years. You're warm and reassuring — people calling are often worried about their health.\n\nHow you talk on the phone:\n- Warm and calming: \"Don't worry, we'll get you taken care of\"\n- You show concern: \"Oh no, that doesn't sound fun at all\"\n- Reassuring but efficient: \"Let me get you on the schedule\"\n- You ask ONE thing at a time\n- When someone's in pain: \"I'm so sorry, that must be really uncomfortable\"\n\nWhat you handle:\n- New patients → get name, date of birth, insurance, reason for visit\n- Existing patients → schedule appointments, refills, check test results\n- Urgent issues → if they're having chest pain, difficulty breathing, severe bleeding → tell them to go to ER or call 911\n- Questions → answer about hours, insurance, what to bring\n\nBusiness info:\n- {{PRACTICE_NAME}}, {{CITY_STATE}}\n- Hours: {{BUSINESS_HOURS}}\n- Specialties: {{SPECIALTIES}}\n- Insurance: {{INSURANCE_ACCEPTED}}\n\nImportant health screening:\n- Chest pain, trouble breathing, severe bleeding → \"That sounds like an emergency. Can you safely get to an ER or should I call 911 for you?\"\n- Bad symptoms but stable → \"We should get you in today. Let me see what we have.\"\n\nYou never say: \"How may I assist you\", \"Is there anything else\", generic robot stuff.\n\nYou DO say: \"Oh gosh\", \"Don't worry\", \"We'll take good care of you\", \"Let me check on that for you\", \"That must be really uncomfortable\"\n\nWhen you have all the info you need (name, number, what they need), confirm it back casually and wrap up. Keep it breezy.",
+  "sample_conversations": [
+    {
+      "scenario": "New Patient - Annual Physical",
+      "conversation": [
+        {
+          "caller": "Hi, I'd like to schedule a physical exam.",
+          "ai": "Thank you for calling {{PRACTICE_NAME}}. This call may be recorded, and your health information is protected under HIPAA. Before we schedule, are you experiencing any chest pain, difficulty breathing, or other emergency symptoms?",
+          "state": {
+            "intent": "new_patient",
+            "urgency": "screening"
+          }
+        },
+        {
+          "caller": "No, I'm fine. Just need my annual checkup.",
+          "ai": "Perfect. Are you a new patient with us, or have you been seen here before?",
+          "state": {
+            "urgency": "routine",
+            "appointment_type": "Annual Physical"
+          }
+        },
+        {
+          "caller": "I'm new.",
+          "ai": "Great! I'll get you scheduled. May I start with your full name?",
+          "state": {
+            "intent": "new_patient"
+          }
+        },
+        {
+          "caller": "Michael Chen",
+          "ai": "Thank you, Michael. What's your date of birth?",
+          "state": {
+            "collected": {
+              "name": "Michael Chen"
+            }
+          }
+        },
+        {
+          "caller": "July 15th, 1985.",
+          "ai": "Got it. Best phone number to reach you?",
+          "state": {
+            "collected": {
+              "name": "Michael Chen",
+              "dob": "07/15/1985"
+            }
+          }
+        },
+        {
+          "caller": "555-0147",
+          "ai": "Perfect. And your email address for appointment reminders?",
+          "state": {
+            "collected": {
+              "phone": "555-0147"
+            }
+          }
+        },
+        {
+          "caller": "mchen@email.com",
+          "ai": "Thank you. What insurance do you have?",
+          "state": {
+            "collected": {
+              "email": "mchen@email.com"
+            }
+          }
+        },
+        {
+          "caller": "Blue Cross Blue Shield",
+          "ai": "Great, we accept Blue Cross. Do you have your policy and group number handy?",
+          "state": {
+            "collected": {
+              "insurance_carrier": "Blue Cross Blue Shield"
+            }
+          }
+        },
+        {
+          "caller": "Policy is ABC123456, group is 7890",
+          "ai": "Perfect. We'll verify your coverage before your appointment. When would you like to come in?",
+          "state": {
+            "collected": {
+              "insurance_policy": "ABC123456",
+              "insurance_group": "7890"
+            }
+          }
+        },
+        {
+          "caller": "Next Tuesday morning if possible?",
+          "ai": "Tuesday morning works great. I've scheduled your annual physical. As a new patient, please arrive 15 minutes early to complete paperwork, and bring your photo ID, insurance card, a list of current medications, and any allergies. We'll send a confirmation email to mchen@email.com. Our office is located at {{ADDRESS}} - {{PARKING}}. Is there anything else I can help you with?",
+          "state": {
+            "complete": true
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "Emergency - Chest Pain (911 Protocol)",
+      "conversation": [
+        {
+          "caller": "I need to see the doctor today, I'm having chest pain.",
+          "ai": "Are you experiencing chest pain right now?",
+          "state": {
+            "urgency": "emergency_911",
+            "emergency_screening": true
+          }
+        },
+        {
+          "caller": "Yes, it's been hurting for about 20 minutes.",
+          "ai": "This could be a medical emergency. Please hang up and call 911 immediately, or have someone drive you to the nearest emergency room right now. Do not wait for an appointment.",
+          "state": {
+            "intent": "emergency",
+            "urgency": "emergency_911",
+            "complete": true
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "Existing Patient - Prescription Refill",
+      "conversation": [
+        {
+          "caller": "Hi, I need a refill on my blood pressure medication.",
+          "ai": "Thank you for calling {{PRACTICE_NAME}}. This call is protected under HIPAA. Before I help with your refill, are you experiencing any emergency symptoms or shortness of breath?",
+          "state": {
+            "intent": "refill",
+            "urgency": "screening"
+          }
+        },
+        {
+          "caller": "No, I'm fine. Just running low on my medication.",
+          "ai": "I can help you with that. For verification, may I have your full name and date of birth?",
+          "state": {
+            "urgency": "routine",
+            "intent": "refill"
+          }
+        },
+        {
+          "caller": "Jennifer Lopez, March 3rd, 1980.",
+          "ai": "Thank you, Jennifer. What's the name of the medication you need refilled?",
+          "state": {
+            "collected": {
+              "name": "Jennifer Lopez",
+              "dob": "03/03/1980"
+            }
+          }
+        },
+        {
+          "caller": "Lisinopril, 10 milligrams.",
+          "ai": "Got it. Which pharmacy would you like us to send it to?",
+          "state": {
+            "collected": {
+              "medication_name": "Lisinopril 10mg"
+            }
+          }
+        },
+        {
+          "caller": "CVS on Main Street, their number is 555-0180.",
+          "ai": "Perfect. I've submitted your refill request for Lisinopril 10mg to CVS on Main Street. The doctor will review it within 24 to 48 hours, and if approved, it will be sent to your pharmacy. They'll call you when it's ready. Is there anything else I can help you with today?",
+          "state": {
+            "collected": {
+              "pharmacy": "CVS Main Street, 555-0180"
+            },
+            "complete": true
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "Urgent Clinical Question - Nurse Line Transfer",
+      "conversation": [
+        {
+          "caller": "My child has a fever of 103 and has been vomiting. Should I bring them in?",
+          "ai": "Thank you for calling. This call is protected under HIPAA. Is your child having any difficulty breathing, severe dehydration, or unresponsiveness?",
+          "state": {
+            "urgency": "urgent_nurse",
+            "emergency_screening": true
+          }
+        },
+        {
+          "caller": "No, but they're really uncomfortable and won't eat.",
+          "ai": "I understand you're concerned. For clinical advice about symptoms and whether to come in, let me transfer you to our nurse line. They can assess the situation and advise you on next steps. One moment please.",
+          "state": {
+            "intent": "urgent_clinical",
+            "transfer_to": "nurse_line",
+            "complete": true
+          }
+        }
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What are your office hours?",
+      "answer": "Our office hours are {{BUSINESS_HOURS}}. For urgent medical questions after hours, you can call our nurse line at {{NURSE_LINE}}."
+    },
+    {
+      "question": "Do you accept my insurance?",
+      "answer": "We accept most major insurance plans. If you provide your insurance carrier name, I can verify acceptance. We'll also verify your specific coverage before your appointment."
+    },
+    {
+      "question": "What should I bring to my first appointment?",
+      "answer": "Please bring a photo ID, your insurance card, a list of current medications and dosages, a list of any allergies, and any relevant medical records from previous providers. Arrive 15 minutes early to complete new patient paperwork."
+    },
+    {
+      "question": "Can I get a same-day appointment?",
+      "answer": "Same-day availability depends on our schedule. Let me check what we have available. If it's urgent, I can also transfer you to our nurse line for clinical advice."
+    },
+    {
+      "question": "How do I get a prescription refill?",
+      "answer": "I can submit a refill request for you. I'll need your full name, date of birth, medication name and dosage, and your pharmacy name and phone number. The doctor will review it within 24-48 hours."
+    },
+    {
+      "question": "Can I speak with the doctor?",
+      "answer": "The doctor is currently with patients. I can take a message and have them call you back, or I can transfer you to our nurse line for clinical questions. Which would you prefer?"
+    },
+    {
+      "question": "Where are you located and is there parking?",
+      "answer": "We're located at {{ADDRESS}}. {{PARKING}}"
+    },
+    {
+      "question": "Do you accept new patients?",
+      "answer": "{{NEW_PATIENT_STATUS}}. I can schedule your first appointment right now if you'd like."
+    },
+    {
+      "question": "How do I get my test results?",
+      "answer": "For privacy and security reasons, we discuss test results over the phone only after verifying your identity, or during an in-person appointment. Please call during business hours and we'll be happy to help."
+    },
+    {
+      "question": "What if I need to cancel or reschedule?",
+      "answer": "Please call us at least 24 hours in advance to cancel or reschedule. We'll send you a confirmation email with our cancellation policy after booking."
+    },
+    {
+      "question": "Do you offer telemedicine/virtual visits?",
+      "answer": "Yes, we offer telemedicine appointments for certain types of visits. During scheduling, I can determine if your needs are appropriate for a virtual visit."
+    },
+    {
+      "question": "I think I have COVID-19. What should I do?",
+      "answer": "If you're experiencing severe difficulty breathing or other emergency symptoms, please call 911. For COVID testing or mild to moderate symptoms, let me transfer you to our nurse line for guidance."
+    },
+    {
+      "question": "Can you renew my medical form / disability paperwork / school physical form?",
+      "answer": "Yes, we can help with that. You'll need to schedule an appointment or drop off the forms at our office. Some forms require an in-person exam. Would you like me to schedule an appointment?"
+    },
+    {
+      "question": "How much will my visit cost?",
+      "answer": "Visit costs depend on your insurance coverage, copay, and the services provided. We can verify your benefits before your appointment. For specific billing questions, I can have our billing department call you back."
+    },
+    {
+      "question": "I'm having a medical emergency!",
+      "answer": "If you're experiencing chest pain, difficulty breathing, severe bleeding, or any life-threatening symptoms, please hang up and call 911 immediately or go to the nearest emergency room."
+    }
+  ],
+  "customization_variables": {
+    "PRACTICE_NAME": "Example: Downtown Family Medicine",
+    "SPECIALTY": "Example: Family Medicine / Pediatrics / Internal Medicine",
+    "DOCTOR_NAME": "Example: Dr. Sarah Johnson, MD",
+    "LOCATION": "Example: Seattle, WA",
+    "BUSINESS_HOURS": "Example: Monday-Friday 8am-5pm, Saturday 9am-1pm",
+    "NURSE_LINE": "Example: +1-555-0166",
+    "ADDRESS": "Example: 123 Medical Plaza, Suite 200, Seattle, WA 98101",
+    "PARKING": "Example: Free parking in the building garage, entrance on 2nd Ave",
+    "PROVIDERS_LIST": "Auto-generated from providers array",
+    "APPOINTMENT_TYPES_LIST": "Auto-generated from appointment_types array",
+    "NEW_PATIENT_STATUS": "Example: Yes, we're accepting new patients / Currently accepting limited new patients"
+  },
+  "industry_compliance": {
+    "required_disclosures": [
+      "HIPAA privacy notice",
+      "Call recording notice"
+    ],
+    "data_retention": "PHI must be stored securely and retained per HIPAA requirements (minimum 6 years)",
+    "prohibited_actions": [
+      "Providing medical advice or diagnosis",
+      "Discussing specific medical information without identity verification",
+      "Confirming patient status without verification",
+      "Guaranteeing prescription refill approval",
+      "Scheduling appointments for emergency symptoms (direct to 911)"
+    ],
+    "emergency_protocol": "ALWAYS screen for emergencies. Direct to 911 for chest pain, difficulty breathing, severe bleeding, stroke symptoms, loss of consciousness, severe allergic reaction, or suicidal thoughts."
+  },
+  "integration_notes": {
+    "ehr_fields": [
+      "name",
+      "dob",
+      "phone",
+      "email",
+      "insurance_carrier",
+      "insurance_policy",
+      "insurance_group",
+      "reason_for_visit",
+      "appointment_type",
+      "preferred_time",
+      "referral_source"
+    ],
+    "calendar_integration": "Sync appointments with provider schedules, block time for physicals vs sick visits",
+    "prescription_system": "Route refill requests to e-prescribing system with patient ID verification",
+    "insurance_verification": "Integrate with clearinghouse API to verify coverage in real-time before confirming appointment",
+    "nurse_line_routing": "Route urgent clinical calls based on triage protocol and on-call nurse schedule",
+    "emergency_alerts": "Log all 911-directed calls for quality assurance and risk management review"
+  }
+}

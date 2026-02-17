@@ -1,0 +1,25 @@
+{
+  "callSid": "TEST_1771277099470",
+  "tenantId": 1,
+  "callerPhone": "+13472449656",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T21:24:59.476Z",
+  "endTime": "2026-02-16T21:25:05.474Z",
+  "turns": 1,
+  "language": "en",
+  "collected": {
+    "service": "pipe"
+  },
+  "intent": "question",
+  "errors": [],
+  "messages": [
+    {
+      "role": "user",
+      "content": "My pipes are frozen and water is everywhere"
+    },
+    {
+      "role": "assistant",
+      "content": "wow. okay. what's the address?"
+    }
+  ]
+}

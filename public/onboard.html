@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Started - Calva AI Receptionist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+  <div class="min-h-screen py-12">
+    <div class="container mx-auto px-6">
+      
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-900 mb-2">Get Started with Calva</h1>
+        <p class="text-gray-600">Set up your AI receptionist in 5 minutes</p>
+      </div>
+
+      <!-- Progress Steps -->
+      <div class="max-w-3xl mx-auto mb-8">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div id="step-1-circle" class="w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold">1</div>
+            <div class="ml-3">
+              <div class="font-semibold">Choose Template</div>
+            </div>
+          </div>
+          <div class="flex-1 h-1 bg-gray-300 mx-4"></div>
+          <div class="flex items-center">
+            <div id="step-2-circle" class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold">2</div>
+            <div class="ml-3">
+              <div class="font-semibold text-gray-500">Configure</div>
+            </div>
+          </div>
+          <div class="flex-1 h-1 bg-gray-300 mx-4"></div>
+          <div class="flex items-center">
+            <div id="step-3-circle" class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold">3</div>
+            <div class="ml-3">
+              <div class="font-semibold text-gray-500">Complete</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 1: Choose Template -->
+      <div id="step-1" class="max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-8">
+        <h2 class="text-3xl font-bold mb-2 text-gray-900">Choose Your Industry Template</h2>
+        <p class="text-gray-600 mb-8">Select the template that best matches your business type</p>
+        <div id="templates-container" class="grid md:grid-cols-3 gap-6">
+          <p class="text-gray-500">Loading templates...</p>
+        </div>
+      </div>
+
+      <!-- Step 2: Configure -->
+      <div id="step-2" class="hidden max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-8">
+        <h2 class="text-3xl font-bold mb-2 text-gray-900">Configure Your AI Receptionist</h2>
+        <p class="text-gray-600 mb-8">Customize the settings for your business</p>
+        
+        <div id="config-form" class="space-y-6">
+          <!-- Dynamic form will be inserted here -->
+        </div>
+
+        <div class="flex justify-between mt-10 pt-6 border-t border-gray-200">
+          <button onclick="goToStep(1)" class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold transition">
+            ← Back
+          </button>
+          <button onclick="createAccount()" class="px-8 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold shadow-md hover:shadow-lg transition">
+            Create Account →
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Complete -->
+      <div id="step-3" class="hidden max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-10">
+        <div class="text-center">
+          <div class="text-7xl mb-6">🎉</div>
+          <h2 class="text-4xl font-bold mb-4 text-gray-900">You're All Set!</h2>
+          <p class="text-gray-600 text-lg mb-10">Your AI receptionist is ready to answer calls.</p>
+          
+          <div class="bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-400 rounded-xl p-8 mb-10 text-left shadow-md">
+            <div class="flex items-center mb-3">
+              <span class="text-2xl mr-2">⚠️</span>
+              <div class="font-bold text-lg">Important: Save Your API Key</div>
+            </div>
+            <p class="text-sm text-gray-700 mb-5">You won't be able to see this again!</p>
+            <div class="bg-white rounded-lg p-5 font-mono text-sm break-all border-2 border-yellow-500 shadow-inner">
+              <span id="api-key-display" class="text-purple-700 font-semibold"></span>
+            </div>
+            <button onclick="copyApiKey()" class="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold shadow hover:shadow-md transition">
+              📋 Copy API Key
+            </button>
+          </div>
+
+          <div class="space-y-6 mb-10 text-left bg-gray-50 rounded-xl p-8">
+            <h3 class="font-bold text-xl text-gray-900 mb-4">Next Steps:</h3>
+            <div class="flex items-start bg-white p-4 rounded-lg shadow-sm">
+              <span class="text-3xl mr-4">1️⃣</span>
+              <div>
+                <div class="font-semibold text-lg text-gray-900">Configure Your Phone Number</div>
+                <div class="text-sm text-gray-600 mt-1">We'll assign you a dedicated phone number for your business</div>
+              </div>
+            </div>
+            <div class="flex items-start bg-white p-4 rounded-lg shadow-sm">
+              <span class="text-3xl mr-4">2️⃣</span>
+              <div>
+                <div class="font-semibold text-lg text-gray-900">Test Your AI Receptionist</div>
+                <div class="text-sm text-gray-600 mt-1">Call your number to test how your AI answers</div>
+              </div>
+            </div>
+            <div class="flex items-start bg-white p-4 rounded-lg shadow-sm">
+              <span class="text-3xl mr-4">3️⃣</span>
+              <div>
+                <div class="font-semibold text-lg text-gray-900">Go Live</div>
+                <div class="text-sm text-gray-600 mt-1">Share your new number with customers</div>
+              </div>
+            </div>
+          </div>
+
+          <a href="/admin/dashboard" class="inline-block px-10 py-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-bold text-lg shadow-lg hover:shadow-xl transition transform hover:scale-105">
+            Go to Dashboard →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    let selectedTemplate = null;
+    let templates = [];
+    let createdApiKey = null;
+
+    // Load templates on page load
+    loadTemplates();
+
+    async function loadTemplates() {
+      try {
+        const response = await fetch('/onboard/templates');
+        const data = await response.json();
+        templates = data.templates;
+        
+        const container = document.getElementById('templates-container');
+        
+        // Icon mapping
+        const iconMap = {
+          'plumbing_services': '🔧',
+          'legal_services': '⚖️',
+          'medical_office': '🏥',
+          'healthcare': '🏥',
+          'education': '🎓',
+          'auto_repair': '🚗',
+          'restaurant': '🍽️',
+          'salon_spa': '💇',
+          'real_estate': '🏠',
+          'veterinary': '🐾'
+        };
+        
+        container.innerHTML = templates.map(template => `
+          <div onclick="selectTemplate('${template.name}')" 
+               class="template-card border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-purple-600 hover:shadow-lg transition transform hover:scale-105">
+            <div class="text-5xl mb-4">
+              ${iconMap[template.industry] || '💼'}
+            </div>
+            <h3 class="font-bold text-lg mb-2 text-gray-900">${template.displayName}</h3>
+            <p class="text-sm text-gray-600 capitalize">${template.industry.replace(/_/g, ' ')}</p>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Failed to load templates:', error);
+        document.getElementById('templates-container').innerHTML = 
+          '<p class="text-red-500 col-span-3 text-center">Failed to load templates. Please refresh the page.</p>';
+      }
+    }
+
+    function selectTemplate(templateName) {
+      selectedTemplate = templateName;
+      
+      // Update visual selection
+      document.querySelectorAll('.template-card').forEach(card => {
+        card.classList.remove('border-purple-600', 'bg-purple-50');
+      });
+      event.currentTarget.classList.add('border-purple-600', 'bg-purple-50');
+
+      // Show config form
+      showConfigForm();
+      
+      setTimeout(() => goToStep(2), 300);
+    }
+
+    function showConfigForm() {
+      const formContainer = document.getElementById('config-form');
+      
+      // Common fields for all templates
+      let formHtml = `
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Business Name *</label>
+          <input id="business-name" type="text" required 
+                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent">
+        </div>
+      `;
+
+      // Template-specific fields
+      if (selectedTemplate === 'plumber') {
+        formHtml += `
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Owner Name *</label>
+              <input id="owner-name" type="text" required 
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Emergency Phone *</label>
+              <input id="emergency-phone" type="tel" required placeholder="+1-555-0123"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">City, State *</label>
+              <input id="city-state" type="text" required placeholder="New York, NY"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Service Area *</label>
+              <input id="service-area" type="text" required placeholder="Manhattan and Brooklyn"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Business Hours *</label>
+              <input id="business-hours" type="text" required placeholder="Mon-Sat 7am-6pm"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">License Number</label>
+              <input id="license-number" type="text" placeholder="Optional"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+          </div>
+        `;
+      } else if (selectedTemplate === 'law-firm') {
+        formHtml += `
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Managing Partner Name *</label>
+              <input id="partner-name" type="text" required 
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Emergency Phone *</label>
+              <input id="emergency-phone" type="tel" required 
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">City, State *</label>
+              <input id="city-state" type="text" required 
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Consultation Fee *</label>
+              <input id="consultation-fee" type="text" required placeholder="Free / $150"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Business Hours *</label>
+            <input id="business-hours" type="text" required 
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+          </div>
+        `;
+      } else if (selectedTemplate === 'school') {
+        formHtml += `
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">School Type *</label>
+              <select id="school-type" required 
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                <option value="">Select type...</option>
+                <option value="Public Elementary">Public Elementary</option>
+                <option value="Public Middle School">Public Middle School</option>
+                <option value="Public High School">Public High School</option>
+                <option value="Private K-8">Private K-8</option>
+                <option value="Charter School">Charter School</option>
+                <option value="Montessori">Montessori</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Grade Levels *</label>
+              <input id="grade-levels" type="text" required placeholder="K-5 or 6-8 or 9-12"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Principal Name *</label>
+              <input id="principal-name" type="text" required placeholder="Dr. Sarah Martinez"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">School District *</label>
+              <input id="school-district" type="text" required placeholder="Springfield Public Schools"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">School Hours *</label>
+              <input id="school-hours" type="text" required placeholder="8:00 AM - 3:00 PM"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Office Hours *</label>
+              <input id="office-hours" type="text" required placeholder="7:30 AM - 4:30 PM"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Address *</label>
+            <input id="address" type="text" required placeholder="456 Education Lane, Springfield, IL 62701"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+          </div>
+        `;
+      }
+
+      formContainer.innerHTML = formHtml;
+    }
+
+    async function createAccount() {
+      // Collect form data
+      const businessName = document.getElementById('business-name').value.trim();
+      
+      if (!businessName) {
+        alert('Please enter your business name');
+        return;
+      }
+
+      // Build customizations object based on template
+      const customizations = {};
+      
+      if (selectedTemplate === 'plumber') {
+        customizations.BUSINESS_NAME = businessName;
+        customizations.OWNER_NAME = document.getElementById('owner-name').value;
+        customizations.EMERGENCY_PHONE = document.getElementById('emergency-phone').value;
+        customizations.CITY_STATE = document.getElementById('city-state').value;
+        customizations.SERVICE_AREA = document.getElementById('service-area').value;
+        customizations.BUSINESS_HOURS = document.getElementById('business-hours').value;
+        customizations.LICENSE_NUMBER = document.getElementById('license-number').value || 'N/A';
+      } else if (selectedTemplate === 'law-firm') {
+        customizations.FIRM_NAME = businessName;
+        customizations.PARTNER_NAME = document.getElementById('partner-name').value;
+        customizations.EMERGENCY_PHONE = document.getElementById('emergency-phone').value;
+        customizations.CITY_STATE = document.getElementById('city-state').value;
+        customizations.CONSULTATION_FEE = document.getElementById('consultation-fee').value;
+        customizations.BUSINESS_HOURS = document.getElementById('business-hours').value;
+      } else if (selectedTemplate === 'school') {
+        customizations.SCHOOL_NAME = businessName;
+        customizations.SCHOOL_TYPE = document.getElementById('school-type').value;
+        customizations.GRADE_LEVELS = document.getElementById('grade-levels').value;
+        customizations.PRINCIPAL_NAME = document.getElementById('principal-name').value;
+        customizations.SCHOOL_DISTRICT = document.getElementById('school-district').value;
+        customizations.SCHOOL_HOURS = document.getElementById('school-hours').value;
+        customizations.OFFICE_HOURS = document.getElementById('office-hours').value;
+        customizations.ADDRESS = document.getElementById('address').value;
+      }
+
+      try {
+        const response = await fetch('/onboard/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            businessName,
+            templateName: selectedTemplate,
+            customizations
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          createdApiKey = data.api_key;
+          document.getElementById('api-key-display').textContent = createdApiKey;
+          localStorage.setItem('calva_api_key', createdApiKey);
+          goToStep(3);
+        } else {
+          alert('Failed to create account: ' + (data.message || data.error));
+        }
+      } catch (error) {
+        console.error('Account creation error:', error);
+        alert('Failed to create account. Please try again.');
+      }
+    }
+
+    function goToStep(step) {
+      // Hide all steps
+      document.getElementById('step-1').classList.add('hidden');
+      document.getElementById('step-2').classList.add('hidden');
+      document.getElementById('step-3').classList.add('hidden');
+
+      // Show target step
+      document.getElementById(`step-${step}`).classList.remove('hidden');
+
+      // Update progress circles
+      for (let i = 1; i <= 3; i++) {
+        const circle = document.getElementById(`step-${i}-circle`);
+        if (i <= step) {
+          circle.classList.remove('bg-gray-300', 'text-gray-600');
+          circle.classList.add('bg-purple-600', 'text-white');
+        } else {
+          circle.classList.remove('bg-purple-600', 'text-white');
+          circle.classList.add('bg-gray-300', 'text-gray-600');
+        }
+      }
+
+      currentStep = step;
+    }
+
+    function copyApiKey() {
+      navigator.clipboard.writeText(createdApiKey);
+      event.target.textContent = 'Copied!';
+      setTimeout(() => {
+        event.target.textContent = 'Copy API Key';
+      }, 2000);
+    }
+  </script>
+
+</body>
+</html>

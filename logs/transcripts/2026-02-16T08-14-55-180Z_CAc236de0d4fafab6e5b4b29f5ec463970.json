@@ -1,0 +1,49 @@
+{
+  "callSid": "CAc236de0d4fafab6e5b4b29f5ec463970",
+  "tenantId": 1,
+  "callerPhone": "+19173043395",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T08:14:10.153Z",
+  "endTime": "2026-02-16T08:14:55.180Z",
+  "turns": 4,
+  "language": "en",
+  "collected": {
+    "service": "pipe"
+  },
+  "intent": "question",
+  "errors": [],
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hey. What's happening, sir?"
+    },
+    {
+      "role": "assistant",
+      "content": "Mike's Plumbing, this is Sarah. What's going on?"
+    },
+    {
+      "role": "user",
+      "content": "I need some help with my pipes."
+    },
+    {
+      "role": "assistant",
+      "content": "Oh okay, I can help with that. And who am I speaking with?"
+    },
+    {
+      "role": "user",
+      "content": "You're speaking with Mike."
+    },
+    {
+      "role": "assistant",
+      "content": "Gotcha, Mike. Is this something that can wait, or do you need someone out there today?"
+    },
+    {
+      "role": "user",
+      "content": "I ain't still month out here today."
+    },
+    {
+      "role": "assistant",
+      "content": "Okay, so you need someone today. What's the best number to reach you at?"
+    }
+  ]
+}

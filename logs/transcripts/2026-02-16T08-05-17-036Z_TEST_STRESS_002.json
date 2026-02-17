@@ -1,0 +1,33 @@
+{
+  "callSid": "TEST_STRESS_002",
+  "tenantId": 1,
+  "callerPhone": "+19175551234",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T08:04:13.336Z",
+  "endTime": "2026-02-16T08:05:17.036Z",
+  "turns": 8,
+  "language": "en",
+  "collected": {
+    "service": "pipe"
+  },
+  "intent": "emergency",
+  "errors": [],
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hi, I have a pipe that burst in my basement and water is everywhere"
+    },
+    {
+      "role": "assistant",
+      "content": "Oh no, that sounds awful! Can I get your name?"
+    },
+    {
+      "role": "user",
+      "content": "My name is John Smith"
+    },
+    {
+      "role": "assistant",
+      "content": "Okay, John. And what's the address where the pipe burst?"
+    }
+  ]
+}

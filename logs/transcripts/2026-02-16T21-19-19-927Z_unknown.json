@@ -1,0 +1,14 @@
+{
+  "callSid": null,
+  "tenantId": null,
+  "callerPhone": null,
+  "businessPhone": null,
+  "startTime": "2026-02-16T21:19:19.856Z",
+  "endTime": "2026-02-16T21:19:19.927Z",
+  "turns": 0,
+  "language": "en",
+  "collected": {},
+  "intent": null,
+  "errors": [],
+  "messages": []
+}

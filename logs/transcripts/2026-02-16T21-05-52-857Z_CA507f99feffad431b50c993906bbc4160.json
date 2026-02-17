@@ -1,0 +1,14 @@
+{
+  "callSid": "CA507f99feffad431b50c993906bbc4160",
+  "tenantId": 1,
+  "callerPhone": "+13472449656",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T21:05:46.186Z",
+  "endTime": "2026-02-16T21:05:52.857Z",
+  "turns": 0,
+  "language": "en",
+  "collected": {},
+  "intent": null,
+  "errors": [],
+  "messages": []
+}

@@ -1,0 +1,10 @@
+{"id":"air-001","status":"completed","task":"Build MVP demo (plumber template)","assigned":"sub-agent","completed":"2026-02-11T17:36:00-05:00"}
+{"id":"air-002","status":"completed","priority":"high","task":"Build law firm template — client intake, case screening, appointment booking","assigned":"template-creator","completed":"2026-02-11T22:41:00-05:00","deliverable":"templates/law-firm.json (14KB)"}
+{"id":"air-003","status":"completed","priority":"high","task":"Build doctor/medical template — patient scheduling, insurance Q&A, intake","assigned":"template-creator","completed":"2026-02-11T22:41:00-05:00","deliverable":"templates/medical-office.json (18KB)"}
+{"id":"air-004","status":"completed","priority":"high","task":"Pick company name + secure domain","assigned":"rifat","completed":"2026-02-12T01:34:00-05:00","notes":"CALVA (calva.ai) — Rifat confirmed. Domain registration pending."}
+{"id":"air-005","status":"pending","priority":"high","task":"Set up Stripe payment links for Calva ($297/$597/$997 tiers)","assigned":"rifat","notes":"Need Rifat to create Stripe account under Calva brand"}
+{"id":"air-006","status":"pending","priority":"medium","task":"Build self-service config system — business signs up, picks template, customizes","assigned":"platform-builder"}
+{"id":"air-007","status":"pending","priority":"medium","task":"Competitive analysis — Smith.ai, Ruby, Bland.ai, Dialzara pricing/features","assigned":"ghost"}
+{"id":"air-008","status":"pending","priority":"medium","task":"Create landing page / website","assigned":"platform-builder"}
+{"id":"air-009","status":"pending","priority":"medium","task":"Write cold outreach scripts for local service businesses","assigned":"sales-outreach"}
+{"id":"air-010","status":"pending","priority":"low","task":"Build salon/spa template","assigned":"template-creator"}

@@ -1,0 +1,83 @@
+{
+  "callSid": "TEST_V2_001",
+  "tenantId": 1,
+  "callerPhone": "+19175551234",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T08:10:51.550Z",
+  "endTime": "2026-02-16T08:12:14.862Z",
+  "turns": 8,
+  "language": "en",
+  "collected": {
+    "service": "water heater",
+    "name": "John Smith",
+    "phone": "917-555-1234"
+  },
+  "intent": "question",
+  "errors": [],
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hi, I have a pipe that burst in my basement and water is everywhere"
+    },
+    {
+      "role": "assistant",
+      "content": "Oh no, that sounds serious. Let me get your name."
+    },
+    {
+      "role": "user",
+      "content": "My name is John Smith"
+    },
+    {
+      "role": "assistant",
+      "content": "Okay, John, and what's the best number to reach you at?"
+    },
+    {
+      "role": "user",
+      "content": "Yeah can someone come out today? This is an emergency"
+    },
+    {
+      "role": "assistant",
+      "content": "Definitely. Where are you located?"
+    },
+    {
+      "role": "user",
+      "content": "How much is an emergency visit going to cost me?"
+    },
+    {
+      "role": "assistant",
+      "content": "Well, it depends on the job, but our emergency call-out fee is usually around $150 to $250, and then we can give you an exact quote once we see what's going on. Does that sound okay?"
+    },
+    {
+      "role": "user",
+      "content": "My number is 917-555-1234"
+    },
+    {
+      "role": "assistant",
+      "content": "Gotcha. So we have your name, number, address and know that it's a burst pipe. ?"
+    },
+    {
+      "role": "user",
+      "content": "What time can someone get here?"
+    },
+    {
+      "role": "assistant",
+      "content": "I'm pulling up the schedule now. We could have someone there in about an hour; does that work for you?"
+    },
+    {
+      "role": "user",
+      "content": "Do you guys also do water heater repairs?"
+    },
+    {
+      "role": "assistant",
+      "content": "We sure do. Is that something you need as well?"
+    },
+    {
+      "role": "user",
+      "content": "Ok thanks bye"
+    },
+    {
+      "role": "assistant",
+      "content": "You're welcome! We'll see you soon."
+    }
+  ]
+}

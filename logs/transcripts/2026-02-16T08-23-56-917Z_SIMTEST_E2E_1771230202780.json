@@ -1,0 +1,25 @@
+{
+  "callSid": "SIMTEST_E2E_1771230202780",
+  "tenantId": 1,
+  "callerPhone": "+13475558821",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T08:23:22.790Z",
+  "endTime": "2026-02-16T08:23:56.917Z",
+  "turns": 1,
+  "language": "en",
+  "collected": {
+    "service": "pipe"
+  },
+  "intent": "question",
+  "errors": [],
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hi yeah, I got a pipe that burst in my basement, there is water everywhere"
+    },
+    {
+      "role": "assistant",
+      "content": "Oh man, okay — is the water still coming in? Do you know where the shutoff valve is, by any chance?"
+    }
+  ]
+}

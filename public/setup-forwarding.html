@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Forwarding Setup Guide - Calva AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .intro {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .intro h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .intro p {
+            font-size: 1.05rem;
+            margin-bottom: 10px;
+        }
+        
+        .carrier-section {
+            margin-bottom: 40px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .carrier-header {
+            background: #667eea;
+            color: white;
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.3s;
+        }
+        
+        .carrier-header:hover {
+            background: #5568d3;
+        }
+        
+        .carrier-header h3 {
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .carrier-logo {
+            width: 30px;
+            height: 30px;
+            margin-right: 15px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .toggle-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+        
+        .carrier-content {
+            padding: 25px;
+            display: none;
+        }
+        
+        .carrier-content.active {
+            display: block;
+        }
+        
+        .carrier-header.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+        
+        .method {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .method h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+        
+        .steps li {
+            counter-increment: step-counter;
+            margin-bottom: 15px;
+            padding-left: 45px;
+            position: relative;
+        }
+        
+        .steps li:before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .code {
+            background: #2d3748;
+            color: #68d391;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            margin: 10px 0;
+            display: inline-block;
+            font-weight: bold;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .note strong {
+            color: #856404;
+        }
+        
+        .tip {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .tip strong {
+            color: #0c5460;
+        }
+        
+        .phone-input {
+            margin: 30px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .phone-input label {
+            color: white;
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 15px;
+        }
+        
+        .phone-input input {
+            padding: 15px 20px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        footer {
+            background: #2d3748;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        footer a {
+            color: #68d391;
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .carrier-header h3 {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📞 Call Forwarding Setup Guide</h1>
+            <p>Connect your existing business number to Calva AI</p>
+        </header>
+        
+        <div class="content">
+            <div class="intro">
+                <h2>Keep Your Existing Number!</h2>
+                <p>Your customers can keep calling your current business number. When you're busy or can't answer, calls automatically forward to your Calva AI receptionist.</p>
+                <p><strong>How it works:</strong> Set up conditional call forwarding so calls only go to Calva when you don't answer after a few rings.</p>
+            </div>
+            
+            <div class="phone-input">
+                <label for="calva-number">Your Calva AI Phone Number:</label>
+                <input type="tel" id="calva-number" placeholder="Enter your Calva number" value="">
+            </div>
+            
+            <!-- AT&T -->
+            <div class="carrier-section">
+                <div class="carrier-header" onclick="toggleCarrier('att')">
+                    <h3>
+                        <span class="carrier-logo">A</span>
+                        AT&T
+                    </h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="carrier-content" id="att-content">
+                    <div class="method">
+                        <h4>Method 1: Forward When Busy or Unanswered</h4>
+                        <ol class="steps">
+                            <li>Dial <span class="code">*61*<span class="calva-placeholder">[CALVA-NUMBER]</span>*11#</span></li>
+                            <li>Press the Call button</li>
+                            <li>Wait for confirmation message</li>
+                            <li>Test by having someone call you while your phone is off</li>
+                        </ol>
+                        <div class="note">
+                            <strong>Note:</strong> The *11# sets a 10-second delay before forwarding. Adjust to *21# for 20 seconds or *31# for 30 seconds.
+                        </div>
+                    </div>
+                    
+                    <div class="method">
+                        <h4>Method 2: Online Account Settings</h4>
+                        <ol class="steps">
+                            <li>Log in to <a href="https://www.att.com/my/" target="_blank">att.com/my</a></li>
+                            <li>Go to "My wireless" > "Manage my device"</li>
+                            <li>Select "Call forwarding"</li>
+                            <li>Enable "Forward when busy" or "Forward when unanswered"</li>
+                            <li>Enter your Calva number</li>
+                            <li>Save changes</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="tip">
+                        <strong>💡 Tip:</strong> To disable forwarding, dial <span class="code">##61#</span> and press Call.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Verizon -->
+            <div class="carrier-section">
+                <div class="carrier-header" onclick="toggleCarrier('verizon')">
+                    <h3>
+                        <span class="carrier-logo">V</span>
+                        Verizon
+                    </h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="carrier-content" id="verizon-content">
+                    <div class="method">
+                        <h4>Method 1: Conditional Call Forwarding</h4>
+                        <ol class="steps">
+                            <li>Dial <span class="code">*71<span class="calva-placeholder">[CALVA-NUMBER]</span></span></li>
+                            <li>Press the Call button</li>
+                            <li>Wait for confirmation tone or message</li>
+                            <li>Hang up</li>
+                        </ol>
+                        <div class="note">
+                            <strong>Note:</strong> *71 forwards calls when you don't answer. By default, it waits about 15 seconds (4 rings) before forwarding.
+                        </div>
+                    </div>
+                    
+                    <div class="method">
+                        <h4>Method 2: My Verizon App</h4>
+                        <ol class="steps">
+                            <li>Open the My Verizon app</li>
+                            <li>Tap "Devices" > Select your phone</li>
+                            <li>Tap "Manage device" > "Controls"</li>
+                            <li>Select "Call Forwarding"</li>
+                            <li>Enable "Forward when unreachable"</li>
+                            <li>Enter your Calva number and save</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="tip">
+                        <strong>💡 Tip:</strong> To turn off forwarding, dial <span class="code">*73</span> and press Call.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- T-Mobile -->
+            <div class="carrier-section">
+                <div class="carrier-header" onclick="toggleCarrier('tmobile')">
+                    <h3>
+                        <span class="carrier-logo">T</span>
+                        T-Mobile
+                    </h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="carrier-content" id="tmobile-content">
+                    <div class="method">
+                        <h4>Method 1: Forward When Unanswered</h4>
+                        <ol class="steps">
+                            <li>Dial <span class="code">**61*<span class="calva-placeholder">[CALVA-NUMBER]</span>**10#</span></li>
+                            <li>Press the Call button</li>
+                            <li>You'll hear a confirmation message</li>
+                            <li>Hang up when confirmed</li>
+                        </ol>
+                        <div class="note">
+                            <strong>Note:</strong> The **10# sets a 10-second timeout. Use **15# for 15 seconds, **20# for 20 seconds, or **30# for 30 seconds.
+                        </div>
+                    </div>
+                    
+                    <div class="method">
+                        <h4>Method 2: T-Mobile App</h4>
+                        <ol class="steps">
+                            <li>Open the T-Mobile app</li>
+                            <li>Tap "Account" > "Line settings"</li>
+                            <li>Select "Call forwarding"</li>
+                            <li>Enable "When unanswered"</li>
+                            <li>Enter your Calva number</li>
+                            <li>Set delay (10-30 seconds) and save</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="tip">
+                        <strong>💡 Tip:</strong> To disable, dial <span class="code">##61#</span> and press Call.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Spectrum Mobile -->
+            <div class="carrier-section">
+                <div class="carrier-header" onclick="toggleCarrier('spectrum')">
+                    <h3>
+                        <span class="carrier-logo">S</span>
+                        Spectrum Mobile
+                    </h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="carrier-content" id="spectrum-content">
+                    <div class="method">
+                        <h4>Call Forwarding Setup</h4>
+                        <ol class="steps">
+                            <li>Dial <span class="code">*61*<span class="calva-placeholder">[CALVA-NUMBER]</span>*11#</span></li>
+                            <li>Press the Call button</li>
+                            <li>Wait for the confirmation message</li>
+                            <li>Hang up</li>
+                        </ol>
+                        <div class="note">
+                            <strong>Note:</strong> Spectrum Mobile uses Verizon's network, so Verizon codes work. *61 forwards when you don't answer.
+                        </div>
+                    </div>
+                    
+                    <div class="method">
+                        <h4>Alternative: Spectrum Account</h4>
+                        <ol class="steps">
+                            <li>Log in to <a href="https://mobile.spectrum.com" target="_blank">mobile.spectrum.com</a></li>
+                            <li>Select your phone line</li>
+                            <li>Go to "Settings" > "Call Settings"</li>
+                            <li>Select "Call Forwarding"</li>
+                            <li>Enable and enter your Calva number</li>
+                            <li>Save changes</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="tip">
+                        <strong>💡 Tip:</strong> To turn off, dial <span class="code">##61#</span> and press Call.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="intro" style="margin-top: 40px;">
+                <h2>Testing Your Setup</h2>
+                <ol class="steps">
+                    <li>Call your business number from another phone</li>
+                    <li>Let it ring without answering</li>
+                    <li>Calva AI should pick up after the delay you set</li>
+                    <li>Try a conversation to test the AI</li>
+                </ol>
+                <div class="tip">
+                    <strong>💡 Pro Tip:</strong> Set the forwarding delay to 15-20 seconds so you have time to answer if you're available, but customers don't wait too long.
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Need help? Contact <a href="mailto:support@calva.ai">support@calva.ai</a></p>
+            <p style="margin-top: 10px; opacity: 0.7;">© 2024 Calva AI - Never miss a call again</p>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleCarrier(id) {
+            const content = document.getElementById(id + '-content');
+            const header = content.previousElementSibling;
+            
+            // Close all other carriers
+            document.querySelectorAll('.carrier-content').forEach(c => {
+                if (c !== content) {
+                    c.classList.remove('active');
+                    c.previousElementSibling.classList.remove('active');
+                }
+            });
+            
+            // Toggle this carrier
+            content.classList.toggle('active');
+            header.classList.toggle('active');
+        }
+        
+        // Update Calva number placeholders when input changes
+        const calvaInput = document.getElementById('calva-number');
+        calvaInput.addEventListener('input', function() {
+            const number = this.value;
+            document.querySelectorAll('.calva-placeholder').forEach(el => {
+                el.textContent = number || '[CALVA-NUMBER]';
+            });
+        });
+        
+        // Try to get Calva number from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const calvaNumber = urlParams.get('number');
+        if (calvaNumber) {
+            calvaInput.value = calvaNumber;
+            calvaInput.dispatchEvent(new Event('input'));
+        }
+        
+        // Open first carrier by default
+        toggleCarrier('att');
+    </script>
+</body>
+</html>

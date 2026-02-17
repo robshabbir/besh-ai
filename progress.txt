@@ -1,0 +1,34 @@
+# Calva Enterprise MVP - Progress Log
+
+## Context
+Building enterprise-level AI receptionist platform. Current MVP has working demo phone but lacks self-service signup, dashboard, and enterprise features.
+
+## Goals
+- Voice naturalness 8+/10
+- Self-service signup → live AI in <5 min
+- Dashboard with call history, analytics, settings
+- Real customer can use without manual setup
+
+## Tech Stack
+- Backend: Node.js + Express
+- Database: SQLite
+- Voice: Twilio + Gemini Flash + TTS (testing Chirp3-HD/ElevenLabs/Deepgram)
+- Frontend: Basic HTML/CSS/JS (keep it simple)
+- Payment: Stripe
+- Current code: /Users/rifat/clawd/revenue/ai-receptionist/
+
+## Known Working Patterns
+- Twilio ConversationRelay for voice AI works well
+- Edge TTS with caching is fast and free
+- Gemini Flash (2.0) handles multi-turn conversations
+- SQLite sufficient for MVP (1-100 customers)
+
+## Blockers to Watch For
+- Voice naturalness is critical - test thoroughly before deploying
+- Twilio number provisioning can fail - need error handling
+- Stripe test mode vs live mode - careful with keys
+
+## Next Iterations Should Focus On
+- Voice testing first (blocks everything else if wrong)
+- Then signup flow (enables testing full user journey)
+- Then dashboard (makes it usable)

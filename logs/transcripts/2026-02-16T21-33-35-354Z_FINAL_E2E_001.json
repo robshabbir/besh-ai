@@ -1,0 +1,25 @@
+{
+  "callSid": "FINAL_E2E_001",
+  "tenantId": 1,
+  "callerPhone": "+13472449656",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T21:33:27.418Z",
+  "endTime": "2026-02-16T21:33:35.354Z",
+  "turns": 1,
+  "language": "en",
+  "collected": {
+    "service": "toilet"
+  },
+  "intent": "question",
+  "errors": [],
+  "messages": [
+    {
+      "role": "user",
+      "content": "My toilet is overflowing"
+    },
+    {
+      "role": "assistant",
+      "content": "Name?"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "callSid": "SIMTEST_1771230248184",
+  "tenantId": 1,
+  "callerPhone": "+13475558821",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T08:24:08.179Z",
+  "endTime": "2026-02-16T08:24:41.121Z",
+  "turns": 8,
+  "language": "en",
+  "collected": {
+    "service": "pipe",
+    "name": "Bad",
+    "phone": "347-555-8821"
+  },
+  "intent": "complete",
+  "errors": [],
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hi yeah, I got a pipe that burst in my basement, there is water everywhere"
+    },
+    {
+      "role": "assistant",
+      "content": "Oh no, okay — is the water still coming in? Is it like, a lot a lot, or is it slowing down? Okay, do you know where your main shutoff valve is, so you can turn off the water to the whole house?"
+    },
+    {
+      "role": "user",
+      "content": "No I don't know where the shutoff is, this is bad"
+    },
+    {
+      "role": "assistant",
+      "content": "Okay, don't panic. Usually it's like, near the front of the house where the water main comes in, or near the water heater? Is there anyone else there with you who could look for it? Okay. Hmm. Alright, what's your address? We can get someone over there ASAP."
+    },
+    {
+      "role": "user",
+      "content": "My name is Marcus Johnson"
+    },
+    {
+      "role": "assistant",
+      "content": "Okay Marcus. Gotcha. We'll get someone out there. You said it's in the basement, right? Do you know what kind of pipe burst? Was it copper, plastic, or...?"
+    },
+    {
+      "role": "user",
+      "content": "Yeah my number is 347-555-8821"
+    },
+    {
+      "role": "assistant",
+      "content": "Okay perfect. Thanks, Marcus. And what was your address?"
+    },
+    {
+      "role": "user",
+      "content": "I'm at 485 Fulton Street in Brooklyn"
+    },
+    {
+      "role": "assistant",
+      "content": "Okay, 485 Fulton. Got it. And your last name was Johnson, right? Okay cool. So that's a burst pipe at 485 Fulton Street in Brooklyn, name Marcus Johnson. Yeah, we can get someone there really fast. It's gonna be an emergency call-out, just so you know — that's one-fifty to two-fifty just to get 'em there, and then whatever the repair costs. Okay?"
+    },
+    {
+      "role": "user",
+      "content": "How much is this gonna cost me?"
+    },
+    {
+      "role": "assistant",
+      "content": "Oh man, I wish I had a crystal ball, you know? Burst pipes... it really depends. I mean, just fixing the pipe, if it's easy to get to, could be two to eight hundred, something like that. But if the water did any damage... that's a whole different story. We can definitely fix the pipe, and then give you some recommendations for who to call for water damage cleanup, if you need it. Does that sound okay?"
+    },
+    {
+      "role": "user",
+      "content": "Okay thanks, how soon can someone get here?"
+    },
+    {
+      "role": "assistant",
+      "content": "We can have someone there in like, thirty minutes, Marcus. Seriously. I'm marking it as an emergency right now. Just keep an eye on that water, okay? Try to move anything that's on the floor, if you can. We'll call you when the plumber is on his way, cool?"
+    },
+    {
+      "role": "user",
+      "content": "Alright thanks bye"
+    },
+    {
+      "role": "assistant",
+      "content": "You got it. Hang in there, Marcus! Bye."
+    }
+  ]
+}

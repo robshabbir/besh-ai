@@ -1,0 +1,14 @@
+{
+  "callSid": "TEST_STRESS_001",
+  "tenantId": 1,
+  "callerPhone": "+19175551234",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T08:03:23.215Z",
+  "endTime": "2026-02-16T08:03:53.710Z",
+  "turns": 0,
+  "language": "en",
+  "collected": {},
+  "intent": null,
+  "errors": [],
+  "messages": []
+}

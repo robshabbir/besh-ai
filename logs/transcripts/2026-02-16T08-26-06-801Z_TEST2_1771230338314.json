@@ -1,0 +1,74 @@
+{
+  "callSid": "TEST2_1771230338314",
+  "tenantId": 1,
+  "callerPhone": "+12125554477",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T08:25:38.331Z",
+  "endTime": "2026-02-16T08:26:06.801Z",
+  "turns": 7,
+  "language": "en",
+  "collected": {
+    "service": "ac",
+    "phone": "212-555-4477"
+  },
+  "intent": "question",
+  "errors": [],
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hey, my kitchen sink is totally backed up and it smells horrible"
+    },
+    {
+      "role": "assistant",
+      "content": "Oh man, that's the worst. Okay, a backed-up sink... Is the water still, like, sitting in there, or is it draining super slow?"
+    },
+    {
+      "role": "user",
+      "content": "Yeah it's been like this since yesterday, I tried Drano but nothing worked"
+    },
+    {
+      "role": "assistant",
+      "content": "Ugh, Drano never really does the trick, does it? Okay, so that'd be a drain cleaning. Those usually run about one-fifty to three hundred, depends on how bad the clog is, you know? We could get someone out there today, if you want. What's your name?"
+    },
+    {
+      "role": "user",
+      "content": "Yeah it's Sarah, Sarah Kim"
+    },
+    {
+      "role": "assistant",
+      "content": "Okay Sarah, nice to meet you. And what's your address? Just so I can see how soon we could get a plumber over there."
+    },
+    {
+      "role": "user",
+      "content": "How much is this gonna run me?"
+    },
+    {
+      "role": "assistant",
+      "content": "Yeah, so drain cleaning usually runs about one-fifty to three hundred, depends on how bad the clog is. But that's just a general idea, you know? The plumber will give you the exact price before they start anything. We don't want any surprises."
+    },
+    {
+      "role": "user",
+      "content": "Okay my number is 212-555-4477"
+    },
+    {
+      "role": "assistant",
+      "content": "Got it, Sarah. Thanks. Let me just confirm - you're at [ADDRESS OMITTED]?"
+    },
+    {
+      "role": "user",
+      "content": "When is the soonest someone could come out?"
+    },
+    {
+      "role": "assistant",
+      "content": "Let me see... Oh um... We've got someone finishing up a job in Brooklyn around 11:30, so they could head your way after that. Would sometime early afternoon work? I can't promise an exact time, but it would be sometime between, say, 12:30 and 2?"
+    },
+    {
+      "role": "user",
+      "content": "Perfect, thanks so much"
+    },
+    {
+      "role": "assistant",
+      "content": "No worries, Sarah. We'll get that sink cleared out for you. So that would be sometime between 12:30 and 2pm then. Is there a buzzer or anything I should let the plumber know about?"
+    }
+  ]
+}

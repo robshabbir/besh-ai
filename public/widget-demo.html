@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Widget Demo - Calva AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .demo-card {
+            background: white;
+            border-radius: 16px;
+            padding: 48px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .copy-btn:hover {
+            background: #2563eb;
+        }
+        
+        .copy-btn.copied {
+            background: #10b981;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #ede9fe;
+            color: #7c3aed;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .check {
+            color: #10b981;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-card">
+        <div class="text-center mb-8">
+            <div class="badge">LIVE DEMO</div>
+            <h1 class="text-4xl font-bold mb-4">Chat Widget Demo</h1>
+            <p class="text-gray-600 text-lg">
+                See Calva's embeddable chat widget in action. Click the bubble in the bottom-right corner!
+            </p>
+        </div>
+        
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">How to Install</h2>
+            <p class="text-gray-600 mb-4">
+                Add this single line of code to your website's HTML, right before the closing <code>&lt;/body&gt;</code> tag:
+            </p>
+            
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode()">Copy</button>
+                <code id="embed-code">&lt;script src="https://your-domain.com/widget.js?key=YOUR_API_KEY"&gt;&lt;/script&gt;</code>
+            </div>
+            
+            <p class="text-sm text-gray-500">
+                Replace <strong>YOUR_API_KEY</strong> with your actual API key from your Calva dashboard.
+            </p>
+        </div>
+        
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Features</h2>
+            <ul class="feature-list">
+                <li>
+                    <span class="check">✓</span>
+                    <span><strong>Instant responses</strong> - AI answers in seconds</span>
+                </li>
+                <li>
+                    <span class="check">✓</span>
+                    <span><strong>Same knowledge base</strong> - Uses your business info from voice calls</span>
+                </li>
+                <li>
+                    <span class="check">✓</span>
+                    <span><strong>Session persistence</strong> - Conversation saved across page views</span>
+                </li>
+                <li>
+                    <span class="check">✓</span>
+                    <span><strong>Mobile responsive</strong> - Works perfectly on all devices</span>
+                </li>
+                <li>
+                    <span class="check">✓</span>
+                    <span><strong>Customizable</strong> - Matches your brand colors (coming soon)</span>
+                </li>
+                <li>
+                    <span class="check">✓</span>
+                    <span><strong>Rate limited</strong> - 60 messages per minute to prevent abuse</span>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <h3 class="font-semibold text-blue-900 mb-2">💡 Pro Tip</h3>
+            <p class="text-blue-800 text-sm">
+                The chat widget uses the same AI and knowledge base as your voice receptionist. 
+                Update your business info in the dashboard, and both channels stay in sync automatically.
+            </p>
+        </div>
+        
+        <div class="text-center">
+            <a href="/admin/dashboard" class="inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition-shadow">
+                Go to Dashboard →
+            </a>
+            <div class="mt-4">
+                <a href="/" class="text-gray-600 hover:text-gray-900">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Demo Widget (using test API key) -->
+    <script src="/widget.js?key=calva_demo_test_key"></script>
+    
+    <script>
+        function copyCode() {
+            const code = document.getElementById('embed-code').textContent;
+            const btn = event.target;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

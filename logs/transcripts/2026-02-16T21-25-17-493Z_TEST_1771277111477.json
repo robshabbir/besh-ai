@@ -1,0 +1,23 @@
+{
+  "callSid": "TEST_1771277111477",
+  "tenantId": 1,
+  "callerPhone": "+13472449656",
+  "businessPhone": "+19297557288",
+  "startTime": "2026-02-16T21:25:11.476Z",
+  "endTime": "2026-02-16T21:25:17.493Z",
+  "turns": 1,
+  "language": "en",
+  "collected": {},
+  "intent": "question",
+  "errors": [],
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hi"
+    },
+    {
+      "role": "assistant",
+      "content": "What's goin' on?"
+    }
+  ]
+}

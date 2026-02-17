@@ -1,0 +1,146 @@
+{
+  "featureName": "Calva Enterprise Platform MVP",
+  "branchName": "calva/enterprise-mvp",
+  "userStories": [
+    {
+      "id": 1,
+      "title": "Voice naturalness testing and selection",
+      "description": "Test Chirp3-HD, ElevenLabs, and Deepgram Aura voices. Record 5 test calls with each. Measure naturalness, latency, interruption handling. Pick winner and deploy.",
+      "acceptanceCriteria": [
+        "Test script exists with 5 test scenarios",
+        "All 3 voices tested and recorded",
+        "Winner selected based on naturalness score 8+/10",
+        "Winner deployed to production"
+      ],
+      "passes": false,
+      "priority": "critical"
+    },
+    {
+      "id": 2,
+      "title": "Self-service signup form UI",
+      "description": "Build signup form with email, password, business name, industry dropdown (9 verticals). Include template picker. Clean, professional UI.",
+      "acceptanceCriteria": [
+        "Form renders at /signup",
+        "All fields present and validated",
+        "Industry dropdown has 9 options",
+        "Submit button exists",
+        "Verify in browser using dev-browser skill"
+      ],
+      "passes": false,
+      "priority": "critical"
+    },
+    {
+      "id": 3,
+      "title": "User authentication system",
+      "description": "Implement signup/login with email + password. Store users in SQLite. Session management with JWT. Protect dashboard routes.",
+      "acceptanceCriteria": [
+        "Users table created in SQLite",
+        "Signup creates user account",
+        "Login authenticates and creates session",
+        "Dashboard requires authentication",
+        "Logout clears session"
+      ],
+      "passes": false,
+      "priority": "critical"
+    },
+    {
+      "id": 4,
+      "title": "Twilio phone number auto-provisioning",
+      "description": "On signup, auto-provision Twilio phone number for the business. Store phone number in database. Configure webhook to route calls to user's AI.",
+      "acceptanceCriteria": [
+        "Twilio API integration working",
+        "Phone number provisioned on signup",
+        "Phone stored in database",
+        "Webhook configured for incoming calls",
+        "Test: signup → get phone number"
+      ],
+      "passes": false,
+      "priority": "high"
+    },
+    {
+      "id": 5,
+      "title": "Template customization flow",
+      "description": "After signup, show customization page: business greeting (text), hours (time picker), top 3 FAQs (text areas), personality slider (formal ↔ friendly).",
+      "acceptanceCriteria": [
+        "Customization page exists",
+        "All fields render correctly",
+        "Settings save to database",
+        "AI uses custom settings on calls",
+        "Verify in browser using dev-browser skill"
+      ],
+      "passes": false,
+      "priority": "high"
+    },
+    {
+      "id": 6,
+      "title": "Dashboard skeleton with navigation",
+      "description": "Build dashboard layout with sidebar nav: Calls, Analytics, Settings, Billing. Empty pages with placeholders. Professional design.",
+      "acceptanceCriteria": [
+        "Dashboard accessible at /dashboard",
+        "Sidebar navigation works",
+        "All 4 pages exist with placeholders",
+        "Responsive design (mobile-friendly)",
+        "Verify in browser using dev-browser skill"
+      ],
+      "passes": false,
+      "priority": "high"
+    },
+    {
+      "id": 7,
+      "title": "Call history page",
+      "description": "Display table of calls: date, time, caller, duration, status. Click row → see transcript + recording player. Export to CSV.",
+      "acceptanceCriteria": [
+        "Call history table renders",
+        "Data fetched from database",
+        "Click row shows transcript",
+        "Recording player works",
+        "Export CSV button functional",
+        "Verify in browser using dev-browser skill"
+      ],
+      "passes": false,
+      "priority": "medium"
+    },
+    {
+      "id": 8,
+      "title": "Analytics dashboard",
+      "description": "Display cards: total calls today/week/month. Chart: daily call volume (last 30 days). Average call duration metric.",
+      "acceptanceCriteria": [
+        "Analytics page exists",
+        "Cards display correct metrics",
+        "Chart renders with real data",
+        "Data updates automatically",
+        "Verify in browser using dev-browser skill"
+      ],
+      "passes": false,
+      "priority": "medium"
+    },
+    {
+      "id": 9,
+      "title": "Settings page (edit greeting/hours/FAQs)",
+      "description": "Settings page where business owner can edit greeting, hours, FAQs, personality. Save button → updates live AI immediately.",
+      "acceptanceCriteria": [
+        "Settings page loads current settings",
+        "All fields editable",
+        "Save updates database",
+        "Changes reflect in AI behavior",
+        "Verify in browser using dev-browser skill"
+      ],
+      "passes": false,
+      "priority": "medium"
+    },
+    {
+      "id": 10,
+      "title": "Stripe payment integration",
+      "description": "Add Stripe Checkout for $99/mo subscription. Payment successful → activate account. Billing page shows subscription status.",
+      "acceptanceCriteria": [
+        "Stripe Checkout session created",
+        "Payment flow completes",
+        "Subscription stored in database",
+        "Billing page shows status",
+        "Can update payment method"
+      ],
+      "passes": false,
+      "priority": "low"
+    }
+  ]
+}

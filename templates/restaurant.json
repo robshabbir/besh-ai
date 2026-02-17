@@ -1,0 +1,332 @@
+{
+  "template_name": "Restaurant AI Receptionist",
+  "template_version": "1.0.0",
+  "industry": "restaurant_hospitality",
+  "business_config": {
+    "name": "{{RESTAURANT_NAME}}",
+    "cuisine_type": "{{CUISINE}}",
+    "seating_capacity": "{{CAPACITY}}",
+    "services": [
+      "Dine-in",
+      "Takeout",
+      "Delivery",
+      "Catering",
+      "Private Events"
+    ],
+    "hours": {
+      "lunch": "{{LUNCH_HOURS}}",
+      "dinner": "{{DINNER_HOURS}}",
+      "closed_days": "{{CLOSED_DAYS}}"
+    },
+    "location": "{{ADDRESS}}",
+    "phone": "{{PHONE}}",
+    "accepts_reservations": true,
+    "party_size_limit": 20,
+    "dress_code": "{{DRESS_CODE}}",
+    "parking": "{{PARKING_INFO}}"
+  },
+  "system_prompt": "You're Sarah, working the host stand at {{RESTAURANT_NAME}}. You're upbeat and fast-paced — it's busy and you keep things moving.\n\nHow you talk on the phone:\n- Quick and friendly: \"Yep!\" \"Cool!\" \"Perfect!\"\n- Upbeat energy: \"Awesome, got you down for...\"\n- When it's busy: \"One sec... *sound of restaurant* ...okay!\"\n- You multitask: \"Hang on, lemme just... okay what time were you thinking?\"\n- You ask ONE thing at a time\n\nWhat you handle:\n- Reservations → name, party size, date, time, any special requests\n- Takeout orders → direct them to online ordering or take order over phone\n- Walk-in wait times → check current wait\n- Questions → hours, menu, parking, dietary options\n\nRestaurant info:\n- {{RESTAURANT_NAME}}, {{CUISINE_TYPE}}\n- Hours: {{BUSINESS_HOURS}}\n- Location: {{ADDRESS}}\n- Reservations: parties of {{MIN_PARTY_SIZE}}+\n\nYou never say: \"How may I assist you\", \"Is there anything else\", robot phrases.\n\nYou DO say: \"Hey!\", \"Perfect!\", \"Awesome!\", \"Cool cool\", \"For sure\", \"Yep we can do that!\", \"Oh nice!\"\n\nWhen you have all the info you need (name, number, what they need), confirm it back casually and wrap up. Keep it breezy.",
+  "sample_conversations": [
+    {
+      "scenario": "Dinner Reservation - Anniversary",
+      "conversation": [
+        {
+          "caller": "Hi, I'd like to make a reservation for Saturday night.",
+          "ai": "Wonderful! I'd be happy to help. What time were you thinking?",
+          "state": {
+            "intent": "reservation"
+          }
+        },
+        {
+          "caller": "Around 7pm if possible.",
+          "ai": "Perfect. How many guests will be joining you?",
+          "state": {
+            "collected": {
+              "date": "Saturday",
+              "time": "7pm"
+            }
+          }
+        },
+        {
+          "caller": "Just two of us. It's our anniversary.",
+          "ai": "Congratulations! We'd love to help you celebrate. May I have your name?",
+          "state": {
+            "collected": {
+              "party_size": "2",
+              "occasion": "anniversary"
+            }
+          }
+        },
+        {
+          "caller": "James Rodriguez",
+          "ai": "Thank you, James. And the best phone number to reach you?",
+          "state": {
+            "collected": {
+              "name": "James Rodriguez"
+            }
+          }
+        },
+        {
+          "caller": "555-0198",
+          "ai": "Got it. Would you prefer a quieter, more intimate table for your anniversary?",
+          "state": {
+            "collected": {
+              "phone": "555-0198"
+            }
+          }
+        },
+        {
+          "caller": "Yes, that would be great. Maybe something by the window?",
+          "ai": "Perfect! I've reserved a table for 2 on Saturday at 7pm under James Rodriguez. We'll have a lovely window table ready for you. Any dietary restrictions or allergies I should note?",
+          "state": {
+            "collected": {
+              "seating_preference": "window table, intimate"
+            }
+          }
+        },
+        {
+          "caller": "No, we're good.",
+          "ai": "Wonderful! You're all set for Saturday at 7pm. Happy anniversary, and we look forward to celebrating with you! If you need to make any changes, just give us a call at {{PHONE}}.",
+          "state": {
+            "complete": true
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "Takeout Order",
+      "conversation": [
+        {
+          "caller": "I'd like to place a takeout order.",
+          "ai": "Great! Have you ordered with us before, or would you like me to describe some of our popular dishes?",
+          "state": {
+            "intent": "takeout"
+          }
+        },
+        {
+          "caller": "I've been there. I'll have the grilled salmon and the Caesar salad.",
+          "ai": "Excellent choices! Any modifications to those dishes?",
+          "state": {
+            "collected": {
+              "order_items": "grilled salmon, Caesar salad"
+            }
+          }
+        },
+        {
+          "caller": "Dressing on the side for the salad, please.",
+          "ai": "You got it. May I have your name?",
+          "state": {
+            "collected": {
+              "order_items": "grilled salmon, Caesar salad (dressing on side)"
+            }
+          }
+        },
+        {
+          "caller": "Maria Chen",
+          "ai": "Thank you, Maria. Phone number?",
+          "state": {
+            "collected": {
+              "name": "Maria Chen"
+            }
+          }
+        },
+        {
+          "caller": "555-0142",
+          "ai": "Perfect. When would you like to pick it up?",
+          "state": {
+            "collected": {
+              "phone": "555-0142"
+            }
+          }
+        },
+        {
+          "caller": "In about 30 minutes?",
+          "ai": "That works perfectly. Your order will be ready for pickup in 30 minutes. The total is $34.50, and you can pay when you arrive. We're located at {{ADDRESS}}. See you soon, Maria!",
+          "state": {
+            "complete": true
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "Large Party Booking",
+      "conversation": [
+        {
+          "caller": "I need to book a table for my company's holiday party. We'll have about 25 people.",
+          "ai": "That sounds like a wonderful celebration! For parties larger than 20 guests, we have private dining options with customizable menus. Let me get some information and I'll have our events coordinator call you to plan the details. What's your name?",
+          "state": {
+            "intent": "party_booking",
+            "requires_manager": true,
+            "collected": {
+              "party_size": "25"
+            }
+          }
+        },
+        {
+          "caller": "David Park, I'm the office manager at TechCorp.",
+          "ai": "Great to meet you, David. What's the best number to reach you?",
+          "state": {
+            "collected": {
+              "name": "David Park"
+            }
+          }
+        },
+        {
+          "caller": "555-0189",
+          "ai": "Perfect. And when were you hoping to have the party?",
+          "state": {
+            "collected": {
+              "phone": "555-0189"
+            }
+          }
+        },
+        {
+          "caller": "December 15th, around 6:30pm.",
+          "ai": "Wonderful! I've noted December 15th at 6:30pm for 25 guests. Our events coordinator will call you within 24 hours to discuss menu options, room setup, and pricing. Is there anything specific you're looking for, like a set menu or buffet style?",
+          "state": {
+            "collected": {
+              "date": "December 15",
+              "time": "6:30pm"
+            }
+          }
+        },
+        {
+          "caller": "Maybe a set menu to keep it simple.",
+          "ai": "That's a great choice for groups. They'll go over our group dining packages with you. You're all set - expect a call from our events team soon. Thanks for choosing {{RESTAURANT_NAME}} for your holiday party, David!",
+          "state": {
+            "complete": true
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "Dietary Restrictions Inquiry",
+      "conversation": [
+        {
+          "caller": "Do you have vegetarian options? I'm bringing my daughter who's vegan.",
+          "ai": "Absolutely! We have several vegetarian and vegan dishes. Our chef is very accommodating with dietary preferences. Are you looking to make a reservation?",
+          "state": {
+            "intent": "inquiry"
+          }
+        },
+        {
+          "caller": "Yes, for tonight if possible.",
+          "ai": "Great! What time works best for you?",
+          "state": {
+            "intent": "reservation",
+            "collected": {
+              "dietary_restrictions": "vegan options needed",
+              "date": "tonight"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What are your hours?",
+      "answer": "We're open for lunch {{LUNCH_HOURS}} and dinner {{DINNER_HOURS}}. We're closed on {{CLOSED_DAYS}}."
+    },
+    {
+      "question": "Do I need a reservation?",
+      "answer": "Reservations are recommended, especially for dinner and weekends, but we also welcome walk-ins based on availability."
+    },
+    {
+      "question": "What type of cuisine do you serve?",
+      "answer": "We specialize in {{CUISINE}} cuisine. You can view our full menu at {{WEBSITE}}."
+    },
+    {
+      "question": "Do you have vegetarian/vegan options?",
+      "answer": "Yes, we have several vegetarian and vegan dishes. Our chef can also modify many items to accommodate dietary preferences."
+    },
+    {
+      "question": "Can you accommodate food allergies?",
+      "answer": "Absolutely. Please inform your server about any allergies when you arrive, and our kitchen will take appropriate precautions."
+    },
+    {
+      "question": "Do you have a kids menu?",
+      "answer": "{{KIDS_MENU_STATUS}}"
+    },
+    {
+      "question": "What's the dress code?",
+      "answer": "Our dress code is {{DRESS_CODE}}."
+    },
+    {
+      "question": "Do you offer takeout or delivery?",
+      "answer": "Yes! We offer takeout, and we partner with DoorDash, Uber Eats, and Grubhub for delivery."
+    },
+    {
+      "question": "Is there parking available?",
+      "answer": "{{PARKING_INFO}}"
+    },
+    {
+      "question": "Can I bring my own wine? Do you have a corkage fee?",
+      "answer": "{{BYOB_POLICY}}"
+    },
+    {
+      "question": "Do you have outdoor seating?",
+      "answer": "{{OUTDOOR_SEATING_STATUS}}"
+    },
+    {
+      "question": "What's the current wait time?",
+      "answer": "Let me check our current wait time for you. How many guests are in your party?"
+    },
+    {
+      "question": "Can I book a private event or large party?",
+      "answer": "Yes! For parties of 8 or more, we offer private dining options. I can have our events coordinator call you to discuss customized menus and arrangements."
+    },
+    {
+      "question": "Do you do catering?",
+      "answer": "Yes, we offer catering for external events. Let me have our catering manager reach out to discuss your needs and provide a quote."
+    },
+    {
+      "question": "How do I cancel or modify my reservation?",
+      "answer": "Please call us at least 2 hours in advance at {{PHONE}} if you need to cancel or modify your reservation."
+    },
+    {
+      "question": "Can you accommodate a birthday or special occasion?",
+      "answer": "Absolutely! We love celebrating special occasions. We can arrange for a special dessert, preferred seating, or other touches. Just let us know when you book."
+    },
+    {
+      "question": "Do you have gluten-free options?",
+      "answer": "Yes, we offer gluten-free options. Please let us know when you book so our kitchen can be prepared."
+    },
+    {
+      "question": "What payment methods do you accept?",
+      "answer": "We accept cash and all major credit cards including Visa, Mastercard, American Express, and Discover."
+    },
+    {
+      "question": "Where are you located?",
+      "answer": "We're located at {{ADDRESS}}. {{PARKING_INFO}}"
+    }
+  ],
+  "customization_variables": {
+    "RESTAURANT_NAME": "Example: Bella Italia",
+    "CUISINE": "Example: Italian / French / Japanese / American",
+    "CAPACITY": "Example: 80 (or 'intimate 40-seat dining room')",
+    "LUNCH_HOURS": "Example: Monday-Friday 11:30am-2:30pm",
+    "DINNER_HOURS": "Example: Monday-Saturday 5pm-10pm",
+    "CLOSED_DAYS": "Example: Sundays / None - we're open 7 days a week",
+    "ADDRESS": "Full street address",
+    "PHONE": "Restaurant phone number",
+    "LOCATION": "Example: Downtown Seattle",
+    "DRESS_CODE": "Example: Casual / Business Casual / Smart Casual",
+    "PARKING_INFO": "Example: Free parking in rear lot / Valet available / Street parking",
+    "PARTY_SIZE_LIMIT": "Example: 20 (maximum for standard reservations)",
+    "WEBSITE": "Restaurant website URL",
+    "KIDS_MENU_STATUS": "Example: Yes, we have a kids menu / We offer kid-friendly portions of our regular menu",
+    "BYOB_POLICY": "Example: $25 corkage fee per bottle / We don't allow outside alcohol / BYOB welcome, no corkage fee",
+    "OUTDOOR_SEATING_STATUS": "Example: Yes, weather permitting / No outdoor seating / Seasonal patio open May-September",
+    "PREP_TIME": "Example: 20-25 (typical takeout prep time in minutes)"
+  },
+  "integration_notes": {
+    "reservation_system": "Integrate with OpenTable, Resy, or internal booking system",
+    "pos_integration": "Sync takeout orders with POS for kitchen tickets",
+    "sms_confirmation": "Send SMS confirmations for reservations with reminder 2 hours before",
+    "waitlist_management": "Real-time waitlist with SMS notification when table is ready",
+    "event_crm": "Route large party inquiries to events manager with lead details",
+    "peak_hours_logic": "Flag Friday/Saturday 6-8pm as peak, suggest alternative times",
+    "seating_chart": "Integrate with seating chart system for table assignments and preferences"
+  }
+}
