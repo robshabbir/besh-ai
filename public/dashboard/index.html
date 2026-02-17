@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Calva AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .nav-link.active { background-color: rgb(243 232 255); color: rgb(126 34 206); }
+    .expand-row { display: none; }
+    .expand-row.open { display: table-row; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- Mobile menu overlay -->
+<div id="mobile-overlay" class="fixed inset-0 bg-black/40 z-30 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 z-40 transform -translate-x-full lg:translate-x-0 transition-transform">
+  <div class="flex items-center gap-2 px-6 py-5 border-b border-gray-200">
+    <span class="text-2xl">📞</span>
+    <span class="text-xl font-bold text-purple-700">Calva</span>
+  </div>
+  <nav class="mt-4 px-3 space-y-1">
+    <a href="/dashboard" data-page="overview" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition">
+      <span>📊</span> Overview
+    </a>
+    <a href="/dashboard/calls" data-page="calls" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition">
+      <span>📞</span> Calls
+    </a>
+    <a href="/dashboard/customize" data-page="customize" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition">
+      <span>🎨</span> Customize AI
+    </a>
+    <a href="/dashboard/settings" data-page="settings" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition">
+      <span>⚙️</span> Settings
+    </a>
+    <a href="/dashboard/billing" data-page="billing" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition">
+      <span>💳</span> Billing
+    </a>
+  </nav>
+  <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+    <div class="text-sm text-gray-500 truncate mb-2" id="sidebar-email"></div>
+    <button onclick="logout()" class="w-full text-left text-sm text-red-600 hover:text-red-800 font-medium">Sign out</button>
+  </div>
+</aside>
+
+<!-- Main content -->
+<div class="lg:ml-64">
+  <!-- Top bar -->
+  <header class="bg-white border-b border-gray-200 px-4 lg:px-8 py-4 flex items-center justify-between">
+    <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-gray-100">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <h1 id="page-title" class="text-xl font-bold text-gray-900">Overview</h1>
+    <div id="tenant-name" class="text-sm text-gray-500"></div>
+  </header>
+
+  <!-- Page content -->
+  <main class="p-4 lg:p-8">
+
+    <!-- ===== OVERVIEW PAGE ===== -->
+    <section id="page-overview" class="page hidden">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div class="text-sm text-gray-500 mb-1">Calls Today</div>
+          <div id="stat-today" class="text-3xl font-bold text-gray-900">—</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div class="text-sm text-gray-500 mb-1">This Week</div>
+          <div id="stat-week" class="text-3xl font-bold text-purple-600">—</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div class="text-sm text-gray-500 mb-1">Avg Duration</div>
+          <div id="stat-duration" class="text-3xl font-bold text-gray-900">—</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div class="text-sm text-gray-500 mb-1">Total Calls</div>
+          <div id="stat-total" class="text-3xl font-bold text-gray-900">—</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div class="text-sm text-gray-500 mb-1">Bookings</div>
+          <div id="stat-bookings" class="text-3xl font-bold text-green-600">—</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div class="text-sm text-gray-500 mb-1">Pending</div>
+          <div id="stat-pending" class="text-3xl font-bold text-yellow-600">—</div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h3 class="font-semibold text-lg mb-2">Quick Actions</h3>
+        <div class="flex flex-wrap gap-3">
+          <a href="/dashboard/customize" class="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700" onclick="navigate(event,'customize')">Customize AI</a>
+          <a href="/dashboard/calls" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200" onclick="navigate(event,'calls')">View Calls</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CALLS PAGE ===== -->
+    <section id="page-calls" class="page hidden">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Caller</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Intent</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+              </tr>
+            </thead>
+            <tbody id="calls-table" class="divide-y divide-gray-200">
+              <tr><td colspan="5" class="px-4 py-12 text-center text-gray-400">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CUSTOMIZE PAGE ===== -->
+    <section id="page-customize" class="page hidden">
+      <div class="max-w-2xl">
+        <p class="text-gray-600 mb-6">Customize how your AI receptionist handles calls.</p>
+
+        <!-- Greeting -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+          <h3 class="font-semibold text-lg mb-3">Greeting Message</h3>
+          <p class="text-sm text-gray-500 mb-3">What the AI says when answering the phone.</p>
+          <input id="cust-greeting" type="text" placeholder="Hey, thanks for calling Acme Plumbing! How can I help you?"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+        </div>
+
+        <!-- Business Hours -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+          <h3 class="font-semibold text-lg mb-3">Business Hours</h3>
+          <div class="space-y-3" id="hours-container"></div>
+        </div>
+
+        <!-- FAQs -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+          <h3 class="font-semibold text-lg mb-3">Top FAQs</h3>
+          <p class="text-sm text-gray-500 mb-4">Add up to 3 questions your callers frequently ask.</p>
+          <div id="faqs-container" class="space-y-4"></div>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <button onclick="saveCustomization()" class="px-6 py-2.5 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700">
+            Save Changes
+          </button>
+          <span id="cust-status" class="text-sm"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SETTINGS PAGE ===== -->
+    <section id="page-settings" class="page hidden">
+      <div class="max-w-2xl bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h3 class="font-semibold text-lg mb-4">Account Settings</h3>
+        <p class="text-gray-500 text-sm">Manage your account from the <a href="/admin/dashboard" class="text-purple-600 underline">legacy dashboard</a> for now. Full settings coming soon.</p>
+      </div>
+    </section>
+
+    <!-- ===== BILLING PAGE ===== -->
+    <section id="page-billing" class="page hidden">
+      <div class="max-w-2xl bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h3 class="font-semibold text-lg mb-4">Billing</h3>
+        <p class="text-gray-500 text-sm">Billing management coming soon.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+// ============= STATE =============
+let currentUser = null;
+let currentTenant = null;
+
+// ============= INIT =============
+(async function init() {
+  try {
+    const res = await fetch('/dashboard/api/me');
+    if (!res.ok) { window.location.href = '/login.html'; return; }
+    const data = await res.json();
+    currentUser = data.user;
+    currentTenant = data.tenant;
+
+    document.getElementById('sidebar-email').textContent = currentUser.email;
+    document.getElementById('tenant-name').textContent = currentTenant?.name || '';
+
+    // Route based on URL
+    const path = window.location.pathname.replace('/dashboard', '').replace(/^\//, '') || 'overview';
+    showPage(path);
+  } catch (e) {
+    window.location.href = '/login.html';
+  }
+})();
+
+// ============= NAVIGATION =============
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+
+  const el = document.getElementById('page-' + page);
+  if (el) {
+    el.classList.remove('hidden');
+  } else {
+    document.getElementById('page-overview').classList.remove('hidden');
+    page = 'overview';
+  }
+
+  const link = document.querySelector(`[data-page="${page}"]`);
+  if (link) link.classList.add('active');
+
+  const titles = { overview: 'Overview', calls: 'Call History', customize: 'Customize AI', settings: 'Settings', billing: 'Billing' };
+  document.getElementById('page-title').textContent = titles[page] || 'Dashboard';
+
+  // Load page data
+  if (page === 'overview') loadOverview();
+  if (page === 'calls') loadCalls();
+  if (page === 'customize') loadCustomize();
+}
+
+function navigate(e, page) {
+  e.preventDefault();
+  history.pushState({}, '', e.currentTarget.href);
+  showPage(page);
+  closeSidebar();
+}
+
+// Handle nav link clicks
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const page = link.dataset.page;
+    history.pushState({}, '', link.href);
+    showPage(page);
+    closeSidebar();
+  });
+});
+
+window.addEventListener('popstate', () => {
+  const path = window.location.pathname.replace('/dashboard', '').replace(/^\//, '') || 'overview';
+  showPage(path);
+});
+
+// ============= SIDEBAR =============
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('-translate-x-full');
+  document.getElementById('mobile-overlay').classList.toggle('hidden');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.add('-translate-x-full');
+  document.getElementById('mobile-overlay').classList.add('hidden');
+}
+
+// ============= OVERVIEW =============
+async function loadOverview() {
+  try {
+    const res = await fetch('/dashboard/api/overview');
+    const { stats } = await res.json();
+    document.getElementById('stat-today').textContent = stats.callsToday ?? 0;
+    document.getElementById('stat-week').textContent = stats.callsThisWeek ?? 0;
+    document.getElementById('stat-duration').textContent = (stats.avgDuration ?? 0) + 's';
+    document.getElementById('stat-total').textContent = stats.totalCalls ?? 0;
+    document.getElementById('stat-bookings').textContent = stats.totalBookings ?? 0;
+    document.getElementById('stat-pending').textContent = stats.pendingBookings ?? 0;
+  } catch (e) { console.error('Overview load failed', e); }
+}
+
+// ============= CALLS =============
+async function loadCalls() {
+  try {
+    const res = await fetch('/dashboard/api/calls');
+    const { calls } = await res.json();
+    const tbody = document.getElementById('calls-table');
+
+    if (!calls.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-12 text-center text-gray-400">No calls yet</td></tr>';
+      return;
+    }
+
+    let html = '';
+    calls.forEach(call => {
+      const date = new Date(call.createdAt * 1000);
+      const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+      const dur = call.durationSeconds ? call.durationSeconds + 's' : '—';
+      const intentClass = call.intent === 'booking' ? 'bg-green-100 text-green-800'
+        : call.intent === 'emergency' ? 'bg-red-100 text-red-800'
+        : 'bg-gray-100 text-gray-800';
+      const hasTranscript = call.transcript && call.transcript.length > 0;
+
+      html += `<tr class="hover:bg-gray-50 cursor-pointer" onclick="toggleExpand('exp-${call.id}')">
+        <td class="px-4 py-3 text-sm">${dateStr}</td>
+        <td class="px-4 py-3 text-sm font-mono">${call.callerPhone || 'Unknown'}</td>
+        <td class="px-4 py-3 text-sm">${dur}</td>
+        <td class="px-4 py-3 text-sm"><span class="px-2 py-0.5 rounded-full text-xs font-medium ${intentClass}">${call.intent || 'unknown'}</span></td>
+        <td class="px-4 py-3 text-sm">${call.transferred ? '<span class="text-blue-600">Transferred</span>' : '—'}</td>
+      </tr>`;
+
+      if (hasTranscript) {
+        const transcriptHtml = call.transcript.map(m =>
+          `<div class="${m.role === 'user' ? 'text-blue-900' : 'text-gray-800'}"><strong>${m.role === 'user' ? 'Caller' : 'AI'}:</strong> ${escapeHtml(m.content)}</div>`
+        ).join('');
+        html += `<tr id="exp-${call.id}" class="expand-row"><td colspan="5" class="px-6 py-4 bg-gray-50">
+          <div class="text-sm space-y-1 max-h-64 overflow-y-auto">${transcriptHtml}</div>
+        </td></tr>`;
+      }
+    });
+    tbody.innerHTML = html;
+  } catch (e) { console.error('Calls load failed', e); }
+}
+
+function toggleExpand(id) {
+  const row = document.getElementById(id);
+  if (row) row.classList.toggle('open');
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ============= CUSTOMIZE =============
+const DAYS = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+
+function loadCustomize() {
+  const config = currentTenant?.config || {};
+
+  // Greeting
+  document.getElementById('cust-greeting').value = config.greeting || '';
+
+  // Hours
+  const hoursContainer = document.getElementById('hours-container');
+  const hours = config.businessHours || {};
+  hoursContainer.innerHTML = DAYS.map(day => {
+    const h = hours[day] || {};
+    const label = day.charAt(0).toUpperCase() + day.slice(1);
+    return `<div class="flex items-center gap-3">
+      <label class="w-24 text-sm font-medium text-gray-700">${label}</label>
+      <input type="time" id="hour-${day}-open" value="${h.open || ''}" class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm">
+      <span class="text-gray-400">to</span>
+      <input type="time" id="hour-${day}-close" value="${h.close || ''}" class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm">
+    </div>`;
+  }).join('');
+
+  // FAQs
+  const faqs = config.faqs || [{q:'',a:''},{q:'',a:''},{q:'',a:''}];
+  while (faqs.length < 3) faqs.push({q:'',a:''});
+  const faqContainer = document.getElementById('faqs-container');
+  faqContainer.innerHTML = faqs.slice(0,3).map((faq, i) => `
+    <div class="border border-gray-200 rounded-lg p-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1">FAQ ${i+1} — Question</label>
+      <input id="faq-q-${i}" type="text" value="${escapeHtml(faq.q || '')}" placeholder="e.g. Do you offer same-day service?"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mb-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Answer</label>
+      <textarea id="faq-a-${i}" rows="2" placeholder="e.g. Yes! Call before noon for same-day appointments."
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent">${escapeHtml(faq.a || '')}</textarea>
+    </div>
+  `).join('');
+}
+
+async function saveCustomization() {
+  const statusEl = document.getElementById('cust-status');
+  statusEl.textContent = 'Saving…';
+  statusEl.className = 'text-sm text-gray-500';
+
+  const businessHours = {};
+  DAYS.forEach(day => {
+    const open = document.getElementById(`hour-${day}-open`).value;
+    const close = document.getElementById(`hour-${day}-close`).value;
+    if (open || close) businessHours[day] = { open, close };
+  });
+
+  const faqs = [0,1,2].map(i => ({
+    q: document.getElementById(`faq-q-${i}`).value.trim(),
+    a: document.getElementById(`faq-a-${i}`).value.trim()
+  })).filter(f => f.q || f.a);
+
+  try {
+    const res = await fetch('/dashboard/api/customize', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        greeting: document.getElementById('cust-greeting').value.trim(),
+        businessHours,
+        faqs
+      })
+    });
+
+    if (!res.ok) throw new Error('Save failed');
+
+    // Update local state
+    if (!currentTenant.config) currentTenant.config = {};
+    currentTenant.config.greeting = document.getElementById('cust-greeting').value.trim();
+    currentTenant.config.businessHours = businessHours;
+    currentTenant.config.faqs = faqs;
+
+    statusEl.textContent = '✓ Saved!';
+    statusEl.className = 'text-sm text-green-600';
+    setTimeout(() => { statusEl.textContent = ''; }, 3000);
+  } catch (e) {
+    statusEl.textContent = '✗ Failed to save';
+    statusEl.className = 'text-sm text-red-600';
+  }
+}
+
+// ============= AUTH =============
+async function logout() {
+  await fetch('/auth/logout', { method: 'POST' });
+  window.location.href = '/login.html';
+}
+</script>
+</body>
+</html>
