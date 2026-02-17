@@ -54,7 +54,7 @@
         "Webhook configured for incoming calls",
         "Test: signup \u2192 get phone number"
       ],
-      "passes": false,
+      "passes": true,
       "priority": "high"
     },
     {
@@ -68,7 +68,7 @@
         "AI uses custom settings on calls",
         "Verify in browser using dev-browser skill"
       ],
-      "passes": false,
+      "passes": true,
       "priority": "high"
     },
     {
@@ -82,7 +82,7 @@
         "Responsive design (mobile-friendly)",
         "Verify in browser using dev-browser skill"
       ],
-      "passes": false,
+      "passes": true,
       "priority": "high"
     },
     {
@@ -97,7 +97,7 @@
         "Export CSV button functional",
         "Verify in browser using dev-browser skill"
       ],
-      "passes": false,
+      "passes": true,
       "priority": "medium"
     },
     {
@@ -111,7 +111,7 @@
         "Data updates automatically",
         "Verify in browser using dev-browser skill"
       ],
-      "passes": false,
+      "passes": true,
       "priority": "medium"
     },
     {
@@ -125,7 +125,7 @@
         "Changes reflect in AI behavior",
         "Verify in browser using dev-browser skill"
       ],
-      "passes": false,
+      "passes": true,
       "priority": "medium"
     },
     {
