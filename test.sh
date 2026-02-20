@@ -5,7 +5,7 @@
 
 set -e
 
-SERVER_URL="http://localhost:3000"
+SERVER_URL="${SERVER_URL:-http://localhost:3100}"
 CALL_SID="TEST_$(date +%s)"
 
 echo "🧪 AI Receptionist Test Suite"
