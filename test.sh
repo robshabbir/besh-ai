@@ -25,7 +25,7 @@ echo ""
 
 # Test initial call
 echo "2️⃣  Testing initial call webhook..."
-RESPONSE=$(curl -s -X POST "${SERVER_URL}/voice" \
+RESPONSE=$(curl -s -X POST "${SERVER_URL}/api/voice" \
   -d "CallSid=${CALL_SID}" \
   -d "From=+15551234567" \
   -d "To=+19297557288")
@@ -43,7 +43,7 @@ echo "3️⃣  Testing booking conversation..."
 
 # Step 1: User wants to book
 echo "   📞 Caller: 'I need to schedule a drain cleaning'"
-RESPONSE=$(curl -s -X POST "${SERVER_URL}/gather" \
+RESPONSE=$(curl -s -X POST "${SERVER_URL}/api/gather" \
   -d "CallSid=${CALL_SID}" \
   -d "SpeechResult=I need to schedule a drain cleaning" \
   -d "From=+15551234567")
@@ -58,7 +58,7 @@ echo ""
 # Step 2: Provide name
 sleep 1
 echo "   📞 Caller: 'My name is John Smith'"
-RESPONSE=$(curl -s -X POST "${SERVER_URL}/gather" \
+RESPONSE=$(curl -s -X POST "${SERVER_URL}/api/gather" \
   -d "CallSid=${CALL_SID}" \
   -d "SpeechResult=My name is John Smith" \
   -d "From=+15551234567")
@@ -73,7 +73,7 @@ echo ""
 # Step 3: Provide phone
 sleep 1
 echo "   📞 Caller: 'My number is 555-123-4567'"
-RESPONSE=$(curl -s -X POST "${SERVER_URL}/gather" \
+RESPONSE=$(curl -s -X POST "${SERVER_URL}/api/gather" \
   -d "CallSid=${CALL_SID}" \
   -d "SpeechResult=My number is 555-123-4567" \
   -d "From=+15551234567")
@@ -87,7 +87,7 @@ echo ""
 
 # Check active sessions
 echo "4️⃣  Checking active sessions..."
-SESSIONS=$(curl -s "${SERVER_URL}/sessions")
+SESSIONS=$(curl -s "${SERVER_URL}/api/sessions")
 echo "$SESSIONS" | head -n 5
 echo ""
 
@@ -100,7 +100,7 @@ RESPONSE=$(curl -s -X POST "${SERVER_URL}/voice" \
   -d "From=+15559876543")
 
 sleep 1
-RESPONSE=$(curl -s -X POST "${SERVER_URL}/gather" \
+RESPONSE=$(curl -s -X POST "${SERVER_URL}/api/gather" \
   -d "CallSid=${NEW_CALL}" \
   -d "SpeechResult=What are your hours?" \
   -d "From=+15559876543")
