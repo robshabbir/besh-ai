@@ -3,6 +3,9 @@ const logger = require('../utils/logger');
 const { processConversation, processConversationStream, extractCollectedInfo, getMissingInfo, prewarmGemini, detectInjectionAttempt } = require('../services/claude');
 const { createBooking, handleEmergency } = require('../services/booking');
 const { sendPostCallNotifications } = require('../services/notifications');
+const { pushCallData } = require('../services/integrations');
+const { sendCallSummary } = require('../services/sms-notify');
+const { isBusinessOpen } = require('../utils/business-hours');
 const fs = require('fs');
 const path = require('path');
 
@@ -149,7 +152,7 @@ function pickFillerText(userText) {
  * ConversationRelay WebSocket Handler — Real-Time Voice AI
  * Now with: keep-alive pings, pre-warming, call scoring, transcript saving
  */
-function setupConversationRelay(wss) {
+async function setupConversationRelay(wss) {
   logger.info('ConversationRelay WebSocket server ready on /ws');
 
   wss.on('connection', (ws, req) => {
@@ -173,6 +176,7 @@ function setupConversationRelay(wss) {
       startTimeMs: Date.now(),
       startTime: new Date().toISOString(),
       transferAttempted: false,
+      isAfterHours: false,
       errors: [],
       turnTimes: [],
       interrupted: false,
@@ -197,9 +201,8 @@ function setupConversationRelay(wss) {
       if (inactivityTimer) clearTimeout(inactivityTimer);
       inactivityTimer = setTimeout(() => {
         if (ws.readyState === ws.OPEN) {
-          // Use pre-recorded clip for "still there?" — sounds way more natural
           if (session.language !== 'es') {
-            playClip(ws, 'still-there');
+            sendText(ws, "Hey, you still there?");
           } else {
             sendText(ws, "¿Sigue ahí?");
           }
@@ -207,7 +210,7 @@ function setupConversationRelay(wss) {
           inactivityTimer = setTimeout(() => {
             if (ws.readyState === ws.OPEN) {
               if (session.language !== 'es') {
-                playClip(ws, 'no-worries-bye', { last: true });
+                sendText(ws, "No worries, just give us a call back whenever. Bye!", true);
               } else {
                 sendText(ws, "Parece que perdimos la conexión. ¡Llámenos de nuevo si necesita ayuda!", true);
               }
@@ -249,6 +252,9 @@ function setupConversationRelay(wss) {
             break;
           case 'dtmf':
             handleDTMF(ws, session, msg);
+            break;
+          case 'error':
+            logger.error('❌ Twilio CR error', { callSid: session.callSid, description: msg.description, msg: JSON.stringify(msg) });
             break;
           default:
             logger.debug('Unknown WS message type', { type: msg.type });
@@ -293,8 +299,8 @@ async function handleSetup(ws, session, msg) {
     to: session.businessPhone
   });
 
-  const tenant = db.getTenantByPhoneNumber(session.businessPhone) || 
-                 db.getTenantByPhoneNumber(session.callerPhone);
+  const tenant = await db.getTenantByPhoneNumber(session.businessPhone) || 
+                 await db.getTenantByPhoneNumber(session.callerPhone);
 
   if (!tenant) {
     logger.error('No tenant found', { to: session.businessPhone, from: session.callerPhone });
@@ -304,7 +310,7 @@ async function handleSetup(ws, session, msg) {
   }
 
   session.tenantId = tenant.id;
-  session.callId = db.createCall(tenant.id, session.callSid, session.callerPhone);
+  session.callId = await db.createCall(tenant.id, session.callSid, session.callerPhone);
   
   logger.info('Call created', { callId: session.callId, tenantId: tenant.id });
   
@@ -350,7 +356,7 @@ async function handlePrompt(ws, session, msg) {
     logger.warn('🛡️ Injection attempt detected', { callSid: session.callSid, pattern: injection.pattern, text: userText.substring(0, 100) });
   }
 
-  const tenant = db.getTenantById(session.tenantId);
+  const tenant = await db.getTenantById(session.tenantId);
   if (!tenant) {
     logger.error('Tenant not found in prompt handler', { tenantId: session.tenantId });
     sendText(ws, "I'm having trouble right now. Please call back in a moment.", true);
@@ -363,7 +369,7 @@ async function handlePrompt(ws, session, msg) {
   if (session.turnCount === 1 && supportedLanguages.includes('es') && detectSpanish(userText)) {
     session.language = 'es';
     logger.info('Spanish detected', { callSid: session.callSid });
-    db.updateCall(session.callSid, { language: 'es' });
+    await db.updateCall(session.callSid, { language: 'es' });
   }
 
   // Build system prompt
@@ -374,12 +380,28 @@ async function handlePrompt(ws, session, msg) {
   }
 
   const features = tenant.config.features || {};
-  if (features.afterHoursMode && tenant.config.businessHours) {
+  let isAfterHours = false;
+  const hoursStr = tenant.config.businessHoursText || tenant.config.businessConfig?.businessHours;
+  if (hoursStr) {
+    const tz = tenant.config.timezone || 'America/New_York';
+    const { isOpen, nextOpen } = isBusinessOpen(hoursStr, tz);
+    isAfterHours = !isOpen;
+    if (isOpen) {
+      systemPrompt += `\nSTATUS: We're currently OPEN.`;
+    } else {
+      const nextStr = nextOpen ? ` We'll be back ${nextOpen}.` : '';
+      systemPrompt += `\nSTATUS: We're CLOSED right now.${nextStr} Take a message — get their name, phone number, and what they need. Let them know we'll call back when we're open. Still handle emergencies normally (burst pipes, gas leaks, etc — text the owner immediately).`;
+    }
+  } else if (features.afterHoursMode && tenant.config.businessHours) {
+    // Legacy structured format
     const withinHours = isWithinBusinessHours(tenant.config.businessHours);
+    isAfterHours = !withinHours;
     systemPrompt += withinHours ? 
       `\nSTATUS: We're currently OPEN.` :
       `\nSTATUS: We're CLOSED right now. Take a message and let them know we'll call back during business hours.`;
   }
+
+  session.isAfterHours = isAfterHours;
 
   // Add injection warning to context if detected
   if (injection.isInjection) {
@@ -404,28 +426,11 @@ async function handlePrompt(ws, session, msg) {
   // This is the key architectural change: human receptionists go "mm-hmm" or "oh no"
   // immediately, THEN process and respond. We do the same with pre-recorded clips.
 
-  // Pick an instant reaction clip based on what the caller said
-  const reactionClip = pickInstantReaction(userText, session.turnCount);
+  // DISABLED: Pre-recorded clips cause Twilio CR errors when mixed with streamed text.
+  // The play+text overlap causes "stops responding" issues.
+  // Instead, rely on the LLM to generate natural filler words in its response.
+  const reactionClip = null;
   let clipWasPlayed = false;
-  if (reactionClip) {
-    playClip(ws, reactionClip, { preemptible: true }); // LLM response will follow/override
-    clipWasPlayed = true;
-    logger.info('🔊 Instant reaction', { clip: reactionClip, callSid: session.callSid });
-    
-    // Tell the LLM what reaction already played so it doesn't duplicate
-    const clipToPhrase = {
-      'react-oh-no': 'Oh no.', 'react-oh-jeez': 'Oh jeez.',
-      'react-oh-man': 'Oh man.', 'react-oh-wow': 'Oh wow.',
-      'react-yikes': 'Ooh, yikes.', 'react-aw': 'Aw.',
-      'ack-mmhmm': 'Mm-hmm.', 'ack-yeah': 'Yeah.',
-      'ack-okay': 'Okay.', 'ack-gotcha': 'Gotcha.',
-      'think-hmm': 'Hmm...', 'think-lemme-see': 'Lemme see...',
-    };
-    const spokenPhrase = clipToPhrase[reactionClip] || '';
-    if (spokenPhrase) {
-      systemPrompt += `\nYou ALREADY said "${spokenPhrase}" out loud. Do NOT repeat it. Continue naturally from there.`;
-    }
-  }
 
   const llmStart = Date.now();
   let sentChars = 0;
@@ -433,19 +438,30 @@ async function handlePrompt(ws, session, msg) {
   let fallbackSent = false;
   let firstChunkReceived = false;
 
-  // Thinking timeout — only if no clip was played (avoid stacking audio)
+  // Thinking timeout — send a short filler if LLM takes >500ms
   const thinkingTimeout = setTimeout(() => {
-    if (!firstChunkReceived && !clipWasPlayed && ws.readyState === ws.OPEN) {
+    if (!firstChunkReceived && ws.readyState === ws.OPEN) {
       fallbackSent = true;
-      // Use pre-recorded clip for thinking too
-      const thinkClip = pickClip('think');
-      if (thinkClip) {
-        playClip(ws, thinkClip, { preemptible: true });
-      } else {
-        sendText(ws, "Hmm...", false);
-      }
+      // Pick contextual filler based on what they said
+      const lower = userText.toLowerCase();
+      // Contextual fillers — varied to sound natural, never repetitive
+      const fillerSets = {
+        emergency: ["Oh no...", "Oh jeez...", "Yikes okay...", "Oh god..."],
+        pricing: ["Hmm let me think...", "So yeah...", "Hmm...", "Let's see..."],
+        booking: ["Lemme see...", "Okay hang on...", "Let me check...", "One sec..."],
+        long: ["Mm-hmm...", "Right right...", "Yeah...", "Okay..."],
+        general: ["Mm-hmm...", "Yeah so...", "Okay...", "Hmm...", "Right..."]
+      };
+      const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+      let filler;
+      if (/emergency|flood|burst|water everywhere|pipe.?burst|fire|gas/i.test(lower)) filler = pick(fillerSets.emergency);
+      else if (/price|cost|how much|rate|quote|charge|fee/i.test(lower)) filler = pick(fillerSets.pricing);
+      else if (/schedule|book|appointment|come out|available|opening/i.test(lower)) filler = pick(fillerSets.booking);
+      else if (userText.split(/\s+/).length > 10) filler = pick(fillerSets.long);
+      else filler = pick(fillerSets.general);
+      sendText(ws, filler, false);
     }
-  }, 1200);
+  }, 500);
 
   const { result, updatedMessages } = await processConversationStream(
     systemPrompt,
@@ -458,17 +474,16 @@ async function handlePrompt(ws, session, msg) {
       }
       streamedText = fullTextSoFar;
       
-      // Stream at natural break points — but chunks must be big enough for smooth TTS
-      // Too small (<8 chars) = choppy playback. Too big = perceived latency.
+      // Stream tokens to ConversationRelay ASAP — send every word as it arrives
       const unsent = fullTextSoFar.substring(sentChars);
-      // First chunk: lower threshold (6 chars) to get first words out fast
-      // Subsequent chunks: 10+ chars for smoother TTS rendering
-      const minLen = sentChars === 0 ? 6 : 10;
-      const breakRegex = new RegExp(`^(.{${minLen},}?[,.\\-!?…]+\\s*)`);
-      const breakMatch = unsent.match(breakRegex);
-      if (breakMatch) {
-        sendText(ws, breakMatch[1].trim(), false);
-        sentChars += breakMatch[0].length;
+      // Send each complete word immediately for fastest TTS start
+      const words = unsent.match(/\S+\s/g);
+      if (words) {
+        const chunk = words.join('');
+        if (chunk.trim()) {
+          sendText(ws, chunk.trim(), false);
+          sentChars += chunk.length;
+        }
       }
     },
     session.collected
@@ -514,7 +529,7 @@ async function handlePrompt(ws, session, msg) {
     chunks: sentChars > 0 ? Math.ceil(sentChars / 15) : 1
   });
 
-  db.updateCall(session.callSid, {
+  await db.updateCall(session.callSid, {
     transcript: session.messages,
     intent: session.intent,
     collected_data: session.collected
@@ -523,12 +538,12 @@ async function handlePrompt(ws, session, msg) {
   // Transfer handling
   if (transferPhone && !session.transferAttempted && detectTransferIntent(result.message)) {
     session.transferAttempted = true;
-    db.updateCall(session.callSid, { transferred: 1, transfer_to: transferPhone });
+    await db.updateCall(session.callSid, { transferred: 1, transfer_to: transferPhone });
 
     const { sendSMS } = require('../services/notifications');
     const summary = session.collected.service || session.collected.reason || 'assistance';
     
-    setImmediate(async () => {
+    setImmediateasync (async () => {
       try {
         await sendSMS(transferPhone, session.businessPhone,
           `🔄 Incoming transfer from ${session.callerPhone}\nThey need: ${summary}`);
@@ -550,7 +565,7 @@ async function handlePrompt(ws, session, msg) {
   if (result.complete) {
     logger.info('✅ Conversation complete', { callSid: session.callSid, intent: session.intent, collected: session.collected });
 
-    setImmediate(async () => {
+    setImmediateasync (async () => {
       try {
         if (result.intent === 'booking' || result.intent === 'new_client') {
           await createBooking(session.tenantId, session.callId, session.collected, result.intent);
@@ -586,7 +601,7 @@ function handleDTMF(ws, session, msg) {
     `Got it, ${digit}. What else can I help with?`);
 }
 
-function handleClose(session) {
+async function handleClose(session) {
   logger.info('📞 Call ended', { callSid: session.callSid, turns: session.turnCount, errors: session.errors.length });
 
   // Save transcript and stats
@@ -595,11 +610,165 @@ function handleClose(session) {
 
   if (session.callSid) {
     try {
-      db.updateCall(session.callSid, { ended_at: new Date().toISOString() });
+      await db.updateCall(session.callSid, { ended_at: new Date().toISOString() });
     } catch (e) {
       logger.error('Failed to update call end', { error: e.message });
     }
   }
+
+  // Push call data to integrations (async, non-blocking)
+  if (session.tenantId && session.turnCount > 0) {
+    setImmediateasync (async () => {
+      try {
+        const tenant = await db.getTenantById(session.tenantId);
+        if (tenant) {
+          const callDuration = Math.floor((Date.now() - session.startTimeMs) / 1000);
+          await pushCallData(tenant, {
+            callerPhone: session.callerPhone,
+            callerName: session.collected?.name || null,
+            intent: session.intent,
+            collected: session.collected,
+            transcript: session.messages,
+            duration: callDuration,
+            urgency: session.intent === 'emergency' ? 'emergency' : 'normal',
+            callSid: session.callSid
+          });
+
+          // SMS notification to business owner
+          const notifyPhone = tenant.config?.notifyPhone || tenant.config?.businessConfig?.ownerPhone;
+          if (notifyPhone) {
+            await sendCallSummary({
+              to: notifyPhone,
+              from: tenant.phone_number,
+              callerPhone: session.callerPhone,
+              intent: session.intent,
+              duration: callDuration,
+              collected: session.collected,
+              isAfterHours: session.isAfterHours,
+              isEmergency: session.intent === 'emergency',
+            });
+          }
+          
+          // Email notification to business owner
+          const notifyEmail = tenant.config?.notifyEmail || tenant.config?.businessConfig?.ownerEmail;
+          if (notifyEmail) {
+            try {
+              const { sendCallSummaryEmail } = require('../services/integrations');
+              await sendCallSummaryEmail(notifyEmail, {
+                callerPhone: session.callerPhone,
+                collected: session.collected,
+                intent: session.intent,
+                duration: callDuration,
+                urgency: session.intent === 'emergency' ? 'emergency' : 'normal',
+              });
+            } catch (emailErr) {
+              logger.warn('Email notification failed (non-blocking)', { error: emailErr.message });
+            }
+          }
+        }
+      } catch (e) {
+        logger.error('Integration push failed', { error: e.message, callSid: session.callSid });
+      }
+    });
+  }
+}
+
+/**
+ * Normalize text for TTS — make it sound like a real human speaking.
+ * Expands abbreviations, writes numbers as words, adds natural pacing.
+ */
+function normalizeTTSText(text) {
+  if (!text) return text;
+  let t = text;
+  
+  // === ABBREVIATIONS → spoken form ===
+  // These trip up TTS engines badly
+  t = t.replace(/\bASAP\b/g, 'as soon as possible');
+  t = t.replace(/\bETA\b/g, 'E T A');
+  t = t.replace(/\bFYI\b/g, 'F Y I');
+  t = t.replace(/\bDIY\b/g, 'D I Y');
+  t = t.replace(/\bHVAC\b/g, 'H vac');
+  t = t.replace(/\bPVC\b/g, 'P V C');
+  t = t.replace(/\bNYC\b/g, 'New York City');
+  t = t.replace(/\bSt\.\s/g, 'Street ');
+  t = t.replace(/\bAve\.\s/g, 'Avenue ');
+  t = t.replace(/\bBlvd\.\s/g, 'Boulevard ');
+  t = t.replace(/\bDr\.\s/g, 'Drive ');
+  t = t.replace(/\bApt\.\s/gi, 'Apartment ');
+  t = t.replace(/\bappt\b/gi, 'appointment');
+  t = t.replace(/\bmin\b/gi, 'minutes');
+  t = t.replace(/\bhrs?\b/gi, 'hours');
+  t = t.replace(/\binfo\b/gi, 'information');
+  t = t.replace(/\btemp\b/gi, 'temperature');
+  t = t.replace(/\bw\//gi, 'with');
+  t = t.replace(/\b24\/7\b/g, 'twenty four seven');
+  t = t.replace(/\bMon\b/g, 'Monday');
+  t = t.replace(/\bTue\b/g, 'Tuesday');
+  t = t.replace(/\bWed\b/g, 'Wednesday');
+  t = t.replace(/\bThu\b/g, 'Thursday');
+  t = t.replace(/\bFri\b/g, 'Friday');
+  t = t.replace(/\bSat\b/g, 'Saturday');
+  t = t.replace(/\bSun\b/g, 'Sunday');
+  
+  // === TIME expressions ===
+  // "7am" → "seven A M", "7:30pm" → "seven thirty P M"
+  t = t.replace(/(\d{1,2}):(\d{2})\s*(am|pm)/gi, (_, h, m, ap) => {
+    const hour = numberToWords(parseInt(h));
+    const min = m === '00' ? '' : ' ' + numberToWords(parseInt(m));
+    return hour + min + ' ' + ap.toUpperCase().split('').join(' ');
+  });
+  t = t.replace(/(\d{1,2})\s*(am|pm)/gi, (_, h, ap) => {
+    return numberToWords(parseInt(h)) + ' ' + ap.toUpperCase().split('').join(' ');
+  });
+  
+  // === MONEY ===
+  // $1,500 → "fifteen hundred"
+  t = t.replace(/\$(\d{1,2}),(\d{3})/g, (_, a, b) => numberToWords(parseInt(a + b)));
+  // $150 → "one fifty"
+  t = t.replace(/\$(\d+)/g, (_, n) => numberToWords(parseInt(n)));
+  
+  // === PHONE NUMBERS ===
+  // (347) 244-9656 → "three four seven, two four four, nine six five six"
+  t = t.replace(/\(?(\d{3})\)?[\s.-]?(\d{3})[\s.-]?(\d{4})/g, (_, a, b, c) => {
+    return a.split('').join(' ') + ', ' + b.split('').join(' ') + ', ' + c.split('').join(' ');
+  });
+  
+  // === MISC ===
+  t = t.replace(/(\d+)%/g, '$1 percent');
+  t = t.replace(/\betc\./gi, 'etcetera');
+  t = t.replace(/\be\.g\./gi, 'for example');
+  t = t.replace(/\bi\.e\./gi, 'that is');
+  t = t.replace(/\bvs\.?\b/gi, 'versus');
+  t = t.replace(/\b#(\d+)/g, 'number $1');
+  
+  // === REMOVE things that sound bad in speech ===
+  t = t.replace(/\.\.\./g, '...'); // keep ellipsis for natural pause
+  t = t.replace(/—/g, ', '); // em dash → comma pause
+  t = t.replace(/–/g, ' to '); // en dash → "to"
+  
+  return t;
+}
+
+function numberToWords(n) {
+  if (n === 0) return 'zero';
+  const ones = ['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+  const tens = ['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+  if (n < 20) return ones[n];
+  if (n < 100) return tens[Math.floor(n/10)] + (n%10 ? ' ' + ones[n%10] : '');
+  if (n < 1000) {
+    const h = Math.floor(n/100);
+    const r = n % 100;
+    // Conversational: "one fifty" not "one hundred fifty"
+    if (r === 0) return ones[h] + ' hundred';
+    if (h > 0 && r < 100) return ones[h] + ' ' + (r < 20 ? ones[r] : tens[Math.floor(r/10)] + (r%10 ? ' ' + ones[r%10] : ''));
+  }
+  if (n < 10000) {
+    const th = Math.floor(n/1000);
+    const r = n % 1000;
+    if (r === 0) return ones[th] + ' thousand';
+    return ones[th] + ' thousand ' + numberToWords(r);
+  }
+  return String(n); // fallback
 }
 
 function sendText(ws, text, last = false) {
@@ -608,7 +777,8 @@ function sendText(ws, text, last = false) {
     return;
   }
   try {
-    ws.send(JSON.stringify({ type: 'text', token: text, last }));
+    const normalized = normalizeTTSText(text);
+    ws.send(JSON.stringify({ type: 'text', token: normalized, last }));
   } catch (e) {
     logger.error('Failed to send text', { error: e.message });
   }
