@@ -1,140 +1,114 @@
 # UX Audit — Calva AI (Apple Standard)
-**Author:** Dev2 (UX Designer role) | **Date:** Feb 21, 2026
+**Role:** Sally (UX Designer) | **Date:** Feb 21, 2026
 
 ---
 
-## Landing Page (index.html) — Score: 6/10
+## Landing Page (index.html) — Score: 7/10
 
 ### Critical
-1. **1921 lines, unmaintainable** — This needs to be broken into components. One change risks breaking everything. No Apple product ships with a monolithic HTML file.
-   - **Fix:** Extract sections into partials or use a simple template engine
-   
-2. **No "Call Our AI" demo** — The #1 conversion driver for voice AI products is missing. Visitors can use the ElevenLabs widget, but entering a phone number and receiving a CALL is 10x more convincing.
-   - **Fix:** Add phone number input in hero → trigger Twilio API call with demo agent
-
-3. **Hero phone animation is scripted, not real** — The conversation bubbles are pre-written JavaScript animations. Users might think this is the actual demo and be disappointed.
-   - **Fix:** Label it clearly as "Example conversation" or replace with real widget
+1. **No live call transfer mention** — Competitors highlight this. Users want to know the AI can hand off to a human. Add a feature card: "Seamless transfer to you when needed."
+2. **No social proof numbers** — Goodcall shows "4.7M+ calls handled, 42K+ agents." We show nothing. Add a stats bar.
+3. **No demo phone number** — "Call us now to hear our AI" is the #1 conversion driver for voice products. Synthflow and Bland both offer live phone demos.
 
 ### High
-4. **No accessibility (ARIA labels)** — Only 1 aria attribute in 1921 lines. Screen readers can't navigate this page.
-   - **Fix:** Add `aria-label` to all interactive elements, `role="navigation"`, `role="main"`, landmark regions
-
-5. **No focus styles on landing page** — Tab-through navigation is invisible. Keyboard users can't see where they are.
-   - **Fix:** Add `focus-visible:ring-2 focus-visible:ring-indigo-500` to all interactive elements
-
-6. **Color contrast issues** — `text-dark-400` and `text-dark-500` on dark background may fail WCAG AA (4.5:1 minimum).
-   - **Fix:** Audit with contrast checker, bump to `text-dark-300` minimum
-
-7. **Industry selector doesn't change demo behavior** — Only plumbing has a real agent. Other industries just change the label.
-   - **Fix:** Already improved (shows note + highlights card). Phase 2: separate agents per industry.
+4. **Industry pages are thin** — `/industries/plumbers.html` etc. exist but are templated shells. Need real content, testimonials, specific pain points.
+5. **No ROI calculator** — Missing opportunity on pricing section. "Calculate your savings" would boost conversion.
+6. **1929 lines in one file** — Unmaintainable. Should be componentized (separate CSS, JS files at minimum).
+7. **Hero phone demo is scripted animation** — Users may think the real product is scripted too. Add a note: "This is a simulation. Try the real thing below →"
 
 ### Polish
-8. **Phone frame fixed at 340px** — Already added `max-w-[90vw]` but the internal elements may still overflow on 320px screens.
-9. **Footer could be more useful** — Add links to docs, API reference, blog
-10. **"Trusted by" section missing** — Need social proof badges
+8. **Pricing section CTAs** — All say "Start Free Trial" but there's no free trial yet. Change to "Get Started" until trial is live.
+9. **Footer links** — Privacy, Terms pages exist but are minimal. Fine for launch.
+10. **Dark mode only** — Landing page is dark theme, dashboard is light. Intentional contrast, but jarring transition.
 
 ---
 
-## Login Page (login.html) — Score: 8.5/10
-
-### High
-1. **No loading skeleton** — Page shows instantly (it's simple), but the login button loading state is good.
+## Login Page (login.html) — Score: 9/10
 
 ### Polish
-2. **Could add "Show password" toggle** — Standard UX pattern
-3. **Forgot password link is low-contrast gray** — Make it more visible
+1. **No "Show password" toggle** — Minor but expected in 2026. Add eye icon.
+2. **No rate-limit feedback** — If locked out after failed attempts, show friendly message.
 
-**Verdict:** Clean, well-designed. Minor improvements only.
+Overall: Clean, focused, good UX. Very close to Apple standard.
 
 ---
 
-## Onboarding (onboard.html) — Score: 7/10
+## Onboarding (onboard.html) — Score: 8/10
+
+### High
+1. **No voice preview during setup** — After configuring greeting + industry, play a sample AI greeting with their business name. This is the "aha moment" — don't miss it.
+2. **Step 5 (Payment) requires Stripe** — Currently broken. Show "Free during beta" or skip step.
+3. **Step 4 (Phone) provisions a Twilio number** — If Twilio fails, no error recovery. Add: "We'll set up your number — if there's an issue, we'll email you."
+
+### Polish
+4. **Template cards could show sample greetings** — Let users hear what each industry template sounds like before choosing.
+5. **Progress bar could show time estimate** — "~3 minutes remaining"
+
+---
+
+## Dashboard (dashboard/index.html) — Score: 7.5/10
 
 ### Critical
-1. **No audio preview** — Users complete 6 steps without ever HEARING their AI receptionist. The "aha moment" should happen DURING onboarding, not after.
-   - **Fix:** After step 3 (Customize), add "Listen to your AI" button that plays TTS of their greeting
+1. **No call playback** — Calls are logged but can't be replayed. Add audio player for call recordings.
+2. **No quick actions** — Dashboard should have "Call back" button next to missed calls.
 
 ### High
-2. **Step 5 (Payment) with no Stripe** — This step will break without Stripe keys. Need graceful handling.
-   - **Fix:** Show "Free trial — no credit card required" and skip payment step
-
-3. **Template cards need audio samples** — Each industry template should have a "Listen" button so users can hear the voice.
-
-4. **6 steps feels long** — Can we reduce to 4? Combine Account + Industry into one step.
+3. **Empty state for new users** — Shows "—" for all stats. Should show a friendly onboarding checklist: "✅ Account created → Forward your calls → Get your first call"
+4. **Customize AI page** — Greeting text field with no preview. Add "▶ Play" button to hear the greeting.
+5. **No search/filter on calls** — Can't search calls by name, intent, or date. Critical once volume grows.
 
 ### Polish
-5. **Inline validation added ✅** — Good improvement from yesterday
-6. **Progress bar overflows on small screens** — `min-w-[600px]` with overflow-x-auto works but feels janky on mobile
-7. **Confetti animation on completion** — Fun touch, keep it
+6. **Skeleton loading added** ✅ (Dev2 already did this)
+7. **Toast notifications added** ✅ (Dev2 already did this)
+8. **Sidebar should show current plan** — "Pro Plan • 14 days left in trial"
 
 ---
 
-## Dashboard (dashboard/index.html) — Score: 7/10
+## Settings (settings.html) — Score: 7/10
+
+### High
+1. **Calendar "Coming Soon"** ✅ (Dev2 fixed this)
+2. **No webhook test button** — "Test Webhook" would help users verify integration works.
+3. **API key section** — Good that it's hidden by default. Add a "Generate new key" button.
+
+### Polish
+4. **Integration section** — ServiceTitan, HubSpot logos would look more professional than plain text.
+
+---
+
+## Pricing (pricing.html) — Score: 6.5/10
 
 ### Critical
-1. **No skeleton loading states** — Shimmer CSS added but not wired to actual data loading. Stats show "—" instead of animated skeleton.
-   - **Fix:** Show skeleton div, then fade to real data when API returns
+1. **No comparison to alternatives** — Add: "vs. $300-2100/mo for human receptionist (Smith.ai)" to anchor value.
+2. **No ROI calculator** — Missing biggest conversion tool.
+3. **"Start Free Trial" buttons but no trial** — Fix copy or implement trial.
 
 ### High
-2. **Zero ARIA attributes** — Dashboard is completely inaccessible to screen readers.
-   - **Fix:** Add landmark roles, aria-labels for nav items, live regions for dynamic content
-
-3. **Call list table not responsive** — Table will overflow on mobile. Need card layout for small screens.
-   - **Fix:** `<table>` on desktop, stacked cards on mobile (hidden md:table-row)
-
-4. **Toast system added ✅** — Good. Now wire it to all async operations (not just save).
-
-### Polish
-5. **Sidebar could show active call count** — Real-time indicator
-6. **Settings page calendar "Coming Soon" ✅** — Good improvement
-7. **Empty state for calls is good** — Friendly message with clear CTA
+4. **Feature comparison table** — Show what's in each tier. Currently just price + vague descriptions.
+5. **No FAQ section** — Common questions: "Can I cancel anytime?", "Is there a contract?", "How many calls included?"
+6. **No annual pricing toggle** — Standard SaaS pattern. Offer 2 months free for annual.
 
 ---
 
-## Settings (settings.html) — Score: 6.5/10
-
-### High
-1. **Long scrolling form** — Should be organized into tabs or accordion sections (Business Info / Integrations / Notifications / Advanced).
-   - **Fix:** Add tab navigation at top
-
-2. **No save confirmation at top** — Save button is at bottom. User scrolls down, saves, can't see confirmation.
-   - **Fix:** Sticky save bar at bottom + toast notification
-
-3. **Calendar Coming Soon ✅** — Good improvement
+## Forgot Password (forgot-password.html) — Score: 8/10
 
 ### Polish
-4. **Webhook URL input has no validation** — Should validate URL format
-5. **Phone number formatting** — Auto-format as user types
+1. **No "check your email" state** — After submitting, show: "Check your inbox for a reset link. Didn't get it? Resend."
+2. **Page is very minimal** — 60 lines is fine, but add a "Back to login" link prominently.
 
 ---
 
-## Pricing (pricing.html) — Score: 7/10
+## Top 10 Actions (Priority Order)
 
-### High
-1. **$49 starter should be more prominent** — SMBs are price-sensitive. The cheapest plan should be the visual anchor.
-2. **No "per day" framing** — "$49/mo" vs "Less than $2/day" — the latter feels cheaper
-3. **Feature comparison table needed** — What exactly do you get at each tier?
-
-### Polish
-4. **No FAQ section** — Common questions about minutes, limits, etc.
-5. **Annual discount option** — Standard SaaS pattern, increases LTV
-
----
-
-## Global Issues (All Pages)
-
-### Critical
-- **WCAG 2.1 AA compliance: FAIL** — Almost zero ARIA attributes across the entire app. This needs systematic remediation.
-- **No skip-to-content links** — Keyboard users must tab through entire nav on every page.
-
-### High  
-- **Inconsistent button styles** — Some pages use `bg-indigo-600`, others use gradients. Need a design system.
-- **No dark mode** — Dashboard is light, landing page is dark. Inconsistent.
-- **No error boundary** — If API fails, pages may break silently. Need global error handler.
-
-### Summary
-The product looks good for a first sprint. The landing page demo, onboarding wizard, and dashboard are functional. But to reach Apple-level quality:
-1. **Accessibility is the #1 gap** — must be fixed before launch
-2. **Audio previews** will transform onboarding conversion
-3. **"Call Our AI" demo** is the killer feature for the landing page
-4. **Design system consistency** needs a pass
+| # | Action | Impact | Effort | Page |
+|---|--------|--------|--------|------|
+| 1 | Add live call transfer to AI | Critical — table stakes | 2-3 hrs | conversation-relay |
+| 2 | Add demo phone number to landing page | High conversion | 1 hr | index.html |
+| 3 | Add voice preview to onboarding (play greeting) | Aha moment | 2 hrs | onboard.html |
+| 4 | Add ROI calculator to pricing | Conversion boost | 2 hrs | pricing.html |
+| 5 | Add social proof stats bar to landing | Trust signals | 30 min | index.html |
+| 6 | Add call playback in dashboard | User retention | 2-3 hrs | dashboard |
+| 7 | Improve dashboard empty state (onboarding checklist) | First-time UX | 1 hr | dashboard |
+| 8 | Fix pricing page (comparison, FAQ, features) | Conversion | 2 hrs | pricing.html |
+| 9 | Add "Play greeting" to Customize AI | Polish | 1 hr | dashboard |
+| 10 | Add call search/filter | Usability | 2 hrs | dashboard |
