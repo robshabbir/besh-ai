@@ -244,7 +244,7 @@
     <!-- Right: Phone-screen conversation demo -->
     <div class="fade-up fade-up-delay-2 relative flex justify-center">
       <div class="absolute -inset-8 bg-gradient-to-r from-brand-600/10 to-purple-600/10 rounded-[3rem] blur-3xl"></div>
-      <div class="relative phone-frame w-[340px] p-3">
+      <div class="relative phone-frame w-[340px] max-w-[90vw] p-3">
         <!-- Notch -->
         <div class="phone-notch"></div>
         <!-- Screen -->
@@ -691,8 +691,13 @@
     .demo-industry-note.visible { display: block; }
     /* ElevenLabs widget container styling */
     #elevenlabs-widget-area { display: none; }
-    #elevenlabs-widget-area.active { display: flex; align-items: center; justify-content: center; min-height: 120px; }
+    #elevenlabs-widget-area.active { display: flex; align-items: center; justify-content: center; min-height: 160px; padding: 16px; border-radius: 16px; background: rgba(99,102,241,0.05); border: 1px solid rgba(99,102,241,0.15); }
     #elevenlabs-widget-area elevenlabs-convai { width: 100%; }
+    #elevenlabs-widget-area .widget-loading { display: flex; flex-direction: column; align-items: center; gap: 8px; color: #a5b4fc; font-size: 13px; }
+    #elevenlabs-widget-area .widget-loading .spinner { width: 24px; height: 24px; border: 2px solid rgba(99,102,241,0.2); border-top-color: #818cf8; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .demo-industry-toast { position: absolute; top: -40px; left: 50%; transform: translateX(-50%); background: rgba(99,102,241,0.9); color: white; font-size: 11px; padding: 6px 14px; border-radius: 8px; white-space: nowrap; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 10; }
+    .demo-industry-toast.visible { opacity: 1; }
   </style>
 
   <script>
@@ -701,8 +706,40 @@
     let demoTimerInterval = null;
     let demoSeconds = 0;
     let demoWidget = null;
+    let selectedIndustry = 'plumbing';
+
+    // Agent IDs per industry — expand as new ElevenLabs agents are created
+    const INDUSTRY_AGENTS = {
+      plumbing:   'agent_2901khtdsd4temk9vwrrk782q2vw',
+      law:        'agent_2901khtdsd4temk9vwrrk782q2vw', // TODO: create dedicated agent
+      medical:    'agent_2901khtdsd4temk9vwrrk782q2vw', // TODO: create dedicated agent
+      restaurant: 'agent_2901khtdsd4temk9vwrrk782q2vw', // TODO: create dedicated agent
+      salon:      'agent_2901khtdsd4temk9vwrrk782q2vw', // TODO: create dedicated agent
+      auto:       'agent_2901khtdsd4temk9vwrrk782q2vw', // TODO: create dedicated agent
+    };
+
+    function endDemoConversation() {
+      const btn = document.getElementById('demo-start-btn');
+      const orb = document.getElementById('demo-orb-container');
+      const widgetArea = document.getElementById('elevenlabs-widget-area');
+      const transcript = document.getElementById('demo-transcript');
+      const statusEl = document.getElementById('demo-connection-status');
+
+      demoActive = false;
+      clearInterval(demoTimerInterval);
+      btn.innerHTML = '<span class="relative z-10 flex items-center gap-2"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/></svg> Start Conversation</span>';
+      btn.style.background = 'linear-gradient(135deg, #4f46e5, #7c3aed)';
+      btn.style.boxShadow = '0 0 30px rgba(99,102,241,0.3), 0 8px 20px rgba(0,0,0,0.3)';
+      statusEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span><span class="text-green-400 text-[10px] font-semibold">READY</span>';
+      if (demoWidget) { demoWidget.remove(); demoWidget = null; }
+      widgetArea.classList.remove('active');
+      orb.style.display = '';
+      transcript.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-center py-8"><div class="w-12 h-12 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-3"><svg class="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg></div><p class="text-sm text-dark-400">Conversation ended</p><p class="text-xs text-dark-600 mt-1">Click Start Conversation to try again</p></div>';
+    }
 
     function startDemoConversation() {
+      if (demoActive) { endDemoConversation(); return; }
+
       const btn = document.getElementById('demo-start-btn');
       const orb = document.getElementById('demo-orb-container');
       const widgetArea = document.getElementById('elevenlabs-widget-area');
@@ -710,42 +747,18 @@
       const transcript = document.getElementById('demo-transcript');
       const statusEl = document.getElementById('demo-connection-status');
 
-      if (demoActive) {
-        // End conversation
-        demoActive = false;
-        clearInterval(demoTimerInterval);
-        btn.innerHTML = '<span class="relative z-10 flex items-center gap-2"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/></svg> Start Conversation</span>';
-        btn.style.background = 'linear-gradient(135deg, #4f46e5, #7c3aed)';
-        btn.style.boxShadow = '0 0 30px rgba(99,102,241,0.3), 0 8px 20px rgba(0,0,0,0.3)';
-        statusEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span><span class="text-green-400 text-[10px] font-semibold">READY</span>';
-        // Remove the widget
-        if (demoWidget) {
-          demoWidget.remove();
-          demoWidget = null;
-        }
-        widgetArea.classList.remove('active');
-        orb.style.display = '';
-        // Show end state in transcript
-        transcript.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-center py-8"><div class="w-12 h-12 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-3"><svg class="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg></div><p class="text-sm text-dark-400">Conversation ended</p><p class="text-xs text-dark-600 mt-1">Click Start Conversation to try again</p></div>';
-        return;
-      }
-
-      // Start conversation
       demoActive = true;
       demoSeconds = 0;
       if (emptyState) emptyState.style.display = 'none';
       
-      // Show active transcript state
       transcript.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-center py-8"><div class="flex items-center gap-2 mb-3"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div><p class="text-sm text-brand-300 font-medium">Conversation in progress</p><p class="text-xs text-dark-500 mt-1">Speak naturally — the AI is listening and responding via your speakers</p></div>';
       
-      // Update button to "End"
       btn.innerHTML = '<span class="relative z-10 flex items-center gap-2"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"/></svg> End Conversation</span>';
       btn.style.background = 'linear-gradient(135deg, #dc2626, #b91c1c)';
       btn.style.boxShadow = '0 0 30px rgba(220,38,38,0.3), 0 8px 20px rgba(0,0,0,0.3)';
       
       statusEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse"></span><span class="text-brand-400 text-[10px] font-semibold">CONNECTED</span>';
 
-      // Start timer
       demoTimerInterval = setInterval(() => {
         demoSeconds++;
         const m = Math.floor(demoSeconds / 60);
@@ -753,14 +766,20 @@
         document.getElementById('demo-timer').textContent = m + ':' + String(s).padStart(2, '0');
       }, 1000);
 
-      // Hide orb, show ElevenLabs widget properly
+      // Hide orb, show widget area with loading state
       orb.style.display = 'none';
       widgetArea.classList.add('active');
+      widgetArea.innerHTML = '<div class="widget-loading"><div class="spinner"></div>Connecting to AI agent…</div>';
       
-      // Create and insert the ElevenLabs widget
-      demoWidget = document.createElement('elevenlabs-convai');
-      demoWidget.setAttribute('agent-id', 'agent_2901khtdsd4temk9vwrrk782q2vw');
-      widgetArea.appendChild(demoWidget);
+      // Create and insert the ElevenLabs widget with industry-specific agent
+      const agentId = INDUSTRY_AGENTS[selectedIndustry] || INDUSTRY_AGENTS.plumbing;
+      setTimeout(() => {
+        if (!demoActive) return;
+        widgetArea.innerHTML = '';
+        demoWidget = document.createElement('elevenlabs-convai');
+        demoWidget.setAttribute('agent-id', agentId);
+        widgetArea.appendChild(demoWidget);
+      }, 600);
     }
 
     function animateOrbBars() {
@@ -773,21 +792,32 @@
       requestAnimationFrame(() => setTimeout(animateOrbBars, 100));
     }
 
-    // Industry selector — updates agent name + shows note for non-plumbing industries
+    // Industry selector — updates agent name, tracks selection, handles mid-conversation switching
     document.querySelectorAll('.demo-ind-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        const ind = btn.dataset.industry;
+        if (ind === selectedIndustry) return;
+        
         document.querySelectorAll('.demo-ind-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        selectedIndustry = ind;
+        
         const names = { plumbing: 'Anthony · Mike\'s Plumbing', law: 'Lisa · Hart & Associates', medical: 'Amy · Greenfield Medicine', restaurant: 'Maria · Bella Cucina', salon: 'Mia · Luxe Hair Studio', auto: 'Sarah · Ridge Auto' };
-        const ind = btn.dataset.industry;
         document.getElementById('demo-agent-name').textContent = names[ind] || 'AI Agent';
         
-        // Show/hide industry note
+        // Show/hide industry note for non-plumbing (only plumbing has a real dedicated agent currently)
         const note = document.getElementById('demo-industry-note');
         if (ind === 'plumbing') {
           note.classList.remove('visible');
         } else {
           note.classList.add('visible');
+        }
+        
+        // If conversation is active, end it and prompt restart with new industry
+        if (demoActive) {
+          endDemoConversation();
+          const transcript = document.getElementById('demo-transcript');
+          transcript.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-center py-8"><div class="w-10 h-10 rounded-full bg-brand-500/10 border border-brand-500/20 flex items-center justify-center mb-3"><span class="text-lg">' + btn.querySelector('.text-lg').textContent + '</span></div><p class="text-sm text-brand-300 font-medium">Switched to ' + (names[ind] || ind) + '</p><p class="text-xs text-dark-500 mt-1">Click Start Conversation to begin</p></div>';
         }
         
         // Update conversation cards to highlight matching industry
