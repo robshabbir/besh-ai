@@ -1,123 +1,157 @@
-# Competitive Research — Calva AI
-**Date:** Feb 21, 2026 | **Role:** Researcher (Dev2)
+# Competitive Intelligence & Best Practices Research
+**Author:** Dev2 (Researcher role) | **Date:** Feb 21, 2026
 
 ---
 
 ## 1. Competitive Feature Matrix
 
-| Feature | Calva ($49-199/mo) | Goodcall ($79-249/mo) | Smith.ai ($300-2100/mo) | Synthflow ($0.15-0.24/min) |
-|---------|------|---------|---------|-----------|
-| **Target** | SMB (1-20 emp) | SMB-Mid | SMB-Enterprise | Enterprise |
-| **Pricing** | Flat monthly | Per agent + per customer | Per call ($8.50-11.50/call) | Per minute |
-| **Setup time** | ~5 min wizard | Minutes | Human onboarding | Complex |
-| **Voice quality** | ElevenLabs | Proprietary (ex-Google) | Human agents + AI | ElevenLabs |
-| **24/7** | ✅ | ✅ | ✅ (human staffed) | ✅ |
-| **Industry templates** | ✅ 9 templates | ✅ | ❌ Custom only | ✅ Flow builder |
-| **Calendar booking** | ❌ Phase 2 | ✅ Google/CRM | ✅ | ✅ |
-| **CRM integration** | ❌ Phase 2 | ✅ ServiceTitan, HubSpot | ✅ HubSpot, Salesforce, Clio | ✅ |
-| **SMS notifications** | ✅ | ✅ | ✅ | ✅ |
-| **Email notifications** | ✅ | ✅ Google Sheets | ✅ Dashboard | ✅ |
-| **Call analytics** | ✅ Basic | ✅ Rich dashboard | ✅ Rich | ✅ |
-| **Unique customers cap** | Unlimited | 100-500/mo (+$0.50 ea) | By call volume | Unlimited |
-| **White-label** | ❌ | ❌ | ❌ | ✅ $2K/mo |
-| **Visual flow builder** | ❌ | ✅ Logic flows | ❌ | ✅ |
-| **Human fallback** | ❌ | ❌ Pure AI | ✅ Core feature | ❌ |
-| **Free trial** | ❌ (need Stripe) | ✅ | ✅ 30-day money-back | ✅ Free to build |
+| Feature | Calva AI | Synthflow | Bland AI | Goodcall | Smith.ai |
+|---------|----------|-----------|----------|----------|----------|
+| **Target Market** | SMB ($49-199/mo) | Enterprise (usage-based) | Enterprise (custom) | SMB/Mid-market | SMB/Legal ($300+/mo) |
+| **Pricing** | $49/$99/$199 flat | $0.15-0.24/min | Custom/enterprise | Not public | $300/30 calls ($10/call) |
+| **Voice Quality** | ElevenLabs + Gemini | ElevenLabs native | Custom fine-tuned models | Google-born proprietary | Human agents + AI |
+| **Setup Time** | ~5 min (wizard) | Minutes (visual flows) | Weeks (enterprise) | Minutes (no-code) | Days (human training) |
+| **Phone Integration** | Twilio | Native + Twilio + BYOT | Custom SIP | Dedicated numbers | Dedicated numbers |
+| **Calendar Booking** | Phase 2 (SMS capture) | ✅ Real-time | Via API | ✅ CRM + Calendar | ✅ CRM + Calendar |
+| **CRM Integration** | Webhook + HubSpot | API + integrations | Full custom | ServiceTitan, Sheets, Zapier | HubSpot, Salesforce, Clio |
+| **Industry Templates** | 9 templates | Flow-based (any) | Custom per client | General purpose | Legal-focused |
+| **Languages** | English | 30+ | Any language | Multiple | English (human agents) |
+| **Concurrent Calls** | 1 (Phase 1) | 5 free + $20/extra | 1M+ | Unlimited | Human-staffed |
+| **Visual Flow Builder** | ❌ Phase 2 | ✅ Full editor | API-only | ✅ No-code builder | N/A (human) |
+| **White Label** | ❌ | $2K/mo | ✅ | ❌ | ❌ |
+| **Analytics Dashboard** | ✅ Basic | ✅ | ✅ Enterprise | ✅ Advanced | ✅ |
+| **SMS/Chat** | SMS notifications | ✅ Omni-channel | ✅ Calls + SMS + Chat | ❌ Phone only | ✅ Chat + phone |
+| **Live Demo on Site** | ✅ ElevenLabs widget | ✅ Flow preview + audio | ✅ Live call demo | ❌ | ❌ |
 
-### Key Competitive Insights
-
-1. **Calva is the cheapest AI option** — $49/mo vs Goodcall's $79/mo minimum. Smith.ai starts at $300/mo but includes human agents.
-
-2. **Goodcall is our closest competitor** — Same target market (SMB), similar features, founded from Google 2017. They've handled 4.7M+ calls. They have ServiceTitan integration which is huge for plumbing/HVAC.
-
-3. **Smith.ai is human-first** — Different category. They charge per call ($8.50-11.50). Not a direct AI competitor but the incumbent SMBs are leaving.
-
-4. **Synthflow is enterprise** — Complex setup, usage-based pricing. Not competing for the same customer.
-
-5. **Our biggest gap: No calendar booking and no CRM integrations.** Every competitor has these. Calendar is Phase 2 but CRM integrations (even just Zapier) should be high priority.
+### Key Takeaways
+1. **Calva's price is our biggest advantage** — Smith.ai charges $10/call, Synthflow $0.15-0.24/min. Our $49/mo flat rate is 5-10x cheaper for typical SMB volumes (20-50 calls/mo).
+2. **Goodcall is our closest competitor** — SMB-focused, born from Google, no-code setup, 42K+ agents launched. But their pricing isn't public (likely higher).
+3. **Bland AI is not our competition** — they're enterprise-only with custom models, forward-deployed engineers, $M+ deals.
+4. **Smith.ai uses human agents** — expensive but high quality. We compete on price, they compete on quality.
 
 ---
 
 ## 2. Best Practices: AI Voice Agent UX
 
-### What Makes AI Voice Agents Feel Human
-1. **Backchanneling** — "Mm-hmm", "Got it", "Sure" while the caller is speaking. Shows the AI is listening.
-2. **Filler words** — Occasional "let me check on that" or "one moment" before responses. Bridges the LLM latency.
-3. **Name usage** — Use the caller's name once they provide it. Creates connection.
-4. **Warm handoff** — When transferring to human: "I'm going to connect you with [name], I've filled them in on what you need."
-5. **Error recovery** — "I didn't quite catch that, could you say that again?" not "I'm sorry, I didn't understand."
-6. **Conversation memory** — Reference earlier parts of the call: "You mentioned the leak is in the kitchen..."
+### What Makes Voice AI Feel Human
 
-### Recommendations for Calva
-- [ ] Add filler phrases during LLM processing ("Let me look into that for you...")
-- [ ] Add backchanneling sounds to the voice pipeline
-- [ ] Use caller's name after collection
-- [ ] Improve error recovery phrasing
+**Turn-taking patterns (critical):**
+- Use backchanneling ("mmhmm", "right", "got it") during caller speech — Synthflow does this
+- Add natural filler words sparingly ("let me check on that", "one moment")
+- Don't interrupt — wait 300-500ms after caller stops before responding
+- Handle interruptions gracefully — stop talking immediately when caller starts
+
+**Voice selection:**
+- Match voice to industry (warm female for medical, professional male for law)
+- ElevenLabs v3 models sound significantly more natural than flash_v2
+- Stability: 0.4-0.6 range sounds most human (too stable = robotic, too variable = drunk)
+
+**Error recovery:**
+- "I didn't quite catch that — could you say that again?"
+- After 2 misheards: "I'm having a little trouble hearing you. Could you spell that for me?"
+- After 3: "Let me connect you to someone who can help directly."
+
+**Handoff to human:**
+- Offer proactively for complex issues ("This sounds like something our team should handle directly")
+- Warm transfer with context ("I'm connecting you to Mike — I've let him know about your drain issue")
+- Never force callers to stay with AI
+
+### What Goodcall Gets Right (Learn From Them)
+- **97% caller interaction rate** — callers actually engage with their AI
+- **ServiceTitan integration** — field service businesses (plumbers, HVAC) use this
+- **Conditional call forwarding** — try human first, AI as backup (genius UX)
+- **Call analytics** — automation rate, call duration, new vs return caller, intent breakdown
 
 ---
 
 ## 3. SMB Onboarding Best Practices
 
-### Industry Benchmarks
-- **Time to first value:** Best SaaS products deliver value in <3 minutes
-- **Wizard completion rate:** 3-5 steps optimal. 6+ steps drops completion by 30%
-- **Template-first wins:** Pre-filled templates beat blank canvas 4:1 for non-technical users
+### Time to Value
+- **Best-in-class: < 5 minutes** (Goodcall, Synthflow)
+- **Calva current: ~5 min** — on par, but can improve
+- Key insight: Show value BEFORE asking for payment (let them hear the AI first)
 
-### Calva Assessment
-- ✅ Template-first approach (good)
-- ⚠️ 6-step wizard (borderline — consider combining Account + Industry into one step)
-- ⚠️ Payment step before value (consider letting them configure + test call before paying)
-- ❌ No "try before you buy" — Goodcall has free trial, we don't
+### Wizard vs Guided Setup
+- **Template-first wins for SMB** — our approach is correct
+- Show the template working immediately (live preview of greeting)
+- Let them customize after seeing the default work
 
-### Recommendations
-- [ ] Combine steps 1+2 (Account + Industry) into single step
-- [ ] Move Payment to AFTER test call (let them hear their AI first)
-- [ ] Add a "Test your AI" step before payment — let them call their own number
-- [ ] Add progress indicator showing "2 min remaining"
+### Progressive Disclosure
+- **Step 1:** Basic info (business name, industry) — required
+- **Step 2:** Customize greeting — optional but shown
+- **Step 3:** Advanced (hours, FAQs, knowledge base) — hidden behind "Advanced" toggle
+- **Step 4:** Phone setup — the "aha moment"
 
----
-
-## 4. Landing Page Conversion
-
-### Best Practices for AI/Voice Products
-1. **Interactive demo above the fold** — Let visitors try the AI immediately (Synthflow does this well)
-2. **Social proof near CTA** — "4.7M+ calls handled" (Goodcall), star ratings, logos
-3. **Problem → Solution framing** — Lead with the pain ("Missing calls?"), not the tech
-4. **Pricing transparency** — Show pricing on the landing page, not behind a "Contact Sales" wall
-5. **Industry-specific pages** — /plumbers, /lawyers, /salons with tailored messaging
-
-### Calva Assessment
-- ✅ Interactive voice demo (just fixed)
-- ✅ Pricing visible
-- ✅ Industry-specific content
-- ⚠️ No social proof (no reviews, no call count, no logos)
-- ⚠️ Demo requires mic permission before showing value
-- ❌ No industry-specific landing pages (we have the templates but no dedicated pages)
-
-### Recommendations
-- [ ] Add social proof section (even placeholder: "Join 100+ businesses")
-- [ ] Add industry-specific landing pages (/plumbers, /lawyers — we have templates already)
-- [ ] Show a pre-recorded demo conversation that auto-plays (no mic needed) with option to try live
-- [ ] Add "as seen in" logos section (even if aspirational)
+### What We're Missing
+- **Audio preview during onboarding** — let them hear the AI voice saying their greeting BEFORE going live
+- **Test call button** — "Call your AI receptionist now to hear how it sounds"
+- **Progressive trust building** — show social proof at each step
 
 ---
 
-## 5. Priority Ranking for Launch
+## 4. Landing Page Conversion Patterns
 
-### Must-Do Before Launch
-1. **Stripe billing** — Can't charge without it (BLOCKED)
-2. **SMTP email** — Verification flow broken (BLOCKED)
-3. **Domain** — Need a URL (BLOCKED)
-4. **Free trial mechanism** — Let users try before paying
+### What Works for Voice AI Products
 
-### Should-Do Within 2 Weeks Post-Launch
-5. **Zapier integration** — Connects to 5000+ apps, covers CRM gap
-6. **Pre-recorded demo** — Landing page demo that works without mic
-7. **Onboarding streamlined** — 6 steps → 4 steps
-8. **Social proof section** — Even placeholder metrics
+**Hero Section:**
+- Synthflow: Live flow preview + audio samples (interactive)
+- Bland: "Receive a call now" (phone number input → instant demo call)
+- Goodcall: Stats-first (97% interaction rate, 4.7M calls handled)
+- **Winner: Interactive demo** — let people experience it, don't just describe it
 
-### Phase 2 (Month 2-3)
-9. **Google Calendar booking**
-10. **ServiceTitan integration** (huge for plumbing/HVAC)
-11. **Industry landing pages**
-12. **Visual flow builder (lite)**
+**Demo Patterns:**
+- **Best: "Call our AI now"** — Bland does this. Callers enter phone number, receive AI call instantly. Most convincing demo possible.
+- **Good: In-page voice widget** — what we have. ElevenLabs embed.
+- **Okay: Audio samples** — pre-recorded conversations. Least convincing.
+
+**Social Proof:**
+- Specific numbers > vague claims ("4,724,918 calls handled" > "trusted by thousands")
+- Industry logos + use case labels ("Used by 500+ plumbing companies")
+- Before/after metrics ("Reduced missed calls by 94%")
+
+**CTA Optimization:**
+- Primary: "Start Free" or "Try It Free" (not "Sign Up")
+- Secondary: "See It In Action" (demo)
+- Avoid: "Contact Sales" (screams enterprise, kills SMB conversion)
+
+### Specific Recommendations for Calva
+
+1. **Add "Call Our AI" demo** — let visitors enter their phone number and receive a demo call from the plumbing template. This is the #1 conversion driver for voice AI products.
+2. **Add real metrics** — we have 15 tenants and real call data. Show "X calls answered" counter.
+3. **Simplify pricing page** — 3 tiers is fine, but highlight the $49 starter more aggressively. "Less than $2/day."
+4. **Industry-specific landing pages** — /plumbers, /lawyers, /salons with tailored copy and demo agent.
+5. **Trust signals** — "Powered by Twilio + ElevenLabs" badges. Known brands build trust.
+
+---
+
+## 5. Priority Recommendations for Launch
+
+### P0 — Do Before Launch
+1. ~~Fix voice demo widget~~ ✅ Done
+2. ~~Fix test suite~~ ✅ Done
+3. ~~Calendar graceful degradation~~ ✅ Done
+4. Stripe billing (blocked on keys)
+5. SMTP email (blocked on provider)
+6. Domain + deploy (blocked on domain)
+
+### P1 — Do Within First Week
+7. **"Call Our AI" demo** — phone number input on landing page, instant demo call
+8. **Audio preview in onboarding** — hear your greeting before going live
+9. **Real-time call counter** on landing page
+10. **ServiceTitan integration** — #1 CRM for plumbers/HVAC
+
+### P2 — Do Within First Month
+11. Visual flow builder (compete with Synthflow/Goodcall)
+12. Multi-language support
+13. SMS/chat channels
+14. Conditional call forwarding (try human first, AI backup)
+15. Advanced analytics dashboard
+
+---
+
+## Sources
+- Synthflow: synthflow.ai (pricing page, feature page)
+- Bland AI: bland.ai (homepage, enterprise page)
+- Goodcall: goodcall.com (homepage, FAQ, features)
+- Smith.ai: smith.ai/pricing (pricing page)
+- Industry data from product pages and public documentation
