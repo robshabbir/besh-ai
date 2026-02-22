@@ -392,6 +392,21 @@
     </div>
     
     <script>
+        // ROI Calculator
+        function updateROI() {
+            const calls = parseInt(document.getElementById('roi-calls').value) || 0;
+            const value = parseInt(document.getElementById('roi-value').value) || 0;
+            const rate = parseInt(document.getElementById('roi-rate').value) || 0;
+            const monthlyLost = calls * value * (rate / 100) * 4.33;
+            const annualLost = monthlyLost * 12;
+            const roi = monthlyLost > 49 ? Math.round((monthlyLost - 49) / 49) : 0;
+            const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+            document.getElementById('roi-lost').textContent = fmt(monthlyLost);
+            document.getElementById('roi-saved').textContent = roi > 0 ? roi + 'x return' : 'Break even';
+            document.getElementById('roi-annual').textContent = fmt(annualLost) + '/year recovered for $49/mo';
+        }
+        updateROI();
+
         const stripe = Stripe('pk_test_51QqTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'); // Placeholder - will be replaced
         let selectedPlan = null;
         
