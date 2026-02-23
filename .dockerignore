@@ -1,9 +1,8 @@
 node_modules
-npm-debug.log
 .env
+logs/
+data/
 .git
 .gitignore
 *.md
-data/*.db
-data/*.db-shm
-data/*.db-wal
+plans/

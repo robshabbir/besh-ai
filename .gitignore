@@ -2,4 +2,14 @@ node_modules/
 .env
 *.log
 .DS_Store
+
+# Local runtime artifacts
+logs/
+data/
+voice-samples/
+
+# Local one-off notes
+UI-POLISH-LOG.md
+
+# Generated audio temp
 public/audio/temp/*.mp3
