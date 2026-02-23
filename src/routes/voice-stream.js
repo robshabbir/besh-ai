@@ -6,7 +6,7 @@ const { processConversation } = require('../services/claude');
 const { createBooking, handleEmergency } = require('../services/booking');
 const { sendPostCallNotifications } = require('../services/notifications');
 const { createDeepgramConnection } = require('../services/deepgram-stt');
-const { createElevenLabsStream } = require('../services/elevenlabs-stream');
+const { createElevenLabsStream, speakText, speakTextStreaming } = require('../services/elevenlabs-stream');
 
 const router = express.Router();
 
@@ -27,8 +27,8 @@ router.post('/voice-stream', async (req, res) => {
   });
 
   try {
-    const tenant = db.getTenantByPhoneNumber(toNumber) || 
-                   db.getTenantByPhoneNumber(fromNumber);
+    const tenant = await db.getTenantByPhoneNumber(toNumber) || 
+                   await db.getTenantByPhoneNumber(fromNumber);
 
     if (!tenant) {
       logger.error('No tenant found', { to: toNumber, from: fromNumber });
@@ -41,7 +41,7 @@ router.post('/voice-stream', async (req, res) => {
     }
 
     // Create call record
-    const callId = db.createCall(tenant.id, callSid, fromNumber);
+    const callId = await db.createCall(tenant.id, callSid, fromNumber);
     logger.info('Call record created', { callId, tenantId: tenant.id });
 
     // Build WebSocket URL
@@ -95,10 +95,10 @@ router.post('/voice-stream', async (req, res) => {
  * WebSocket handler for Twilio Media Streams
  * Handles bidirectional audio streaming
  */
-function setupMediaStreamWebSocket(wss) {
+async function setupMediaStreamWebSocket(wss) {
   logger.info('Media Stream WebSocket server ready on /ws/media-stream');
 
-  wss.on('connection', (ws, req) => {
+  wss.on('connection', async (ws, req) => {
     // Try to get params from URL (may be stripped by Twilio)
     const params = new URLSearchParams(req.url.split('?')[1] || '');
     const urlCallSid = params.get('callSid');
@@ -123,12 +123,17 @@ function setupMediaStreamWebSocket(wss) {
       isSpeaking: false,
       deepgram: null,
       elevenLabs: null,
-      tenant: urlTenantId ? db.getTenantById(urlTenantId) : null,
+      tenant: null, // resolved async below
       callerPhone: null,
       greetingSent: false,
       audioBuffer: [],
       currentMarkId: 0
     };
+
+    // Resolve tenant async
+    if (urlTenantId) {
+      try { session.tenant = await db.getTenantById(urlTenantId); } catch (e) { logger.error('Failed to load tenant', { error: e.message }); }
+    }
 
     ws.on('message', async (data) => {
       try {
@@ -194,20 +199,20 @@ async function handleStart(ws, session, msg) {
     if (tenantIdParam) {
       session.tenantId = parseInt(tenantIdParam);
       session.callId = parseInt(callIdParam);
-      session.tenant = db.getTenantById(session.tenantId);
+      session.tenant = await db.getTenantById(session.tenantId);
     }
     
     // Still no tenant? Look up by phone number
     if (!session.tenant) {
       const toNumber = msg.start.customParameters?.To || msg.start.to;
       const fromNumber = msg.start.customParameters?.From || msg.start.from;
-      session.tenant = db.getTenantByPhoneNumber(toNumber) || 
-                       db.getTenantByPhoneNumber(fromNumber);
+      session.tenant = await db.getTenantByPhoneNumber(toNumber) || 
+                       await db.getTenantByPhoneNumber(fromNumber);
       if (session.tenant) {
         session.tenantId = session.tenant.id;
         // Create call record if we don't have one
         if (!session.callId) {
-          session.callId = db.createCall(session.tenant.id, session.callSid, session.callerPhone);
+          session.callId = await db.createCall(session.tenant.id, session.callSid, session.callerPhone);
         }
       }
     }
@@ -245,12 +250,14 @@ async function handleStart(ws, session, msg) {
     caller: session.callerPhone
   });
 
-  // Send greeting after a brief pause (like a real person picking up)
+  // Send greeting immediately — don't allow barge-in during greeting
+  session.greetingPlaying = true;
   setTimeout(async () => {
     if (!session.greetingSent) {
       await sendGreeting(ws, session);
+      session.greetingPlaying = false;
     }
-  }, 100);
+  }, 300);
 }
 
 /**
@@ -312,8 +319,8 @@ async function handleTranscript(ws, session, transcript) {
     isSpeaking: session.isSpeaking
   });
 
-  // If AI is speaking, this is a barge-in - stop TTS immediately
-  if (session.isSpeaking) {
+  // If AI is speaking, this is a barge-in - stop TTS (but not during greeting)
+  if (session.isSpeaking && !session.greetingPlaying) {
     logger.info('Barge-in detected, stopping TTS', { callSid: session.callSid });
     
     // Stop current TTS
@@ -343,7 +350,7 @@ async function handleTranscript(ws, session, transcript) {
         detectSpanish(transcript)) {
       session.language = 'es';
       logger.info('Spanish language detected', { callSid: session.callSid });
-      db.updateCall(session.callSid, { language: 'es' });
+      await db.updateCall(session.callSid, { language: 'es' });
     }
 
     // Build system prompt
@@ -379,7 +386,7 @@ async function handleTranscript(ws, session, transcript) {
       systemPrompt += `\n\n## HUMAN HANDOFF\nIf the caller asks to speak with someone or you cannot help them, say something like "Let me transfer you to someone who can help" to initiate a transfer.`;
     }
 
-    // Get AI response
+    // Get AI response — start TTS on FIRST SENTENCE while LLM continues
     const startTime = Date.now();
     const { result, updatedMessages } = await processConversation(
       systemPrompt,
@@ -401,8 +408,29 @@ async function handleTranscript(ws, session, transcript) {
       responseLength: result.message.length
     });
 
+    // Split response into sentences and TTS them in parallel
+    // First sentence plays while remaining sentences generate
+    const sentences = splitIntoSentences(result.message);
+    if (sentences.length > 1 && ws.readyState === 1) {
+      // Fire first sentence TTS immediately, don't await
+      const firstTTS = streamTextToSpeech(ws, session, sentences[0]);
+      // Generate remaining sentences TTS in parallel
+      const restTTS = speakText(sentences.slice(1).join(' '), session.language);
+      
+      await firstTTS;
+      try {
+        const restChunks = await restTTS;
+        if (ws.readyState === 1) {
+          for (const chunk of restChunks) sendAudio(ws, session.streamSid, chunk);
+        }
+      } catch(e) { logger.error('Rest TTS error', { error: e.message }); }
+      
+      // Skip the normal streamTextToSpeech below
+      session._skipTTS = true;
+    }
+
     // Update call record
-    db.updateCall(session.callSid, {
+    await db.updateCall(session.callSid, {
       transcript: session.messages,
       intent: session.intent,
       collected_data: session.collected
@@ -419,7 +447,7 @@ async function handleTranscript(ws, session, transcript) {
       await streamTextToSpeech(ws, session, result.message);
 
       // Mark as transferred
-      db.updateCall(session.callSid, {
+      await db.updateCall(session.callSid, {
         transferred: 1,
         transfer_to: transferPhone
       });
@@ -461,8 +489,11 @@ async function handleTranscript(ws, session, transcript) {
       return;
     }
 
-    // Stream AI response to caller
-    await streamTextToSpeech(ws, session, result.message);
+    // Stream AI response to caller (skip if already sent via sentence splitting above)
+    if (!session._skipTTS) {
+      await streamTextToSpeech(ws, session, result.message);
+    }
+    session._skipTTS = false;
 
     // If conversation complete, handle post-call actions
     if (result.complete) {
@@ -537,69 +568,71 @@ async function sendGreeting(ws, session) {
 }
 
 /**
- * Stream text to speech via ElevenLabs and send to Twilio
+ * Convert text to speech via ElevenLabs streaming API and send to Twilio.
+ * Uses streaming for lower time-to-first-byte — audio starts playing
+ * while the rest is still generating.
  */
 async function streamTextToSpeech(ws, session, text) {
-  return new Promise((resolve, reject) => {
-    session.isSpeaking = true;
-    session.currentMarkId++;
-    const markId = `mark_${session.currentMarkId}`;
-    
-    let audioChunks = [];
-    let totalBytes = 0;
-    
-    // Create ElevenLabs stream
-    session.elevenLabs = createElevenLabsStream(
-      session.language,
-      // onAudio
-      (audioBuffer) => {
-        // Send audio chunk to Twilio as base64 μ-law
-        const base64Audio = audioBuffer.toString('base64');
-        
-        sendAudio(ws, session.streamSid, base64Audio);
-        
-        audioChunks.push(audioBuffer);
-        totalBytes += audioBuffer.length;
-      },
-      // onComplete
-      () => {
-        logger.debug('TTS complete', { 
-          callSid: session.callSid,
-          totalBytes,
-          chunks: audioChunks.length
-        });
-        
-        // Send mark to track completion
-        sendMark(ws, session.streamSid, markId);
-        
-        session.isSpeaking = false;
-        session.elevenLabs = null;
-        resolve();
-      },
-      // onError
-      (error) => {
-        logger.error('ElevenLabs stream error', { 
-          error: error.message,
-          callSid: session.callSid 
-        });
-        
-        session.isSpeaking = false;
-        session.elevenLabs = null;
-        reject(error);
+  session.isSpeaking = true;
+  session.currentMarkId++;
+  const markId = `mark_${session.currentMarkId}`;
+  const t0 = Date.now();
+  let chunkCount = 0;
+  
+  try {
+    // Stream audio chunks to Twilio as they arrive from ElevenLabs
+    await speakTextStreaming(text, session.language, (base64Chunk) => {
+      if (ws.readyState === 1 && session.streamSid) {
+        sendAudio(ws, session.streamSid, base64Chunk);
+        chunkCount++;
       }
-    );
-
-    // Send text to ElevenLabs (can split into chunks for streaming)
-    // For now, send as one chunk for simplicity
-    session.elevenLabs.sendText(text);
-    session.elevenLabs.flush();
-  });
+    });
+    
+    // Send mark after all audio
+    if (ws.readyState === 1) {
+      sendMark(ws, session.streamSid, markId);
+      logger.info('📢 TTS sent (streaming)', { 
+        callSid: session.callSid, 
+        chunks: chunkCount, 
+        ms: Date.now() - t0, 
+        text: text.substring(0, 40) 
+      });
+    } else {
+      logger.warn('Cannot send TTS — call already ended', { callSid: session.callSid });
+    }
+  } catch (error) {
+    logger.error('TTS streaming error, trying fallback', { error: error.message, callSid: session.callSid });
+    
+    // Fallback to non-streaming REST
+    try {
+      const audioChunks = await speakText(text, session.language);
+      if (ws.readyState === 1) {
+        for (const chunk of audioChunks) {
+          sendAudio(ws, session.streamSid, chunk);
+        }
+        sendMark(ws, session.streamSid, markId);
+        logger.info('📢 TTS sent (REST fallback)', { callSid: session.callSid, chunks: audioChunks.length, ms: Date.now() - t0 });
+      }
+    } catch (fallbackError) {
+      logger.error('TTS fallback also failed', { error: fallbackError.message });
+    }
+  } finally {
+    session.isSpeaking = false;
+  }
 }
 
 /**
  * Send audio chunk to Twilio Media Stream
  */
 function sendAudio(ws, streamSid, base64Audio) {
+  if (ws.readyState !== 1) {
+    logger.warn('Cannot send audio — WS not open', { readyState: ws.readyState, streamSid });
+    return;
+  }
+  if (!streamSid) {
+    logger.warn('Cannot send audio — no streamSid');
+    return;
+  }
   const message = {
     event: 'media',
     streamSid: streamSid,
@@ -643,7 +676,7 @@ function sendClear(ws, streamSid) {
 /**
  * Handle WebSocket close
  */
-function handleClose(session) {
+async function handleClose(session) {
   logger.info('Media Stream connection closed', { 
     callSid: session.callSid,
     turns: session.turnCount 
@@ -661,7 +694,7 @@ function handleClose(session) {
 
   // Update call record
   try {
-    db.updateCall(session.callSid, {
+    await db.updateCall(session.callSid, {
       ended_at: new Date().toISOString()
     });
   } catch (e) {
@@ -722,6 +755,16 @@ function isWithinBusinessHours(businessHours) {
   }
   
   return currentTime >= todayHours.open && currentTime <= todayHours.close;
+}
+
+/**
+ * Split text into sentences for pipelined TTS
+ */
+function splitIntoSentences(text) {
+  // Split on sentence endings but keep them attached
+  const parts = text.match(/[^.!?]+[.!?]+\s*/g);
+  if (!parts || parts.length <= 1) return [text];
+  return parts.map(s => s.trim()).filter(s => s.length > 0);
 }
 
 module.exports = {

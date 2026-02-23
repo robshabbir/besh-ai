@@ -15,7 +15,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -30,7 +30,7 @@
         }
         
         header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
             color: white;
             padding: 40px;
             text-align: center;
@@ -55,11 +55,11 @@
             padding: 25px;
             border-radius: 10px;
             margin-bottom: 40px;
-            border-left: 5px solid #667eea;
+            border-left: 5px solid #4f46e5;
         }
         
         .intro h2 {
-            color: #667eea;
+            color: #4f46e5;
             margin-bottom: 15px;
             font-size: 1.5rem;
         }
@@ -77,7 +77,7 @@
         }
         
         .carrier-header {
-            background: #667eea;
+            background: #4f46e5;
             color: white;
             padding: 20px 25px;
             cursor: pointer;
@@ -107,7 +107,7 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            color: #667eea;
+            color: #4f46e5;
         }
         
         .toggle-icon {
@@ -136,7 +136,7 @@
         }
         
         .method h4 {
-            color: #667eea;
+            color: #4f46e5;
             margin-bottom: 15px;
             font-size: 1.2rem;
         }
@@ -158,7 +158,7 @@
             position: absolute;
             left: 0;
             top: 0;
-            background: #667eea;
+            background: #4f46e5;
             color: white;
             width: 30px;
             height: 30px;
@@ -195,7 +195,7 @@
         
         .tip {
             background: #d1ecf1;
-            border-left: 4px solid #17a2b8;
+            border-left: 4px solid #4f46e5;
             padding: 15px;
             margin: 15px 0;
             border-radius: 4px;
@@ -208,7 +208,7 @@
         .phone-input {
             margin: 30px 0;
             padding: 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
             border-radius: 10px;
             text-align: center;
         }
@@ -492,12 +492,20 @@
             });
         });
         
-        // Try to get Calva number from URL parameter
+        // Try to get Calva number from URL parameter or API
         const urlParams = new URLSearchParams(window.location.search);
         const calvaNumber = urlParams.get('number');
         if (calvaNumber) {
             calvaInput.value = calvaNumber;
             calvaInput.dispatchEvent(new Event('input'));
+        } else {
+            // Try loading from user's account
+            fetch('/auth/me').then(r => r.ok ? r.json() : null).then(data => {
+                if (data?.tenant?.phoneNumber) {
+                    calvaInput.value = data.tenant.phoneNumber;
+                    calvaInput.dispatchEvent(new Event('input'));
+                }
+            }).catch(() => {});
         }
         
         // Open first carrier by default

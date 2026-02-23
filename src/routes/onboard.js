@@ -44,14 +44,14 @@ function sanitizeObject(obj) {
 /**
  * Serve onboarding page
  */
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/onboard.html'));
 });
 
 /**
  * Get available industry templates
  */
-router.get('/templates', rateLimit(20, 60000), (req, res) => {
+router.get('/templates', rateLimit(20, 60000), async (req, res) => {
   try {
     const templates = listAvailableTemplates();
     res.json({ templates });
@@ -64,7 +64,7 @@ router.get('/templates', rateLimit(20, 60000), (req, res) => {
 /**
  * Get template customization variables
  */
-router.get('/templates/:name/variables', rateLimit(20, 60000), (req, res) => {
+router.get('/templates/:name/variables', rateLimit(20, 60000), async (req, res) => {
   try {
     const templateInfo = getTemplateVariables(req.params.name);
     res.json(templateInfo);
@@ -122,23 +122,41 @@ router.post('/create', rateLimit(5, 60000), validateOnboardingData, async (req, 
     // Merge template with business config
     const processedConfig = mergeTemplateWithConfig(templateName, businessConfig);
 
-    // Generate API key
-    const apiKey = 'calva_' + crypto.randomBytes(32).toString('hex');
+    // Check if user already has a tenant from signup (avoid double-creation)
+    let tenantId = req.session?.tenantId;
+    let apiKey;
 
-    // Create tenant (without phone number initially)
-    const tenantId = db.createTenant(
-      businessName,
-      industry || processedConfig.industry,
-      null, // Phone number will be provisioned next
-      processedConfig,
-      apiKey
-    );
+    if (tenantId) {
+      // Update existing tenant from signup
+      const existingTenant = await db.getTenantById(tenantId);
+      if (existingTenant) {
+        apiKey = existingTenant.api_key;
+        await db.updateTenant(tenantId, {
+          name: businessName,
+          config_json: { ...processedConfig, setupComplete: true }
+        });
+        // Update industry
+        try {
+          await db.updateTenant(tenantId, { industry: industry || processedConfig.industry });
+        } catch (e) { /* ignore */ }
+        logger.info('Existing tenant updated during onboarding', { tenantId, businessName });
+      } else {
+        tenantId = null; // Fall through to create new
+      }
+    }
 
-    logger.info('New tenant created', { 
-      tenantId, 
-      businessName, 
-      industry: processedConfig.industry 
-    });
+    if (!tenantId) {
+      // No session tenant — create new one (legacy/API path)
+      apiKey = 'calva_' + crypto.randomBytes(32).toString('hex');
+      tenantId = await db.createTenant(
+        businessName,
+        industry || processedConfig.industry,
+        null,
+        processedConfig,
+        apiKey
+      );
+      logger.info('New tenant created', { tenantId, businessName, industry: processedConfig.industry });
+    }
 
     // Auto-provision phone number
     let phoneInfo = null;
@@ -203,14 +221,14 @@ router.post('/assign-phone', rateLimit(10, 60000), async (req, res) => {
       });
     }
 
-    const tenant = db.getTenantByApiKey(api_key);
+    const tenant = await db.getTenantByApiKey(api_key);
     
     if (!tenant) {
       return res.status(404).json({ error: 'Invalid API key' });
     }
 
     // Check if phone number already in use
-    const existingTenant = db.getTenantByPhoneNumber(phone_number);
+    const existingTenant = await db.getTenantByPhoneNumber(phone_number);
     if (existingTenant && existingTenant.id !== tenant.id) {
       return res.status(400).json({ 
         error: 'Phone number already assigned to another tenant' 
@@ -218,7 +236,7 @@ router.post('/assign-phone', rateLimit(10, 60000), async (req, res) => {
     }
 
     // Update tenant with phone number
-    db.updateTenant(tenant.id, { phone_number });
+    await db.updateTenant(tenant.id, { phone_number });
 
     logger.info('Phone number assigned', { tenantId: tenant.id, phone_number });
 

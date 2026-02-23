@@ -5,31 +5,35 @@ const crypto = require('crypto');
 const { provisionPhoneNumberForTenant } = require('../services/twilio-provisioning');
 const { sendSMS } = require('../services/notify');
 const { loadTemplate } = require('../services/template-loader');
+const { rateLimit } = require('../middleware/rateLimit');
 
 const router = express.Router();
+
+// Rate limit checkout creation
+router.use('/create-checkout', rateLimit(3, 60000));
 
 const isPlaceholder = (process.env.STRIPE_SECRET_KEY || '').includes('PLACEHOLDER');
 const stripe = isPlaceholder ? null : require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-// Pricing tiers
+// Pricing tiers (aligned with landing page)
 const PRICING = {
   starter: {
     priceId: process.env.STRIPE_PRICE_STARTER || 'price_starter_test',
     name: 'Starter',
-    amount: 9900, // $99/mo in cents
-    calls: 100
+    amount: 4900, // $49/mo in cents
+    minutes: 100
   },
   pro: {
     priceId: process.env.STRIPE_PRICE_PRO || 'price_pro_test',
-    name: 'Pro',
-    amount: 29700, // $297/mo in cents
-    calls: 500
+    name: 'Professional',
+    amount: 9900, // $99/mo in cents
+    minutes: 300
   },
   business: {
     priceId: process.env.STRIPE_PRICE_BUSINESS || 'price_business_test',
     name: 'Business',
-    amount: 59700, // $597/mo in cents
-    calls: -1 // unlimited
+    amount: 19900, // $199/mo in cents
+    minutes: 1000
   }
 };
 
@@ -190,7 +194,7 @@ async function handleCheckoutCompleted(session) {
   
   try {
     // Check if tenant already exists for this customer
-    const existingTenants = db.getAllTenants();
+    const existingTenants = await db.getAllTenants();
     const existing = existingTenants.find(t => 
       t.config?.stripeCustomerId === customerId
     );
@@ -199,7 +203,7 @@ async function handleCheckoutCompleted(session) {
       logger.info('Tenant already exists for customer', { tenantId: existing.id, customerId });
       // Re-activate if was deactivated
       if (!existing.active) {
-        db.updateTenant(existing.id, { active: 1 });
+        await db.updateTenant(existing.id, { active: true });
         logger.info('Tenant re-activated', { tenantId: existing.id });
       }
       return;
@@ -244,7 +248,7 @@ async function handleCheckoutCompleted(session) {
     };
     
     // Create tenant in database with placeholder phone number
-    const tenantId = db.createTenant(
+    const tenantId = await db.createTenant(
       business_name,
       industry || 'general',
       '+1000000000', // Temporary placeholder
@@ -358,7 +362,7 @@ async function handleSubscriptionUpdated(subscription) {
   logger.info('Subscription updated', { customerId, status });
   
   try {
-    const tenants = db.getAllTenants();
+    const tenants = await db.getAllTenants();
     const tenant = tenants.find(t => t.config?.stripeCustomerId === customerId);
     
     if (!tenant) {
@@ -369,7 +373,7 @@ async function handleSubscriptionUpdated(subscription) {
     // Update tenant status based on subscription status
     const active = ['active', 'trialing'].includes(status);
     
-    db.updateTenant(tenant.id, { active: active ? 1 : 0 });
+    await db.updateTenant(tenant.id, { active: active ? 1 : 0 });
     
     logger.info('Tenant status updated', { 
       tenantId: tenant.id, 
@@ -394,7 +398,7 @@ async function handleSubscriptionDeleted(subscription) {
   logger.info('Subscription deleted', { customerId });
   
   try {
-    const tenants = db.getAllTenants();
+    const tenants = await db.getAllTenants();
     const tenant = tenants.find(t => t.config?.stripeCustomerId === customerId);
     
     if (!tenant) {
@@ -403,7 +407,7 @@ async function handleSubscriptionDeleted(subscription) {
     }
     
     // Deactivate tenant
-    db.updateTenant(tenant.id, { active: 0 });
+    await db.updateTenant(tenant.id, { active: false });
     
     logger.info('Tenant deactivated', { tenantId: tenant.id, customerId });
     
@@ -431,7 +435,7 @@ async function handlePaymentFailed(invoice) {
  * GET /billing/status
  * Returns payment/subscription status for the current tenant
  */
-router.get('/status', (req, res) => {
+router.get('/status', async (req, res) => {
   if (isPlaceholder) {
     return res.json({ status: 'skipped', message: 'Stripe not configured — payment step skipped', paid: true });
   }
@@ -440,7 +444,7 @@ router.get('/status', (req, res) => {
     return res.status(401).json({ error: 'Not authenticated' });
   }
 
-  const tenant = db.getTenantById(req.session.tenantId);
+  const tenant = await db.getTenantById(req.session.tenantId);
   if (!tenant) {
     return res.status(404).json({ error: 'Tenant not found' });
   }

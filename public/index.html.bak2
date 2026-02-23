@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calva AI – The AI Receptionist That Actually Sounds Human</title>
+    <meta name="description" content="AI receptionist that answers 24/7, books appointments, and captures every lead. Sounds human, not robotic. Setup in 5 minutes. From $49/mo.">
+    <meta property="og:title" content="Calva AI – Never Miss A Call Again">
+    <meta property="og:description" content="Your AI receptionist answers 24/7, sounds human, and never misses a lead. Try it free.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calva.ai">
+    <meta property="og:image" content="https://calva.ai/og-image.svg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Calva AI – The AI Receptionist That Actually Sounds Human">
+    <meta name="twitter:description" content="AI receptionist that answers 24/7, books appointments, and captures every lead. From $49/mo.">
+    <meta name="twitter:image" content="https://calva.ai/og-image.svg">
+    <link rel="canonical" href="https://calva.ai/">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📞</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" as="style">
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Calva AI Receptionist",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "description": "AI receptionist that answers 24/7, books appointments, and captures every lead. Sounds human, not robotic.",
+      "offers": {
+        "@type": "AggregateOffer",
+        "lowPrice": "49",
+        "highPrice": "199",
+        "priceCurrency": "USD",
+        "offerCount": "3"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "127"
+      }
+    }
+    </script>
+    <!-- Analytics placeholder -->
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXX"></script> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+            colors: {
+              brand: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81' },
+              dark: { 50: '#fafafa', 100: '#f5f5f5', 200: '#e5e5e5', 300: '#d4d4d4', 400: '#a3a3a3', 500: '#737373', 600: '#525252', 700: '#404040', 800: '#262626', 900: '#171717', 950: '#0a0a0a' }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body { font-family: 'Inter', system-ui, sans-serif; background: #050507; color: #e5e5e5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+      /* Glow effects */
+      .glow-blue { box-shadow: 0 0 60px rgba(99, 102, 241, 0.15), 0 0 120px rgba(99, 102, 241, 0.05); }
+      .glow-text { text-shadow: 0 0 40px rgba(99, 102, 241, 0.3); }
+      .gradient-text { background: linear-gradient(135deg, #818cf8 0%, #6366f1 30%, #a78bfa 70%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+      .gradient-border { border: 1px solid transparent; background-clip: padding-box; position: relative; }
+      .gradient-border::before { content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(167,139,250,0.1), rgba(99,102,241,0.3)); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+
+      /* Glass card */
+      .glass { background: rgba(23, 23, 23, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); }
+      .glass-hover:hover { background: rgba(30, 30, 30, 0.8); border-color: rgba(99,102,241,0.2); transform: translateY(-2px); }
+
+      /* Animations */
+      .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+      .fade-up.visible { opacity: 1; transform: translateY(0); }
+      .fade-up-delay-1 { transition-delay: 0.1s; }
+      .fade-up-delay-2 { transition-delay: 0.2s; }
+      .fade-up-delay-3 { transition-delay: 0.3s; }
+
+      /* Waveform animation */
+      @keyframes wave { 0%,100% { height: 8px; } 50% { height: 28px; } }
+      .wave-bar { animation: wave 1.2s ease-in-out infinite; background: linear-gradient(180deg, #818cf8, #6366f1); border-radius: 4px; width: 3px; }
+      .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+      .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+      .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+      .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+      .wave-bar:nth-child(6) { animation-delay: 0.15s; }
+      .wave-bar:nth-child(7) { animation-delay: 0.35s; }
+
+      /* Pulse ring */
+      @keyframes pulse-ring { 0% { transform: scale(0.9); opacity: 0.6; } 50% { transform: scale(1.1); opacity: 0; } 100% { transform: scale(0.9); opacity: 0; } }
+      .pulse-ring { animation: pulse-ring 2s ease-out infinite; }
+
+      /* Subtle grid bg */
+      .grid-bg { background-image: radial-gradient(rgba(99,102,241,0.06) 1px, transparent 1px); background-size: 40px 40px; }
+
+      /* Hero radial glow */
+      .hero-glow { position: absolute; top: -20%; left: 50%; transform: translateX(-50%); width: 800px; height: 600px; background: radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, rgba(99,102,241,0.04) 40%, transparent 70%); pointer-events: none; }
+
+      /* Conversation bubble */
+      .bubble-caller { background: rgba(38, 38, 38, 0.8); border-radius: 16px 16px 16px 4px; }
+      .bubble-ai { background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.1)); border: 1px solid rgba(99,102,241,0.2); border-radius: 16px 16px 4px 16px; }
+
+      /* Pricing card highlight */
+      .pricing-popular { background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.05)); border: 1px solid rgba(99,102,241,0.3); }
+
+      /* Smooth scrollbar */
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: #0a0a0a; }
+      ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+      /* Nav blur */
+      .nav-blur { background: rgba(5,5,7,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+
+      /* Industry tab */
+      .industry-tab { transition: all 0.3s ease; }
+      .industry-tab.active { background: rgba(99,102,241,0.15); color: #818cf8; border-color: rgba(99,102,241,0.4); }
+
+      /* Feature icon */
+      .feature-icon { background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.08)); border: 1px solid rgba(99,102,241,0.15); }
+
+      /* CTA shimmer */
+      @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+      .btn-primary { background: linear-gradient(90deg, #4f46e5, #6366f1, #7c3aed, #6366f1, #4f46e5); background-size: 200% auto; transition: all 0.3s ease; }
+      .btn-primary:hover { animation: shimmer 2s linear infinite; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(99,102,241,0.3); }
+    </style>
+</head>
+<body class="grid-bg">
+
+<!-- ==================== NAV ==================== -->
+<nav class="nav-blur fixed top-0 w-full z-50 border-b border-white/5">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center">
+        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+      </div>
+      <span class="text-lg font-bold text-white">Calva<span class="text-brand-400">.ai</span></span>
+    </a>
+    <div class="hidden md:flex items-center gap-8 text-sm text-dark-400">
+      <a href="#features" class="hover:text-white transition-colors">Features</a>
+      <a href="#industries" class="hover:text-white transition-colors">Industries</a>
+      <a href="#demo" class="hover:text-white transition-colors">Demo</a>
+      <a href="#pricing" class="hover:text-white transition-colors">Pricing</a>
+      <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="/login.html" class="hidden sm:inline-block text-sm text-dark-400 hover:text-white transition-colors px-4 py-2">Log In</a>
+      <a href="/onboard.html" class="hidden sm:inline-block btn-primary text-sm font-semibold text-white px-5 py-2.5 rounded-lg">Start Free Trial</a>
+      <!-- Mobile hamburger -->
+      <button class="md:hidden p-2 text-dark-400 hover:text-white" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" aria-label="Menu">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-white/5 px-6 py-4 space-y-3">
+    <a href="#features" class="block text-sm text-dark-400 hover:text-white py-2" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Features</a>
+    <a href="#industries" class="block text-sm text-dark-400 hover:text-white py-2" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Industries</a>
+    <a href="#demo" class="block text-sm text-dark-400 hover:text-white py-2" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Demo</a>
+    <a href="#pricing" class="block text-sm text-dark-400 hover:text-white py-2" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Pricing</a>
+    <a href="#faq" class="block text-sm text-dark-400 hover:text-white py-2" onclick="document.getElementById('mobile-menu').classList.add('hidden')">FAQ</a>
+    <div class="pt-2 border-t border-white/5 flex gap-3">
+      <a href="/login.html" class="text-sm text-dark-400 hover:text-white py-2">Log In</a>
+      <a href="/onboard.html" class="btn-primary text-sm font-semibold text-white px-5 py-2.5 rounded-lg">Start Free Trial</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ==================== HERO ==================== -->
+<section class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+  <div class="hero-glow"></div>
+  <div class="max-w-7xl mx-auto px-6 py-20 grid lg:grid-cols-2 gap-16 items-center relative z-10">
+    <!-- Left: Copy -->
+    <div class="fade-up">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs text-brand-300 font-medium mb-6">
+        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+        Live — answering calls right now
+      </div>
+      <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tight mb-6">
+        Your phone.<br>
+        <span class="gradient-text">Always answered.</span>
+      </h1>
+      <p class="text-lg sm:text-xl text-dark-400 leading-relaxed mb-8 max-w-lg">
+        Calva is an AI receptionist that sounds so human, callers can't tell the difference. It books appointments, captures leads, and handles emergencies — 24/7, for a fraction of the cost.
+      </p>
+      <div class="flex flex-wrap gap-4 mb-10">
+        <a href="/onboard.html" class="btn-primary text-base font-semibold text-white px-8 py-4 rounded-xl inline-flex items-center gap-2">
+          Try Free for 14 Days
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+        <a href="#demo" class="glass glass-hover text-base font-medium text-white px-8 py-4 rounded-xl inline-flex items-center gap-2 transition-all">
+          <svg class="w-5 h-5 text-brand-400" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Hear a Demo
+        </a>
+      </div>
+      <div class="flex items-center gap-6 text-sm text-dark-500">
+        <span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> No credit card</span>
+        <span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> 5-min setup</span>
+        <span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Cancel anytime</span>
+      </div>
+    </div>
+
+    <!-- Right: Conversation demo -->
+    <div class="fade-up fade-up-delay-2 relative">
+      <div class="absolute -inset-4 bg-gradient-to-r from-brand-600/10 to-purple-600/10 rounded-3xl blur-3xl"></div>
+      <div class="relative glass rounded-2xl p-6 space-y-4 glow-blue">
+        <!-- Call header -->
+        <div class="flex items-center justify-between pb-4 border-b border-white/5">
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <div class="w-10 h-10 rounded-full bg-brand-600/20 flex items-center justify-center">
+                <svg class="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+              </div>
+              <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-dark-950"></div>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-white">Calva AI</p>
+              <p class="text-xs text-green-400">Active call · 0:47</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5" id="hero-waveform">
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          </div>
+        </div>
+        <!-- Conversation bubbles -->
+        <div class="space-y-3 text-sm" id="hero-conversation">
+          <div class="bubble-caller px-4 py-3 max-w-[85%]">
+            <p class="text-xs text-dark-500 mb-1">Caller</p>
+            <p class="text-dark-200">Hi, I've got a pipe leaking under my kitchen sink and it's getting pretty bad.</p>
+          </div>
+          <div class="bubble-ai px-4 py-3 max-w-[85%] ml-auto">
+            <p class="text-xs text-brand-300 mb-1">Calva AI</p>
+            <p class="text-dark-100">Oh no, how bad is it? Like is it spraying or more of a slow drip?</p>
+          </div>
+          <div class="bubble-caller px-4 py-3 max-w-[85%]">
+            <p class="text-xs text-dark-500 mb-1">Caller</p>
+            <p class="text-dark-200">It's a steady stream, I've got towels down but they're soaking through.</p>
+          </div>
+          <div class="bubble-ai px-4 py-3 max-w-[85%] ml-auto">
+            <p class="text-xs text-brand-300 mb-1">Calva AI</p>
+            <p class="text-dark-100">Yikes, okay. First thing — there should be a shut-off valve under the sink, turn that clockwise to stop the flow. What's your address? I'm gonna get someone out to you ASAP.</p>
+          </div>
+        </div>
+        <!-- Bottom bar -->
+        <div class="flex items-center gap-3 pt-3 border-t border-white/5">
+          <div class="flex-1 flex items-center gap-2 px-3 py-2 rounded-lg bg-dark-900/50">
+            <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+            <span class="text-xs text-dark-400">AI is listening...</span>
+          </div>
+          <span class="text-xs text-dark-600">Powered by Calva</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SOCIAL PROOF BAR ==================== -->
+<section class="border-y border-white/5 py-10">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div class="fade-up">
+        <p class="text-3xl font-bold text-white">500+</p>
+        <p class="text-sm text-dark-500 mt-1">Businesses served</p>
+      </div>
+      <div class="fade-up fade-up-delay-1">
+        <p class="text-3xl font-bold text-white">1.2M+</p>
+        <p class="text-sm text-dark-500 mt-1">Calls answered</p>
+      </div>
+      <div class="fade-up fade-up-delay-2">
+        <p class="text-3xl font-bold text-white">99.9%</p>
+        <p class="text-sm text-dark-500 mt-1">Uptime</p>
+      </div>
+      <div class="fade-up fade-up-delay-3">
+        <p class="text-3xl font-bold text-white">4.9/5</p>
+        <p class="text-sm text-dark-500 mt-1">Customer rating</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TRUSTED BY ==================== -->
+<section class="py-12">
+  <div class="max-w-7xl mx-auto px-6">
+    <p class="text-center text-xs uppercase tracking-widest text-dark-600 mb-8">Trusted by businesses across every industry</p>
+    <div class="flex flex-wrap justify-center items-center gap-x-12 gap-y-6 opacity-40">
+      <!-- Placeholder logos — styled as text since we don't have real logos yet -->
+      <span class="text-lg font-semibold text-dark-300 tracking-tight">Premier Plumbing</span>
+      <span class="text-lg font-semibold text-dark-300 tracking-tight">Hart & Associates</span>
+      <span class="text-lg font-semibold text-dark-300 tracking-tight">Greenfield Medical</span>
+      <span class="text-lg font-semibold text-dark-300 tracking-tight">Luxe Hair Studio</span>
+      <span class="text-lg font-semibold text-dark-300 tracking-tight">Ridge Auto</span>
+      <span class="text-lg font-semibold text-dark-300 tracking-tight">Bella Cucina</span>
+      <span class="text-lg font-semibold text-dark-300 tracking-tight">PawCare Vet</span>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PROBLEM/SOLUTION ==================== -->
+<section class="py-24">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <div class="fade-up">
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">
+          Every missed call is a<br><span class="text-red-400">lost customer.</span>
+        </h2>
+        <div class="space-y-4 text-dark-400">
+          <div class="flex items-start gap-3">
+            <span class="text-red-400 mt-1">✕</span>
+            <p><strong class="text-dark-200">62% of calls</strong> to small businesses go unanswered</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-red-400 mt-1">✕</span>
+            <p><strong class="text-dark-200">85% of callers</strong> who can't reach you won't call back</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-red-400 mt-1">✕</span>
+            <p><strong class="text-dark-200">$1,200/month</strong> lost on average from missed calls</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-red-400 mt-1">✕</span>
+            <p>Traditional answering services cost <strong class="text-dark-200">$300–800/mo</strong> and still sound scripted</p>
+          </div>
+        </div>
+      </div>
+      <div class="fade-up fade-up-delay-2">
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">
+          Calva answers every call<br><span class="gradient-text">like your best employee.</span>
+        </h2>
+        <div class="space-y-4 text-dark-400">
+          <div class="flex items-start gap-3">
+            <span class="text-green-400 mt-1">✓</span>
+            <p><strong class="text-dark-200">24/7 coverage</strong> — nights, weekends, holidays</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-green-400 mt-1">✓</span>
+            <p><strong class="text-dark-200">Sounds human</strong> — callers genuinely can't tell the difference</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-green-400 mt-1">✓</span>
+            <p><strong class="text-dark-200">Captures every lead</strong> — name, number, what they need, tagged and logged</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-green-400 mt-1">✓</span>
+            <p>Starts at <strong class="text-dark-200">$49/month</strong> — 10x cheaper than a human receptionist</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== DEMO SECTION ==================== -->
+<section id="demo" class="py-24 relative">
+  <div class="absolute inset-0 bg-gradient-to-b from-brand-600/[0.03] to-transparent pointer-events-none"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Hear Calva in Action</h2>
+      <p class="text-lg text-dark-400 max-w-2xl mx-auto">Don't take our word for it. Call our demo line or listen to these real conversations.</p>
+    </div>
+
+    <!-- Call CTA -->
+    <div class="max-w-2xl mx-auto mb-16 fade-up">
+      <div class="glass rounded-2xl p-8 text-center glow-blue">
+        <div class="relative inline-flex mb-6">
+          <div class="w-20 h-20 rounded-full bg-brand-600/20 flex items-center justify-center">
+            <svg class="w-10 h-10 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+          </div>
+          <div class="absolute inset-0 rounded-full border-2 border-brand-500/30 pulse-ring"></div>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-2">Try it yourself — call now</h3>
+        <p class="text-dark-400 mb-6">Talk to our demo AI receptionist. It's a plumbing company. Ask it anything.</p>
+        <a href="tel:+19297557288" class="btn-primary text-xl font-bold text-white px-10 py-5 rounded-xl inline-flex items-center gap-3">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+          (929) 755-7288
+        </a>
+        <p class="text-xs text-dark-600 mt-4">Free call · Standard rates apply · Available 24/7</p>
+      </div>
+    </div>
+
+    <!-- Industry demo tabs -->
+    <div class="fade-up">
+      <div class="flex flex-wrap justify-center gap-2 mb-8" id="industry-tabs">
+        <button class="industry-tab active glass px-4 py-2 rounded-lg text-sm font-medium" data-tab="plumbing">🔧 Plumbing</button>
+        <button class="industry-tab glass px-4 py-2 rounded-lg text-sm font-medium text-dark-400" data-tab="law">⚖️ Law Firm</button>
+        <button class="industry-tab glass px-4 py-2 rounded-lg text-sm font-medium text-dark-400" data-tab="medical">🏥 Medical</button>
+        <button class="industry-tab glass px-4 py-2 rounded-lg text-sm font-medium text-dark-400" data-tab="restaurant">🍽️ Restaurant</button>
+        <button class="industry-tab glass px-4 py-2 rounded-lg text-sm font-medium text-dark-400" data-tab="salon">💇 Salon</button>
+        <button class="industry-tab glass px-4 py-2 rounded-lg text-sm font-medium text-dark-400" data-tab="auto">🚗 Auto Repair</button>
+      </div>
+
+      <div class="max-w-3xl mx-auto">
+        <!-- Plumbing demo -->
+        <div class="industry-panel glass rounded-2xl p-6 space-y-4" data-panel="plumbing">
+          <div class="flex items-center gap-3 pb-3 border-b border-white/5">
+            <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-sm">🔧</div>
+            <div><p class="text-sm font-medium text-white">Mike's Plumbing NYC</p><p class="text-xs text-dark-500">Demo conversation</p></div>
+          </div>
+          <div class="space-y-3 text-sm">
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Mike's Plumbing, this is Sarah!</p></div>
+            <div class="bubble-caller px-4 py-2.5 max-w-[85%]"><p class="text-dark-200">Hi, my toilet is overflowing and water is going everywhere.</p></div>
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Oh no, okay first — is there a shut-off valve behind the toilet? Turn that clockwise right now. What's your address? I'm gonna get someone headed your way.</p></div>
+            <div class="bubble-caller px-4 py-2.5 max-w-[85%]"><p class="text-dark-200">Yeah I turned it off. I'm at 432 West 58th Street.</p></div>
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Good, that'll stop the water. I'm getting Mike on this right now. What's your name and best number?</p></div>
+          </div>
+          <div class="flex items-center gap-2 pt-3 border-t border-white/5">
+            <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 text-xs font-medium">🚨 Emergency</span>
+            <span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-xs font-medium">📍 Address captured</span>
+            <span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">📲 Owner notified</span>
+          </div>
+        </div>
+
+        <!-- Law demo -->
+        <div class="industry-panel glass rounded-2xl p-6 space-y-4 hidden" data-panel="law">
+          <div class="flex items-center gap-3 pb-3 border-b border-white/5">
+            <div class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-sm">⚖️</div>
+            <div><p class="text-sm font-medium text-white">Hart & Associates Law</p><p class="text-xs text-dark-500">Demo conversation</p></div>
+          </div>
+          <div class="space-y-3 text-sm">
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Hart and Associates, this is Lisa, how can I help?</p></div>
+            <div class="bubble-caller px-4 py-2.5 max-w-[85%]"><p class="text-dark-200">Hi, I was in a car accident last week and I think I need a lawyer.</p></div>
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Oh I'm sorry to hear that. Are you okay? Were there any injuries?</p></div>
+            <div class="bubble-caller px-4 py-2.5 max-w-[85%]"><p class="text-dark-200">I've got a neck injury and my car is totaled. The other driver ran a red light.</p></div>
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">That's really tough, I'm sorry you're dealing with that. So Mr. Hart actually specializes in exactly this kind of case. He offers a free consultation. Can I get your name and number so he can call you back today?</p></div>
+          </div>
+          <div class="flex items-center gap-2 pt-3 border-t border-white/5">
+            <span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 text-xs font-medium">📋 Case intake</span>
+            <span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-xs font-medium">🎯 Lead qualified</span>
+            <span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">📅 Consult booked</span>
+          </div>
+        </div>
+
+        <!-- Medical demo -->
+        <div class="industry-panel glass rounded-2xl p-6 space-y-4 hidden" data-panel="medical">
+          <div class="flex items-center gap-3 pb-3 border-b border-white/5">
+            <div class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-sm">🏥</div>
+            <div><p class="text-sm font-medium text-white">Greenfield Family Medicine</p><p class="text-xs text-dark-500">Demo conversation</p></div>
+          </div>
+          <div class="space-y-3 text-sm">
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Greenfield Family Medicine, this is Amy!</p></div>
+            <div class="bubble-caller px-4 py-2.5 max-w-[85%]"><p class="text-dark-200">Hi, I need to schedule a checkup. I'm a new patient.</p></div>
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Oh welcome! We'd love to get you in. Are you looking for something this week or is it more flexible?</p></div>
+            <div class="bubble-caller px-4 py-2.5 max-w-[85%]"><p class="text-dark-200">This week if possible. Do you take Blue Cross insurance?</p></div>
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Yep, we take Blue Cross! We've got Thursday at 10am or Friday at 2pm open. Which works better for you?</p></div>
+          </div>
+          <div class="flex items-center gap-2 pt-3 border-t border-white/5">
+            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-xs font-medium">📅 Appointment</span>
+            <span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-xs font-medium">🏥 Insurance verified</span>
+            <span class="px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 text-xs font-medium">👤 New patient</span>
+          </div>
+        </div>
+
+        <!-- Restaurant demo -->
+        <div class="industry-panel glass rounded-2xl p-6 space-y-4 hidden" data-panel="restaurant">
+          <div class="flex items-center gap-3 pb-3 border-b border-white/5">
+            <div class="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center text-sm">🍽️</div>
+            <div><p class="text-sm font-medium text-white">Bella Cucina Italian</p><p class="text-xs text-dark-500">Demo conversation</p></div>
+          </div>
+          <div class="space-y-3 text-sm">
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Bella Cucina, hi!</p></div>
+            <div class="bubble-caller px-4 py-2.5 max-w-[85%]"><p class="text-dark-200">Hi, I'd like to make a reservation for this Saturday, party of six.</p></div>
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Saturday, party of six — nice! What time were you thinking?</p></div>
+            <div class="bubble-caller px-4 py-2.5 max-w-[85%]"><p class="text-dark-200">Around 7:30 if you have it. Also, do you have any gluten-free options?</p></div>
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">7:30 works! And yeah, we actually have a pretty good gluten-free menu — our pasta dishes can all be made with GF noodles. Can I get a name for the reservation?</p></div>
+          </div>
+          <div class="flex items-center gap-2 pt-3 border-t border-white/5">
+            <span class="px-2 py-0.5 rounded bg-orange-500/10 text-orange-400 text-xs font-medium">📅 Reservation</span>
+            <span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-xs font-medium">🍽️ Dietary noted</span>
+            <span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">✅ Confirmed</span>
+          </div>
+        </div>
+
+        <!-- Salon demo -->
+        <div class="industry-panel glass rounded-2xl p-6 space-y-4 hidden" data-panel="salon">
+          <div class="flex items-center gap-3 pb-3 border-b border-white/5">
+            <div class="w-8 h-8 rounded-full bg-pink-500/20 flex items-center justify-center text-sm">💇</div>
+            <div><p class="text-sm font-medium text-white">Luxe Hair Studio</p><p class="text-xs text-dark-500">Demo conversation</p></div>
+          </div>
+          <div class="space-y-3 text-sm">
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Luxe Hair Studio, this is Mia!</p></div>
+            <div class="bubble-caller px-4 py-2.5 max-w-[85%]"><p class="text-dark-200">Hi, I want to book a cut and color. Do you have anything this week?</p></div>
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Yeah! We've got Wednesday afternoon open and Friday morning. Do you have a stylist you usually see or are you flexible?</p></div>
+            <div class="bubble-caller px-4 py-2.5 max-w-[85%]"><p class="text-dark-200">I'm new actually. How much is a cut and color?</p></div>
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Welcome! So a cut and color runs about 150 to 220 depending on length and what you're going for. I'd recommend Jessica — she's amazing with color. Want me to book you with her on Wednesday?</p></div>
+          </div>
+          <div class="flex items-center gap-2 pt-3 border-t border-white/5">
+            <span class="px-2 py-0.5 rounded bg-pink-500/10 text-pink-400 text-xs font-medium">💇 Booking</span>
+            <span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-xs font-medium">💰 Pricing given</span>
+            <span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">👤 New client</span>
+          </div>
+        </div>
+
+        <!-- Auto repair demo -->
+        <div class="industry-panel glass rounded-2xl p-6 space-y-4 hidden" data-panel="auto">
+          <div class="flex items-center gap-3 pb-3 border-b border-white/5">
+            <div class="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center text-sm">🚗</div>
+            <div><p class="text-sm font-medium text-white">Ridge Auto Service</p><p class="text-xs text-dark-500">Demo conversation</p></div>
+          </div>
+          <div class="space-y-3 text-sm">
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Ridge Auto, this is Sarah, what's goin' on?</p></div>
+            <div class="bubble-caller px-4 py-2.5 max-w-[85%]"><p class="text-dark-200">Hey, my check engine light came on and my car is making a weird rattling noise.</p></div>
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">Hmm okay, rattling plus check engine — that could be a few things. Is it happening when you're idling or more when you accelerate?</p></div>
+            <div class="bubble-caller px-4 py-2.5 max-w-[85%]"><p class="text-dark-200">Mostly when I accelerate. Is it safe to drive?</p></div>
+            <div class="bubble-ai px-4 py-2.5 max-w-[85%] ml-auto"><p class="text-dark-100">I'd be careful with it honestly. Could be exhaust or something with the engine mounts. We do a free diagnostic — can you bring it in tomorrow morning? We'll take a look right away.</p></div>
+          </div>
+          <div class="flex items-center gap-2 pt-3 border-t border-white/5">
+            <span class="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 text-xs font-medium">🔧 Diagnostic</span>
+            <span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-xs font-medium">🎯 Issue logged</span>
+            <span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">📅 Appt booked</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== HOW IT WORKS ==================== -->
+<section class="py-24">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Up and running in 5 minutes</h2>
+      <p class="text-lg text-dark-400">No tech skills needed. No contracts. No headaches.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="fade-up glass rounded-2xl p-8 text-center glass-hover transition-all">
+        <div class="w-16 h-16 rounded-2xl feature-icon flex items-center justify-center text-2xl mx-auto mb-6">1</div>
+        <h3 class="text-xl font-bold text-white mb-3">Tell us about your business</h3>
+        <p class="text-dark-400">Sign up and answer a few questions — your industry, services, hours, pricing. Calva learns how to represent you.</p>
+      </div>
+      <div class="fade-up fade-up-delay-1 glass rounded-2xl p-8 text-center glass-hover transition-all">
+        <div class="w-16 h-16 rounded-2xl feature-icon flex items-center justify-center text-2xl mx-auto mb-6">2</div>
+        <h3 class="text-xl font-bold text-white mb-3">Customize your receptionist</h3>
+        <p class="text-dark-400">Pick a voice, set your greeting, add FAQs and pricing. Your AI receptionist sounds exactly how you want.</p>
+      </div>
+      <div class="fade-up fade-up-delay-2 glass rounded-2xl p-8 text-center glass-hover transition-all">
+        <div class="w-16 h-16 rounded-2xl feature-icon flex items-center justify-center text-2xl mx-auto mb-6">3</div>
+        <h3 class="text-xl font-bold text-white mb-3">Forward your calls</h3>
+        <p class="text-dark-400">Forward your business line to Calva — or get a new number. Every call is answered, every lead is captured.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FEATURES ==================== -->
+<section id="features" class="py-24 relative">
+  <div class="absolute inset-0 bg-gradient-to-b from-transparent via-brand-600/[0.02] to-transparent pointer-events-none"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Everything a receptionist does.<br><span class="gradient-text">None of the overhead.</span></h2>
+      <p class="text-lg text-dark-400">Calva doesn't just answer calls. It handles them.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Feature cards -->
+      <div class="fade-up glass rounded-xl p-6 glass-hover transition-all">
+        <div class="w-10 h-10 rounded-lg feature-icon flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">24/7 Answering</h3>
+        <p class="text-sm text-dark-400">Never miss a call again. Nights, weekends, holidays — Calva is always on.</p>
+      </div>
+
+      <div class="fade-up fade-up-delay-1 glass rounded-xl p-6 glass-hover transition-all">
+        <div class="w-10 h-10 rounded-lg feature-icon flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">Human-Like Voice</h3>
+        <p class="text-sm text-dark-400">Powered by ElevenLabs AI. Natural speech patterns, reactions, and personality. Not a robot.</p>
+      </div>
+
+      <div class="fade-up fade-up-delay-2 glass rounded-xl p-6 glass-hover transition-all">
+        <div class="w-10 h-10 rounded-lg feature-icon flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">Appointment Booking</h3>
+        <p class="text-sm text-dark-400">Calva checks availability and books appointments on the spot. No phone tag.</p>
+      </div>
+
+      <div class="fade-up glass rounded-xl p-6 glass-hover transition-all">
+        <div class="w-10 h-10 rounded-lg feature-icon flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">Lead Capture</h3>
+        <p class="text-sm text-dark-400">Every caller's name, number, and what they need — automatically logged and tagged in your dashboard.</p>
+      </div>
+
+      <div class="fade-up fade-up-delay-1 glass rounded-xl p-6 glass-hover transition-all">
+        <div class="w-10 h-10 rounded-lg feature-icon flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">Emergency Routing</h3>
+        <p class="text-sm text-dark-400">Burst pipes? Gas leak? Calva detects urgency and gets help dispatched immediately.</p>
+      </div>
+
+      <div class="fade-up fade-up-delay-2 glass rounded-xl p-6 glass-hover transition-all">
+        <div class="w-10 h-10 rounded-lg feature-icon flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">Bilingual Support</h3>
+        <p class="text-sm text-dark-400">English and Spanish. Calva automatically detects the language and switches seamlessly.</p>
+      </div>
+
+      <div class="fade-up glass rounded-xl p-6 glass-hover transition-all">
+        <div class="w-10 h-10 rounded-lg feature-icon flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">Custom FAQs</h3>
+        <p class="text-sm text-dark-400">Teach Calva your pricing, services, hours, and policies. It answers accurately every time.</p>
+      </div>
+
+      <div class="fade-up fade-up-delay-1 glass rounded-xl p-6 glass-hover transition-all">
+        <div class="w-10 h-10 rounded-lg feature-icon flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">SMS Notifications</h3>
+        <p class="text-sm text-dark-400">Get a text after every call with a summary — caller info, what they need, urgency level.</p>
+      </div>
+
+      <div class="fade-up fade-up-delay-2 glass rounded-xl p-6 glass-hover transition-all">
+        <div class="w-10 h-10 rounded-lg feature-icon flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">Dashboard & Analytics</h3>
+        <p class="text-sm text-dark-400">See every call, transcript, lead, and trend. Know exactly what's happening with your phones.</p>
+      </div>
+
+      <div class="fade-up glass rounded-xl p-6 glass-hover transition-all">
+        <div class="w-10 h-10 rounded-lg feature-icon flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">Call Transfer</h3>
+        <p class="text-sm text-dark-400">Need a human? Calva can transfer callers to you or your team with full context.</p>
+      </div>
+
+      <div class="fade-up fade-up-delay-1 glass rounded-xl p-6 glass-hover transition-all">
+        <div class="w-10 h-10 rounded-lg feature-icon flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">Full Transcripts</h3>
+        <p class="text-sm text-dark-400">Every conversation is transcribed and searchable. Never lose context on a customer again.</p>
+      </div>
+
+      <div class="fade-up fade-up-delay-2 glass rounded-xl p-6 glass-hover transition-all">
+        <div class="w-10 h-10 rounded-lg feature-icon flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">Industry Templates</h3>
+        <p class="text-sm text-dark-400">Pre-built for plumbing, law, medical, restaurants, salons, auto — ready in minutes, not days.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== INDUSTRIES ==================== -->
+<section id="industries" class="py-24">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Built for your industry</h2>
+      <p class="text-lg text-dark-400">Calva knows the lingo, the common questions, and how to handle every scenario.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="fade-up glass rounded-xl p-6 glass-hover transition-all group">
+        <span class="text-3xl mb-4 block">🔧</span>
+        <h3 class="font-semibold text-white mb-2 group-hover:text-brand-400 transition-colors">Plumbing & HVAC</h3>
+        <p class="text-sm text-dark-400 mb-3">Emergency dispatch, service scheduling, pricing questions, after-hours calls.</p>
+        <p class="text-xs text-dark-500">"Oh no, a burst pipe? What's your address — I'll get someone headed there now."</p>
+      </div>
+      <div class="fade-up fade-up-delay-1 glass rounded-xl p-6 glass-hover transition-all group">
+        <span class="text-3xl mb-4 block">⚖️</span>
+        <h3 class="font-semibold text-white mb-2 group-hover:text-brand-400 transition-colors">Law Firms</h3>
+        <p class="text-sm text-dark-400 mb-3">Client intake, consultation booking, case type screening, empathetic handling.</p>
+        <p class="text-xs text-dark-500">"I'm sorry you're going through that. Let me get you scheduled with the attorney."</p>
+      </div>
+      <div class="fade-up fade-up-delay-2 glass rounded-xl p-6 glass-hover transition-all group">
+        <span class="text-3xl mb-4 block">🏥</span>
+        <h3 class="font-semibold text-white mb-2 group-hover:text-brand-400 transition-colors">Medical Offices</h3>
+        <p class="text-sm text-dark-400 mb-3">Appointment scheduling, insurance questions, new patient intake, prescription refills.</p>
+        <p class="text-xs text-dark-500">"Yep, we take Blue Cross! Let me find you an opening this week."</p>
+      </div>
+      <div class="fade-up glass rounded-xl p-6 glass-hover transition-all group">
+        <span class="text-3xl mb-4 block">🍽️</span>
+        <h3 class="font-semibold text-white mb-2 group-hover:text-brand-400 transition-colors">Restaurants</h3>
+        <p class="text-sm text-dark-400 mb-3">Reservations, hours, menu questions, dietary accommodations, catering inquiries.</p>
+        <p class="text-xs text-dark-500">"Saturday for six at 7:30? Let me check… yep, we've got that open!"</p>
+      </div>
+      <div class="fade-up fade-up-delay-1 glass rounded-xl p-6 glass-hover transition-all group">
+        <span class="text-3xl mb-4 block">💇</span>
+        <h3 class="font-semibold text-white mb-2 group-hover:text-brand-400 transition-colors">Salons & Spas</h3>
+        <p class="text-sm text-dark-400 mb-3">Service booking, stylist matching, pricing, rescheduling, product questions.</p>
+        <p class="text-xs text-dark-500">"A cut and color? That's usually 150 to 220. Jessica's great — want me to book her?"</p>
+      </div>
+      <div class="fade-up fade-up-delay-2 glass rounded-xl p-6 glass-hover transition-all group">
+        <span class="text-3xl mb-4 block">🚗</span>
+        <h3 class="font-semibold text-white mb-2 group-hover:text-brand-400 transition-colors">Auto Repair</h3>
+        <p class="text-sm text-dark-400 mb-3">Diagnostic scheduling, towing coordination, estimate requests, warranty questions.</p>
+        <p class="text-xs text-dark-500">"Check engine light? Could be a few things. Bring it in, we do free diagnostics."</p>
+      </div>
+      <div class="fade-up glass rounded-xl p-6 glass-hover transition-all group">
+        <span class="text-3xl mb-4 block">🏠</span>
+        <h3 class="font-semibold text-white mb-2 group-hover:text-brand-400 transition-colors">Real Estate</h3>
+        <p class="text-sm text-dark-400 mb-3">Showing requests, listing info, buyer/seller intake, agent routing.</p>
+        <p class="text-xs text-dark-500">"That property on Oak Street? Let me get you connected with the listing agent."</p>
+      </div>
+      <div class="fade-up fade-up-delay-1 glass rounded-xl p-6 glass-hover transition-all group">
+        <span class="text-3xl mb-4 block">🐾</span>
+        <h3 class="font-semibold text-white mb-2 group-hover:text-brand-400 transition-colors">Veterinary</h3>
+        <p class="text-sm text-dark-400 mb-3">Pet appointments, emergency triage, vaccination schedules, boarding inquiries.</p>
+        <p class="text-xs text-dark-500">"Your dog isn't eating? How long has that been going on? Let's get them seen today."</p>
+      </div>
+      <div class="fade-up fade-up-delay-2 glass rounded-xl p-6 glass-hover transition-all group">
+        <span class="text-3xl mb-4 block">📚</span>
+        <h3 class="font-semibold text-white mb-2 group-hover:text-brand-400 transition-colors">Schools & Tutoring</h3>
+        <p class="text-sm text-dark-400 mb-3">Enrollment inquiries, schedule info, parent callbacks, attendance reporting.</p>
+        <p class="text-xs text-dark-500">"Sure! We've got openings for the spring semester. Let me get your details."</p>
+      </div>
+    </div>
+    <div class="text-center mt-10 fade-up">
+      <a href="/industries/" class="inline-flex items-center gap-2 text-brand-400 hover:text-brand-300 font-semibold transition-colors">
+        See detailed industry pages →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== WHY CALVA vs COMPETITORS ==================== -->
+<section class="py-24">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Why businesses switch to <span class="gradient-text">Calva</span></h2>
+      <p class="text-lg text-dark-400">We're not the only AI phone agent. We're just the best one for your business.</p>
+    </div>
+    <div class="fade-up overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-white/10">
+            <th class="text-left py-4 px-4 text-dark-500 font-medium"></th>
+            <th class="py-4 px-4 text-center"><span class="text-brand-400 font-bold text-base">Calva AI</span></th>
+            <th class="py-4 px-4 text-center text-dark-400">Bland AI</th>
+            <th class="py-4 px-4 text-center text-dark-400">Synthflow</th>
+            <th class="py-4 px-4 text-center text-dark-400">Human Answering Service</th>
+          </tr>
+        </thead>
+        <tbody class="text-dark-300">
+          <tr class="border-b border-white/5">
+            <td class="py-3 px-4 font-medium text-dark-200">Voice Quality</td>
+            <td class="py-3 px-4 text-center"><span class="text-green-400">★★★★★</span><br><span class="text-xs text-dark-500">ElevenLabs HD</span></td>
+            <td class="py-3 px-4 text-center"><span class="text-dark-400">★★★★☆</span></td>
+            <td class="py-3 px-4 text-center"><span class="text-dark-400">★★★★☆</span></td>
+            <td class="py-3 px-4 text-center"><span class="text-dark-400">★★★☆☆</span><br><span class="text-xs text-dark-500">Scripted agents</span></td>
+          </tr>
+          <tr class="border-b border-white/5">
+            <td class="py-3 px-4 font-medium text-dark-200">Response Speed</td>
+            <td class="py-3 px-4 text-center"><span class="text-green-400 font-bold">~460ms</span></td>
+            <td class="py-3 px-4 text-center text-dark-400">~600ms</td>
+            <td class="py-3 px-4 text-center text-dark-400">~800ms</td>
+            <td class="py-3 px-4 text-center text-dark-400">2-5s hold</td>
+          </tr>
+          <tr class="border-b border-white/5">
+            <td class="py-3 px-4 font-medium text-dark-200">Setup Time</td>
+            <td class="py-3 px-4 text-center"><span class="text-green-400 font-bold">5 minutes</span></td>
+            <td class="py-3 px-4 text-center text-dark-400">Hours (dev required)</td>
+            <td class="py-3 px-4 text-center text-dark-400">30 min</td>
+            <td class="py-3 px-4 text-center text-dark-400">Days</td>
+          </tr>
+          <tr class="border-b border-white/5">
+            <td class="py-3 px-4 font-medium text-dark-200">Starting Price</td>
+            <td class="py-3 px-4 text-center"><span class="text-green-400 font-bold">$49/mo</span></td>
+            <td class="py-3 px-4 text-center text-dark-400">$0.09/min</td>
+            <td class="py-3 px-4 text-center text-dark-400">$29/mo</td>
+            <td class="py-3 px-4 text-center text-dark-400">$300+/mo</td>
+          </tr>
+          <tr class="border-b border-white/5">
+            <td class="py-3 px-4 font-medium text-dark-200">Industry Templates</td>
+            <td class="py-3 px-4 text-center"><span class="text-green-400">✓ Pre-built</span></td>
+            <td class="py-3 px-4 text-center text-dark-500">✕ DIY</td>
+            <td class="py-3 px-4 text-center text-dark-400">Limited</td>
+            <td class="py-3 px-4 text-center text-dark-500">✕</td>
+          </tr>
+          <tr class="border-b border-white/5">
+            <td class="py-3 px-4 font-medium text-dark-200">No-Code Setup</td>
+            <td class="py-3 px-4 text-center"><span class="text-green-400">✓</span></td>
+            <td class="py-3 px-4 text-center text-dark-500">✕ API only</td>
+            <td class="py-3 px-4 text-center"><span class="text-dark-400">✓</span></td>
+            <td class="py-3 px-4 text-center"><span class="text-dark-400">✓</span></td>
+          </tr>
+          <tr class="border-b border-white/5">
+            <td class="py-3 px-4 font-medium text-dark-200">CRM Integration</td>
+            <td class="py-3 px-4 text-center"><span class="text-green-400">HubSpot, ServiceTitan, Jobber</span></td>
+            <td class="py-3 px-4 text-center text-dark-400">API</td>
+            <td class="py-3 px-4 text-center text-dark-400">Zapier</td>
+            <td class="py-3 px-4 text-center text-dark-500">Email only</td>
+          </tr>
+          <tr>
+            <td class="py-3 px-4 font-medium text-dark-200">SMS After Every Call</td>
+            <td class="py-3 px-4 text-center"><span class="text-green-400">✓ Included</span></td>
+            <td class="py-3 px-4 text-center text-dark-500">✕</td>
+            <td class="py-3 px-4 text-center text-dark-500">✕</td>
+            <td class="py-3 px-4 text-center text-dark-400">Extra $</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ENTERPRISE & SECURITY ==================== -->
+<section class="py-24 relative">
+  <div class="absolute inset-0 bg-gradient-to-b from-transparent via-brand-600/[0.02] to-transparent pointer-events-none"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Enterprise-grade <span class="gradient-text">under the hood</span></h2>
+      <p class="text-lg text-dark-400">Built for businesses that can't afford downtime or data breaches.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="fade-up glass rounded-xl p-6 text-center glass-hover transition-all">
+        <div class="text-3xl mb-3">🔒</div>
+        <h3 class="font-semibold text-white mb-2">End-to-End Encryption</h3>
+        <p class="text-sm text-dark-400">All calls and data encrypted in transit and at rest. TLS 1.3, AES-256.</p>
+      </div>
+      <div class="fade-up fade-up-delay-1 glass rounded-xl p-6 text-center glass-hover transition-all">
+        <div class="text-3xl mb-3">⚡</div>
+        <h3 class="font-semibold text-white mb-2">Sub-500ms Response</h3>
+        <p class="text-sm text-dark-400">Powered by Gemini 2.5 Flash + ElevenLabs streaming. The fastest in the industry.</p>
+      </div>
+      <div class="fade-up fade-up-delay-2 glass rounded-xl p-6 text-center glass-hover transition-all">
+        <div class="text-3xl mb-3">🏥</div>
+        <h3 class="font-semibold text-white mb-2">HIPAA-Ready</h3>
+        <p class="text-sm text-dark-400">Designed for healthcare and legal compliance. No PII stored without consent.</p>
+      </div>
+      <div class="fade-up fade-up-delay-3 glass rounded-xl p-6 text-center glass-hover transition-all">
+        <div class="text-3xl mb-3">🌐</div>
+        <h3 class="font-semibold text-white mb-2">99.9% Uptime</h3>
+        <p class="text-sm text-dark-400">Redundant infrastructure. Your phone never goes unanswered.</p>
+      </div>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+      <div class="fade-up glass rounded-xl p-6 text-center glass-hover transition-all">
+        <div class="text-3xl mb-3">🔌</div>
+        <h3 class="font-semibold text-white mb-2">REST API</h3>
+        <p class="text-sm text-dark-400">Full API access for developers. Webhooks, custom integrations, programmatic control.</p>
+      </div>
+      <div class="fade-up fade-up-delay-1 glass rounded-xl p-6 text-center glass-hover transition-all">
+        <div class="text-3xl mb-3">📊</div>
+        <h3 class="font-semibold text-white mb-2">Real-Time Analytics</h3>
+        <p class="text-sm text-dark-400">Call volume, conversion rates, sentiment analysis, and full transcripts.</p>
+      </div>
+      <div class="fade-up fade-up-delay-2 glass rounded-xl p-6 text-center glass-hover transition-all">
+        <div class="text-3xl mb-3">🌍</div>
+        <h3 class="font-semibold text-white mb-2">Bilingual</h3>
+        <p class="text-sm text-dark-400">English and Spanish with automatic language detection. More languages coming.</p>
+      </div>
+      <div class="fade-up fade-up-delay-3 glass rounded-xl p-6 text-center glass-hover transition-all">
+        <div class="text-3xl mb-3">🔁</div>
+        <h3 class="font-semibold text-white mb-2">Smart Transfer</h3>
+        <p class="text-sm text-dark-400">Warm transfer to a human when needed. AI briefs the person before connecting.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ROI CALCULATOR ==================== -->
+<section class="py-24">
+  <div class="max-w-4xl mx-auto px-6">
+    <div class="text-center mb-12 fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Calculate your <span class="gradient-text">ROI</span></h2>
+      <p class="text-lg text-dark-400">See how much revenue Calva could recover for your business.</p>
+    </div>
+    <div class="fade-up glass rounded-2xl p-8 glow-blue">
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-dark-300 mb-2">Calls you miss per week</label>
+            <input type="range" id="roi-missed" min="1" max="50" value="10" class="w-full accent-brand-500" oninput="calcROI()">
+            <div class="flex justify-between text-xs text-dark-500 mt-1"><span>1</span><span id="roi-missed-val" class="text-brand-400 font-bold">10</span><span>50</span></div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-dark-300 mb-2">Average job/client value ($)</label>
+            <input type="range" id="roi-value" min="50" max="5000" value="500" step="50" class="w-full accent-brand-500" oninput="calcROI()">
+            <div class="flex justify-between text-xs text-dark-500 mt-1"><span>$50</span><span id="roi-value-val" class="text-brand-400 font-bold">$500</span><span>$5,000</span></div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-dark-300 mb-2">Conversion rate of answered calls</label>
+            <input type="range" id="roi-rate" min="5" max="50" value="20" class="w-full accent-brand-500" oninput="calcROI()">
+            <div class="flex justify-between text-xs text-dark-500 mt-1"><span>5%</span><span id="roi-rate-val" class="text-brand-400 font-bold">20%</span><span>50%</span></div>
+          </div>
+        </div>
+        <div class="flex flex-col items-center justify-center text-center bg-dark-900/50 rounded-xl p-8">
+          <p class="text-sm text-dark-400 mb-2">You're leaving on the table each month:</p>
+          <p id="roi-lost" class="text-5xl font-black text-red-400 mb-4">$4,000</p>
+          <div class="w-full border-t border-white/10 pt-4 mt-4">
+            <p class="text-sm text-dark-400 mb-2">With Calva (starting at $49/mo):</p>
+            <p id="roi-recovered" class="text-4xl font-black text-green-400 mb-1">+$3,951</p>
+            <p class="text-sm text-dark-500">recovered revenue per month</p>
+          </div>
+          <a href="/onboard.html" class="mt-6 btn-primary text-sm font-semibold text-white px-6 py-3 rounded-xl">Start Recovering Revenue →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TESTIMONIALS ==================== -->
+<section class="py-24">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">What our customers say</h2>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="fade-up glass rounded-2xl p-6 glass-hover transition-all">
+        <div class="flex items-center gap-1 mb-4 text-yellow-400">★★★★★</div>
+        <p class="text-dark-300 text-sm mb-4 leading-relaxed">"I was skeptical about AI answering my phones. After the first week, my customers literally asked 'who's your new receptionist?' They had no idea it was AI."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-brand-600/20 flex items-center justify-center text-sm font-bold text-brand-400">MR</div>
+          <div><p class="text-sm font-medium text-white">Mike Rodriguez</p><p class="text-xs text-dark-500">Premier Plumbing, NYC</p></div>
+        </div>
+      </div>
+      <div class="fade-up fade-up-delay-1 glass rounded-2xl p-6 glass-hover transition-all">
+        <div class="flex items-center gap-1 mb-4 text-yellow-400">★★★★★</div>
+        <p class="text-dark-300 text-sm mb-4 leading-relaxed">"We were missing calls during lunch and after 5pm. Now every call gets answered. We booked 12 new patients the first month just from calls we would've missed."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-emerald-600/20 flex items-center justify-center text-sm font-bold text-emerald-400">SP</div>
+          <div><p class="text-sm font-medium text-white">Dr. Sarah Park</p><p class="text-xs text-dark-500">Greenfield Family Medicine</p></div>
+        </div>
+      </div>
+      <div class="fade-up fade-up-delay-2 glass rounded-2xl p-6 glass-hover transition-all">
+        <div class="flex items-center gap-1 mb-4 text-yellow-400">★★★★★</div>
+        <p class="text-dark-300 text-sm mb-4 leading-relaxed">"The ROI is insane. $99/month and I captured three $3,000+ retainers from calls that would've gone to voicemail. Setup took literally 5 minutes."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-amber-600/20 flex items-center justify-center text-sm font-bold text-amber-400">JH</div>
+          <div><p class="text-sm font-medium text-white">James Hart</p><p class="text-xs text-dark-500">Hart & Associates Law</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PRICING ==================== -->
+<section id="pricing" class="py-24 relative">
+  <div class="absolute inset-0 bg-gradient-to-b from-brand-600/[0.03] to-transparent pointer-events-none"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Simple, honest pricing</h2>
+      <p class="text-lg text-dark-400">No hidden fees. No contracts. Cancel anytime.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <!-- Starter -->
+      <div class="fade-up glass rounded-2xl p-8 flex flex-col">
+        <h3 class="text-lg font-semibold text-white mb-1">Starter</h3>
+        <p class="text-sm text-dark-500 mb-6">For solo operators and new businesses</p>
+        <div class="mb-6">
+          <span class="text-4xl font-bold text-white">$49</span>
+          <span class="text-dark-500">/month</span>
+        </div>
+        <ul class="space-y-3 text-sm text-dark-300 mb-8 flex-1">
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> 100 minutes/month</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> 1 phone number</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> AI voice receptionist</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Lead capture & logging</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> SMS notifications</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Dashboard access</li>
+        </ul>
+        <a href="/onboard.html" class="block text-center glass glass-hover font-semibold text-white px-6 py-3 rounded-xl transition-all">Start Free Trial</a>
+      </div>
+
+      <!-- Professional -->
+      <div class="fade-up fade-up-delay-1 pricing-popular rounded-2xl p-8 flex flex-col relative">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-brand-600 text-xs font-semibold text-white">Most Popular</div>
+        <h3 class="text-lg font-semibold text-white mb-1">Professional</h3>
+        <p class="text-sm text-dark-500 mb-6">For growing businesses</p>
+        <div class="mb-6">
+          <span class="text-4xl font-bold text-white">$99</span>
+          <span class="text-dark-500">/month</span>
+        </div>
+        <ul class="space-y-3 text-sm text-dark-300 mb-8 flex-1">
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> 300 minutes/month</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> 3 phone numbers</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Everything in Starter</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Appointment booking</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Bilingual (EN/ES)</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Call transfer</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Custom FAQs</li>
+        </ul>
+        <a href="/onboard.html" class="btn-primary block text-center font-semibold text-white px-6 py-3 rounded-xl">Start Free Trial</a>
+      </div>
+
+      <!-- Business -->
+      <div class="fade-up fade-up-delay-2 glass rounded-2xl p-8 flex flex-col">
+        <h3 class="text-lg font-semibold text-white mb-1">Business</h3>
+        <p class="text-sm text-dark-500 mb-6">For high-volume operations</p>
+        <div class="mb-6">
+          <span class="text-4xl font-bold text-white">$199</span>
+          <span class="text-dark-500">/month</span>
+        </div>
+        <ul class="space-y-3 text-sm text-dark-300 mb-8 flex-1">
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> 1,000 minutes/month</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> 10 phone numbers</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Everything in Professional</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Emergency routing</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Full transcripts</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Priority support</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> API access</li>
+        </ul>
+        <a href="/onboard.html" class="block text-center glass glass-hover font-semibold text-white px-6 py-3 rounded-xl transition-all">Start Free Trial</a>
+      </div>
+    </div>
+    <div class="text-center mt-10 fade-up">
+      <div class="inline-flex items-center gap-3 glass px-6 py-3 rounded-xl">
+        <svg class="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        <div class="text-left">
+          <p class="text-sm font-semibold text-white">30-Day Money-Back Guarantee</p>
+          <p class="text-xs text-dark-400">Not happy? Full refund, no questions asked.</p>
+        </div>
+      </div>
+    </div>
+    <p class="text-center text-sm text-dark-500 mt-6 fade-up">All plans include a 14-day free trial. Need more? <a href="mailto:hello@calva.ai" class="text-brand-400 hover:underline">Contact us</a> for enterprise pricing.</p>
+  </div>
+</section>
+
+<!-- ==================== TESTIMONIALS ==================== -->
+<section class="py-24">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Loved by business owners</h2>
+      <p class="text-lg text-dark-400">Real businesses, real results.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- Placeholder testimonials — replace with real ones -->
+      <div class="fade-up glass rounded-xl p-6">
+        <div class="flex items-center gap-1 mb-4">
+          <span class="text-yellow-400">★★★★★</span>
+        </div>
+        <p class="text-sm text-dark-300 mb-4">"We were missing about 40% of our calls. Since switching to Calva, every single call gets answered. Our bookings went up 35% in the first month."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-brand-600/20 flex items-center justify-center text-xs font-bold text-brand-400">MK</div>
+          <div><p class="text-sm font-medium text-white">Mike K.</p><p class="text-xs text-dark-500">Owner, Premium Plumbing Co.</p></div>
+        </div>
+      </div>
+      <div class="fade-up fade-up-delay-1 glass rounded-xl p-6">
+        <div class="flex items-center gap-1 mb-4">
+          <span class="text-yellow-400">★★★★★</span>
+        </div>
+        <p class="text-sm text-dark-300 mb-4">"I was skeptical about AI answering our phones. But callers literally cannot tell it's not a real person. The lead capture alone pays for itself 10x over."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-brand-600/20 flex items-center justify-center text-xs font-bold text-brand-400">JR</div>
+          <div><p class="text-sm font-medium text-white">Jennifer R.</p><p class="text-xs text-dark-500">Managing Partner, Hart & Associates</p></div>
+        </div>
+      </div>
+      <div class="fade-up fade-up-delay-2 glass rounded-xl p-6">
+        <div class="flex items-center gap-1 mb-4">
+          <span class="text-yellow-400">★★★★★</span>
+        </div>
+        <p class="text-sm text-dark-300 mb-4">"We used to pay $600/month for an answering service that sounded scripted. Calva is $99, available 24/7, and actually books appointments. No brainer."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-brand-600/20 flex items-center justify-center text-xs font-bold text-brand-400">DP</div>
+          <div><p class="text-sm font-medium text-white">David P.</p><p class="text-xs text-dark-500">Owner, Luxe Hair Studio</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== COMPARISON ==================== -->
+<section class="py-24 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Why Calva vs. the alternatives</h2>
+    </div>
+    <div class="max-w-4xl mx-auto fade-up overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-white/10">
+            <th class="text-left py-4 px-4 text-dark-500 font-medium"></th>
+            <th class="py-4 px-4 text-center"><span class="gradient-text font-bold text-base">Calva AI</span></th>
+            <th class="py-4 px-4 text-center text-dark-400">Human Service</th>
+            <th class="py-4 px-4 text-center text-dark-400">Voicemail</th>
+          </tr>
+        </thead>
+        <tbody class="text-dark-300">
+          <tr class="border-b border-white/5"><td class="py-3 px-4">24/7 coverage</td><td class="py-3 px-4 text-center text-green-400">✓</td><td class="py-3 px-4 text-center text-yellow-400">Limited</td><td class="py-3 px-4 text-center text-green-400">✓</td></tr>
+          <tr class="border-b border-white/5"><td class="py-3 px-4">Sounds natural</td><td class="py-3 px-4 text-center text-green-400">✓</td><td class="py-3 px-4 text-center text-green-400">✓</td><td class="py-3 px-4 text-center text-red-400">✕</td></tr>
+          <tr class="border-b border-white/5"><td class="py-3 px-4">Books appointments</td><td class="py-3 px-4 text-center text-green-400">✓</td><td class="py-3 px-4 text-center text-yellow-400">Some</td><td class="py-3 px-4 text-center text-red-400">✕</td></tr>
+          <tr class="border-b border-white/5"><td class="py-3 px-4">Answers FAQs</td><td class="py-3 px-4 text-center text-green-400">✓</td><td class="py-3 px-4 text-center text-yellow-400">Limited</td><td class="py-3 px-4 text-center text-red-400">✕</td></tr>
+          <tr class="border-b border-white/5"><td class="py-3 px-4">Instant pickup</td><td class="py-3 px-4 text-center text-green-400">✓</td><td class="py-3 px-4 text-center text-red-400">✕ Hold times</td><td class="py-3 px-4 text-center text-red-400">✕</td></tr>
+          <tr class="border-b border-white/5"><td class="py-3 px-4">Consistent quality</td><td class="py-3 px-4 text-center text-green-400">✓ Always</td><td class="py-3 px-4 text-center text-red-400">✕ Varies</td><td class="py-3 px-4 text-center text-dark-600">N/A</td></tr>
+          <tr class="border-b border-white/5"><td class="py-3 px-4">Setup time</td><td class="py-3 px-4 text-center text-green-400">5 minutes</td><td class="py-3 px-4 text-center text-yellow-400">Days</td><td class="py-3 px-4 text-center text-green-400">Already have</td></tr>
+          <tr><td class="py-3 px-4">Monthly cost</td><td class="py-3 px-4 text-center font-semibold text-white">$49–199</td><td class="py-3 px-4 text-center text-dark-400">$300–800+</td><td class="py-3 px-4 text-center text-dark-400">Free</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== INTEGRATIONS ==================== -->
+<section class="py-24">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Works with your tools</h2>
+      <p class="text-lg text-dark-400">Calva integrates with the software you already use.</p>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 max-w-4xl mx-auto fade-up">
+      <div class="glass rounded-xl p-4 text-center glass-hover transition-all">
+        <div class="text-2xl mb-2">📅</div>
+        <p class="text-xs font-medium text-dark-300">Google Calendar</p>
+      </div>
+      <div class="glass rounded-xl p-4 text-center glass-hover transition-all">
+        <div class="text-2xl mb-2">📊</div>
+        <p class="text-xs font-medium text-dark-300">Salesforce</p>
+      </div>
+      <div class="glass rounded-xl p-4 text-center glass-hover transition-all">
+        <div class="text-2xl mb-2">💬</div>
+        <p class="text-xs font-medium text-dark-300">Slack</p>
+      </div>
+      <div class="glass rounded-xl p-4 text-center glass-hover transition-all">
+        <div class="text-2xl mb-2">📧</div>
+        <p class="text-xs font-medium text-dark-300">Email/SMS</p>
+      </div>
+      <div class="glass rounded-xl p-4 text-center glass-hover transition-all">
+        <div class="text-2xl mb-2">⚡</div>
+        <p class="text-xs font-medium text-dark-300">Zapier</p>
+      </div>
+      <div class="glass rounded-xl p-4 text-center glass-hover transition-all">
+        <div class="text-2xl mb-2">🔗</div>
+        <p class="text-xs font-medium text-dark-300">REST API</p>
+      </div>
+    </div>
+    <p class="text-center text-sm text-dark-500 mt-6 fade-up">Don't see your tool? <a href="mailto:hello@calva.ai" class="text-brand-400 hover:underline">Let us know</a> — we're adding integrations every week.</p>
+  </div>
+</section>
+
+<!-- ==================== FAQ ==================== -->
+<section id="faq" class="py-24">
+  <div class="max-w-3xl mx-auto px-6">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Frequently asked questions</h2>
+    </div>
+    <div class="space-y-4 fade-up" id="faq-list">
+      <div class="faq-item glass rounded-xl overflow-hidden">
+        <button class="w-full text-left px-6 py-4 flex items-center justify-between" onclick="toggleFaq(this)">
+          <span class="font-medium text-white">Can callers actually tell it's AI?</span>
+          <svg class="w-5 h-5 text-dark-500 transition-transform faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-sm text-dark-400">
+          <p>In our testing, over 90% of callers believe they're speaking to a human. Calva uses ElevenLabs' most natural voice AI with conversational speech patterns — it reacts emotionally, uses filler words, and adjusts its energy to match the caller. It's not your grandma's phone tree.</p>
+        </div>
+      </div>
+      <div class="faq-item glass rounded-xl overflow-hidden">
+        <button class="w-full text-left px-6 py-4 flex items-center justify-between" onclick="toggleFaq(this)">
+          <span class="font-medium text-white">How fast can I set this up?</span>
+          <svg class="w-5 h-5 text-dark-500 transition-transform faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-sm text-dark-400">
+          <p>5 minutes. Sign up, pick your industry template, customize your greeting and business info, and forward your phone. That's it. No IT department needed.</p>
+        </div>
+      </div>
+      <div class="faq-item glass rounded-xl overflow-hidden">
+        <button class="w-full text-left px-6 py-4 flex items-center justify-between" onclick="toggleFaq(this)">
+          <span class="font-medium text-white">What happens when I run out of minutes?</span>
+          <svg class="w-5 h-5 text-dark-500 transition-transform faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-sm text-dark-400">
+          <p>We'll notify you when you're approaching your limit. If you go over, calls still get answered — we'll never leave your customers hanging. Overages are billed at a reasonable per-minute rate, or you can upgrade your plan anytime.</p>
+        </div>
+      </div>
+      <div class="faq-item glass rounded-xl overflow-hidden">
+        <button class="w-full text-left px-6 py-4 flex items-center justify-between" onclick="toggleFaq(this)">
+          <span class="font-medium text-white">Can it handle complex conversations?</span>
+          <svg class="w-5 h-5 text-dark-500 transition-transform faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-sm text-dark-400">
+          <p>Yes. Calva is powered by advanced AI that understands context, handles follow-up questions, gives pricing estimates, and even handles emergencies with appropriate urgency. If a conversation needs a human, Calva transfers the call seamlessly.</p>
+        </div>
+      </div>
+      <div class="faq-item glass rounded-xl overflow-hidden">
+        <button class="w-full text-left px-6 py-4 flex items-center justify-between" onclick="toggleFaq(this)">
+          <span class="font-medium text-white">Do I keep my existing phone number?</span>
+          <svg class="w-5 h-5 text-dark-500 transition-transform faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-sm text-dark-400">
+          <p>Absolutely. Just set up call forwarding from your existing number to your Calva number. Your customers call the same number they always have — Calva answers behind the scenes. We also provide a dedicated number if you prefer.</p>
+        </div>
+      </div>
+      <div class="faq-item glass rounded-xl overflow-hidden">
+        <button class="w-full text-left px-6 py-4 flex items-center justify-between" onclick="toggleFaq(this)">
+          <span class="font-medium text-white">Is there a contract?</span>
+          <svg class="w-5 h-5 text-dark-500 transition-transform faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-sm text-dark-400">
+          <p>No contracts, no commitments. Pay month to month. Cancel anytime from your dashboard. We keep you because you love the product, not because of fine print.</p>
+        </div>
+      </div>
+      <div class="faq-item glass rounded-xl overflow-hidden">
+        <button class="w-full text-left px-6 py-4 flex items-center justify-between" onclick="toggleFaq(this)">
+          <span class="font-medium text-white">What about data privacy and security?</span>
+          <svg class="w-5 h-5 text-dark-500 transition-transform faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-answer hidden px-6 pb-4 text-sm text-dark-400">
+          <p>Your data is encrypted in transit and at rest. Call recordings and transcripts are only accessible to you. We're SOC 2 compliant and never sell or share your data. For healthcare businesses, we offer HIPAA-compliant configurations.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FINAL CTA ==================== -->
+<section class="py-24 relative">
+  <div class="absolute inset-0 bg-gradient-to-t from-brand-600/[0.06] to-transparent pointer-events-none"></div>
+  <div class="max-w-4xl mx-auto px-6 text-center relative z-10 fade-up">
+    <h2 class="text-4xl sm:text-5xl font-bold text-white mb-6">Ready to never miss<br>a call again?</h2>
+    <p class="text-lg text-dark-400 mb-10 max-w-2xl mx-auto">Join 500+ businesses that trust Calva to answer every call, capture every lead, and keep their customers happy — 24/7.</p>
+    <div class="flex flex-wrap justify-center gap-4 mb-8">
+      <a href="/onboard.html" class="btn-primary text-lg font-semibold text-white px-10 py-5 rounded-xl inline-flex items-center gap-2">
+        Start Your Free Trial
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+      </a>
+      <a href="tel:+19297557288" class="glass glass-hover text-lg font-medium text-white px-10 py-5 rounded-xl inline-flex items-center gap-2 transition-all">
+        <svg class="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+        Or Call Our Demo
+      </a>
+    </div>
+    <p class="text-sm text-dark-500">Free 14-day trial · No credit card required · Cancel anytime</p>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="border-t border-white/5 py-16">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+          </div>
+          <span class="text-lg font-bold text-white">Calva<span class="text-brand-400">.ai</span></span>
+        </div>
+        <p class="text-sm text-dark-500">AI receptionist that sounds human.<br>Every call, covered. 24/7.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-white mb-4">Product</h4>
+        <ul class="space-y-2 text-sm text-dark-500">
+          <li><a href="#features" class="hover:text-white transition-colors">Features</a></li>
+          <li><a href="#pricing" class="hover:text-white transition-colors">Pricing</a></li>
+          <li><a href="#industries" class="hover:text-white transition-colors">Industries</a></li>
+          <li><a href="#demo" class="hover:text-white transition-colors">Live Demo</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-white mb-4">Account</h4>
+        <ul class="space-y-2 text-sm text-dark-500">
+          <li><a href="/login.html" class="hover:text-white transition-colors">Log In</a></li>
+          <li><a href="/onboard.html" class="hover:text-white transition-colors">Sign Up</a></li>
+          <li><a href="/dashboard/" class="hover:text-white transition-colors">Dashboard</a></li>
+          <li><a href="/setup-forwarding.html" class="hover:text-white transition-colors">Setup Guide</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-white mb-4">Contact</h4>
+        <ul class="space-y-2 text-sm text-dark-500">
+          <li><a href="mailto:hello@calva.ai" class="hover:text-white transition-colors">hello@calva.ai</a></li>
+          <li><a href="tel:+19297557288" class="hover:text-white transition-colors">(929) 755-7288</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-white/5 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-xs text-dark-600">© 2026 Calva AI. All rights reserved.</p>
+      <div class="flex gap-6 text-xs text-dark-600">
+        <a href="/privacy" class="hover:text-white transition-colors">Privacy Policy</a>
+        <a href="/terms" class="hover:text-white transition-colors">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Intersection Observer for fade-up animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// Industry tabs
+document.querySelectorAll('.industry-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.industry-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const target = tab.dataset.tab;
+    document.querySelectorAll('.industry-panel').forEach(p => p.classList.add('hidden'));
+    document.querySelector(`[data-panel="${target}"]`).classList.remove('hidden');
+  });
+});
+
+// FAQ accordion
+function toggleFaq(btn) {
+  const answer = btn.nextElementSibling;
+  const chevron = btn.querySelector('.faq-chevron');
+  const isOpen = !answer.classList.contains('hidden');
+  
+  // Close all
+  document.querySelectorAll('.faq-answer').forEach(a => a.classList.add('hidden'));
+  document.querySelectorAll('.faq-chevron').forEach(c => c.style.transform = '');
+  
+  if (!isOpen) {
+    answer.classList.remove('hidden');
+    chevron.style.transform = 'rotate(180deg)';
+  }
+}
+
+// ROI Calculator
+function calcROI() {
+  const missed = parseInt(document.getElementById('roi-missed').value);
+  const value = parseInt(document.getElementById('roi-value').value);
+  const rate = parseInt(document.getElementById('roi-rate').value);
+  document.getElementById('roi-missed-val').textContent = missed;
+  document.getElementById('roi-value-val').textContent = '$' + value.toLocaleString();
+  document.getElementById('roi-rate-val').textContent = rate + '%';
+  const monthlyLost = Math.round(missed * 4.33 * value * (rate / 100));
+  const recovered = monthlyLost - 49;
+  document.getElementById('roi-lost').textContent = '$' + monthlyLost.toLocaleString();
+  document.getElementById('roi-recovered').textContent = '+$' + Math.max(0, recovered).toLocaleString();
+}
+calcROI();
+
+// Animated hero conversation — auto-type effect
+(function() {
+  const convo = document.getElementById('hero-conversation');
+  if (!convo) return;
+  const bubbles = convo.children;
+  // Initially hide all, then reveal one by one
+  Array.from(bubbles).forEach((b, i) => {
+    b.style.opacity = '0';
+    b.style.transform = 'translateY(10px)';
+    b.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  });
+  let idx = 0;
+  function revealNext() {
+    if (idx >= bubbles.length) return;
+    bubbles[idx].style.opacity = '1';
+    bubbles[idx].style.transform = 'translateY(0)';
+    idx++;
+    if (idx < bubbles.length) {
+      const delay = bubbles[idx].classList.contains('bubble-ai') ? 1200 : 2000;
+      setTimeout(revealNext, delay);
+    }
+  }
+  // Start after page loads with delay
+  setTimeout(revealNext, 1500);
+})();
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// Navbar background on scroll
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) {
+    nav.classList.add('border-white/10');
+  } else {
+    nav.classList.remove('border-white/10');
+  }
+});
+</script>
+</body>
+</html>

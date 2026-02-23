@@ -41,32 +41,32 @@ function sanitizeObject(obj) {
 /**
  * Serve admin dashboard HTML
  */
-router.get('/dashboard', (req, res) => {
+router.get('/dashboard', async (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/dashboard.html'));
 });
 
 /**
  * Serve call forwarding setup guide
  */
-router.get('/setup-forwarding', (req, res) => {
+router.get('/setup-forwarding', async (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/setup-forwarding.html'));
 });
 
 /**
  * Get tenant dashboard data
  */
-router.get('/dashboard/data', authenticateTenant, (req, res) => {
+router.get('/dashboard/data', authenticateTenant, async (req, res) => {
   try {
     const tenant = req.tenant;
     
     // Get recent calls
-    const calls = db.getCallsByTenant(tenant.id, 20);
+    const calls = await db.getCallsByTenant(tenant.id, 20);
     
     // Get recent bookings
-    const bookings = db.getBookingsByTenant(tenant.id, 20);
+    const bookings = await db.getBookingsByTenant(tenant.id, 20);
     
     // Get recent notifications
-    const notifications = db.getNotificationsByTenant(tenant.id, 20);
+    const notifications = await db.getNotificationsByTenant(tenant.id, 20);
     
     // Calculate stats
     const stats = {
@@ -123,9 +123,9 @@ router.get('/dashboard/data', authenticateTenant, (req, res) => {
 /**
  * Get call details with transcript
  */
-router.get('/calls/:callSid', authenticateTenant, (req, res) => {
+router.get('/calls/:callSid', authenticateTenant, async (req, res) => {
   try {
-    const call = db.getCallBySid(req.params.callSid);
+    const call = await db.getCallBySid(req.params.callSid);
     
     if (!call || call.tenant_id !== req.tenant.id) {
       return res.status(404).json({ error: 'Call not found' });
@@ -153,7 +153,7 @@ router.get('/calls/:callSid', authenticateTenant, (req, res) => {
 /**
  * Update booking status
  */
-router.patch('/bookings/:id', authenticateTenant, (req, res) => {
+router.patch('/bookings/:id', authenticateTenant, async (req, res) => {
   try {
     const { status } = req.body;
     
@@ -161,14 +161,14 @@ router.patch('/bookings/:id', authenticateTenant, (req, res) => {
       return res.status(400).json({ error: 'Invalid status' });
     }
 
-    const bookings = db.getBookingsByTenant(req.tenant.id);
+    const bookings = await db.getBookingsByTenant(req.tenant.id);
     const booking = bookings.find(b => b.id === parseInt(req.params.id));
     
     if (!booking) {
       return res.status(404).json({ error: 'Booking not found' });
     }
 
-    db.updateBookingStatus(booking.id, status);
+    await db.updateBookingStatus(booking.id, status);
     
     res.json({ success: true, id: booking.id, status });
   } catch (error) {
@@ -183,7 +183,7 @@ router.patch('/bookings/:id', authenticateTenant, (req, res) => {
 /**
  * Get tenant configuration
  */
-router.get('/tenant-config', authenticateTenant, (req, res) => {
+router.get('/tenant-config', authenticateTenant, async (req, res) => {
   try {
     res.json({
       config: req.tenant.config || {}
@@ -200,7 +200,7 @@ router.get('/tenant-config', authenticateTenant, (req, res) => {
 /**
  * Update knowledge base
  */
-router.put('/tenant/knowledge', authenticateTenant, rateLimit(20, 60000), validateKnowledgeBase, (req, res) => {
+router.put('/tenant/knowledge', authenticateTenant, rateLimit(20, 60000), validateKnowledgeBase, async (req, res) => {
   try {
     let { knowledgeBase } = req.body;
     
@@ -219,7 +219,7 @@ router.put('/tenant/knowledge', authenticateTenant, rateLimit(20, 60000), valida
     const currentConfig = req.tenant.config || {};
     currentConfig.knowledgeBase = knowledgeBase || '';
     
-    db.updateTenant(req.tenant.id, { config_json: currentConfig });
+    await db.updateTenant(req.tenant.id, { config_json: currentConfig });
     
     res.json({ success: true, message: 'Knowledge base updated' });
   } catch (error) {
@@ -234,7 +234,7 @@ router.put('/tenant/knowledge', authenticateTenant, rateLimit(20, 60000), valida
 /**
  * Update tenant settings (greeting, hours, features, etc.)
  */
-router.put('/tenant/settings', authenticateTenant, rateLimit(20, 60000), validateTenantSettings, (req, res) => {
+router.put('/tenant/settings', authenticateTenant, rateLimit(20, 60000), validateTenantSettings, async (req, res) => {
   try {
     let { settings } = req.body;
     
@@ -285,7 +285,7 @@ router.put('/tenant/settings', authenticateTenant, rateLimit(20, 60000), validat
       };
     }
     
-    db.updateTenant(req.tenant.id, { config_json: currentConfig });
+    await db.updateTenant(req.tenant.id, { config_json: currentConfig });
     
     res.json({ success: true, message: 'Settings updated successfully' });
   } catch (error) {
@@ -300,7 +300,7 @@ router.put('/tenant/settings', authenticateTenant, rateLimit(20, 60000), validat
 /**
  * Update tenant configuration
  */
-router.patch('/settings', authenticateTenant, (req, res) => {
+router.patch('/settings', authenticateTenant, async (req, res) => {
   try {
     const { config } = req.body;
     
@@ -308,7 +308,7 @@ router.patch('/settings', authenticateTenant, (req, res) => {
       return res.status(400).json({ error: 'Config required' });
     }
 
-    db.updateTenant(req.tenant.id, { config_json: config });
+    await db.updateTenant(req.tenant.id, { config_json: config });
     
     res.json({ success: true, message: 'Settings updated' });
   } catch (error) {
@@ -319,7 +319,7 @@ router.patch('/settings', authenticateTenant, (req, res) => {
 /**
  * Export analytics data as CSV
  */
-router.get('/analytics/export', authenticateTenant, (req, res) => {
+router.get('/analytics/export', authenticateTenant, async (req, res) => {
   try {
     const { format } = req.query;
     
@@ -331,7 +331,7 @@ router.get('/analytics/export', authenticateTenant, (req, res) => {
     }
     
     const tenantId = req.tenant.id;
-    const calls = db.getCallsByTenant(tenantId, 1000); // Export up to 1000 calls
+    const calls = await db.getCallsByTenant(tenantId, 1000); // Export up to 1000 calls
     
     // Build CSV header
     const csvRows = [];
@@ -389,7 +389,7 @@ router.get('/analytics/export', authenticateTenant, (req, res) => {
 /**
  * Get analytics data
  */
-router.get('/analytics', authenticateTenant, (req, res) => {
+router.get('/analytics', authenticateTenant, async (req, res) => {
   try {
     const tenantId = req.tenant.id;
     const now = Math.floor(Date.now() / 1000);
@@ -400,24 +400,24 @@ router.get('/analytics', authenticateTenant, (req, res) => {
     const oneMonthAgo = now - (30 * 24 * 60 * 60);
     
     // Get stats for different time periods
-    const statsToday = db.getCallAnalytics(tenantId, oneDayAgo, now);
-    const statsWeek = db.getCallAnalytics(tenantId, oneWeekAgo, now);
-    const statsMonth = db.getCallAnalytics(tenantId, oneMonthAgo, now);
+    const statsToday = await db.getCallAnalytics(tenantId, oneDayAgo, now);
+    const statsWeek = await db.getCallAnalytics(tenantId, oneWeekAgo, now);
+    const statsMonth = await db.getCallAnalytics(tenantId, oneMonthAgo, now);
     
     // Get busiest hour
-    const callsByHour = db.getCallsByHour(tenantId, oneWeekAgo, now);
+    const callsByHour = await db.getCallsByHour(tenantId, oneWeekAgo, now);
     const busiestHour = callsByHour.length > 0 
       ? callsByHour[0] 
       : { hour: '00', count: 0 };
     
     // Get calls by day for chart (last 7 days)
-    const callsByDay = db.getCallsByDay(tenantId, 7);
+    const callsByDay = await db.getCallsByDay(tenantId, 7);
     
     // Get recent calls with more details
-    const recentCalls = db.getCallsByTenant(tenantId, 20);
+    const recentCalls = await db.getCallsByTenant(tenantId, 20);
     
     // Get voicemails
-    const voicemails = db.getVoicemailsByTenant(tenantId, 20);
+    const voicemails = await db.getVoicemailsByTenant(tenantId, 20);
     
     res.json({
       stats: {

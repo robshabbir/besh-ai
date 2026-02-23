@@ -14,7 +14,7 @@ const router = express.Router();
 /**
  * Get tenant information
  */
-router.get('/tenant', authenticateTenant, (req, res) => {
+router.get('/tenant', authenticateTenant, async (req, res) => {
   res.json({
     id: req.tenant.id,
     name: req.tenant.name,
@@ -28,10 +28,10 @@ router.get('/tenant', authenticateTenant, (req, res) => {
 /**
  * Get all calls for authenticated tenant
  */
-router.get('/calls', authenticateTenant, rateLimit(60, 60000), (req, res) => {
+router.get('/calls', authenticateTenant, rateLimit(60, 60000), async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 50, 200);
-    const calls = db.getCallsByTenant(req.tenant.id, limit);
+    const calls = await db.getCallsByTenant(req.tenant.id, limit);
     
     res.json({
       count: calls.length,
@@ -56,12 +56,12 @@ router.get('/calls', authenticateTenant, rateLimit(60, 60000), (req, res) => {
 /**
  * Get all bookings for authenticated tenant
  */
-router.get('/bookings', authenticateTenant, rateLimit(60, 60000), (req, res) => {
+router.get('/bookings', authenticateTenant, rateLimit(60, 60000), async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 50, 200);
     const status = req.query.status;
     
-    let bookings = db.getBookingsByTenant(req.tenant.id, limit);
+    let bookings = await db.getBookingsByTenant(req.tenant.id, limit);
     
     if (status) {
       bookings = bookings.filter(b => b.status === status);
@@ -83,10 +83,10 @@ router.get('/bookings', authenticateTenant, rateLimit(60, 60000), (req, res) => 
 /**
  * Get notifications
  */
-router.get('/notifications', authenticateTenant, rateLimit(60, 60000), (req, res) => {
+router.get('/notifications', authenticateTenant, rateLimit(60, 60000), async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 50, 200);
-    const notifications = db.getNotificationsByTenant(req.tenant.id, limit);
+    const notifications = await db.getNotificationsByTenant(req.tenant.id, limit);
     
     res.json({
       count: notifications.length,
@@ -194,7 +194,7 @@ router.post('/simulate-call', async (req, res) => {
     }
     
     // Authenticate tenant by API key
-    const tenant = db.getTenantByApiKey(apiKey);
+    const tenant = await db.getTenantByApiKey(apiKey);
     
     if (!tenant) {
       return res.status(401).json({ error: 'Invalid API key' });
@@ -277,7 +277,7 @@ router.post('/simulate-call', async (req, res) => {
 /**
  * Health check
  */
-router.get('/health', (req, res) => {
+router.get('/health', async (req, res) => {
   res.json({
     status: 'ok',
     service: 'calva-api',

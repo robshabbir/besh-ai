@@ -22,24 +22,29 @@ const chatRoutes = require('./src/routes/chat');
 const authRoutes = require('./src/routes/auth');
 const dashboardRoutes = require('./src/routes/dashboard');
 const dashboardApiRoutes = require('./src/routes/dashboard-api');
+const passwordResetRoutes = require('./src/routes/password-reset');
+const calendarRoutes = require('./src/routes/calendar');
 const { setupConversationRelay } = require('./src/routes/conversation-relay');
+const voiceWidgetRoutes = require('./src/routes/voice-widget');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3100;
+
+// Trust proxy for Railway/Fly.io (needed for secure cookies + rate limiting)
+app.set('trust proxy', 1);
 
 // ============= STARTUP =============
 
 logger.info('Starting Calva AI Receptionist Platform');
 
 // Initialize database
-try {
-  db.init();
-  migrate();
-  logger.info('Database initialized');
-} catch (error) {
+db.init();
+migrate().then(() => {
+  logger.info('Database initialized (Supabase)');
+}).catch(error => {
   logger.error('Database initialization failed', { error: error.message });
   process.exit(1);
-}
+});
 
 // ============= MIDDLEWARE =============
 
@@ -49,14 +54,29 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com", "https://cdn.tailwindcss.com"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net", "https://cdn.tailwindcss.com", "https://js.stripe.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net", "https://cdn.tailwindcss.com", "https://js.stripe.com", "https://elevenlabs.io"],
       fontSrc: ["'self'", "https://cdn.jsdelivr.net", "https://fonts.gstatic.com", "https://fonts.googleapis.com"],
-      connectSrc: ["'self'", "https://api.stripe.com"],
+      connectSrc: ["'self'", "https://api.stripe.com", "blob:", "https://api.elevenlabs.io", "wss://api.elevenlabs.io"],
+      mediaSrc: ["'self'", "blob:", "data:"],
       frameSrc: ["'self'", "https://js.stripe.com"],
       imgSrc: ["'self'", "data:", "https:"],
     }
   }
 }));
+
+// CORS for API routes
+app.use('/api', async (req, res, next) => {
+  const allowedOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : [];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-Key');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
 
 // Compression
 app.use(compression());
@@ -69,13 +89,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Session middleware
+const SESSION_SECRET = process.env.SESSION_SECRET || (process.env.NODE_ENV === 'production' ? undefined : 'calva-dev-secret-change-in-production');
+if (!SESSION_SECRET) {
+  logger.error('SESSION_SECRET environment variable is required in production');
+  process.exit(1);
+}
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'calva-dev-secret-change-in-production',
+  secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // set true behind HTTPS proxy
+    secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
+    sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   }
 }));
@@ -118,11 +144,22 @@ app.use('/api', apiRoutes);
 // Chat widget API
 app.use('/api', chatRoutes);
 
+// Voice widget API (browser talk-to-agent)
+app.use('/api', voiceWidgetRoutes);
+
 // Onboarding
 app.use('/onboard', onboardRoutes);
 
+// Password reset page (GET serves HTML, POST handled by passwordResetRoutes)
+app.get('/auth/reset-password', async (req, res) => {
+  if (req.query.token) return res.sendFile(path.join(__dirname, 'public/reset-password.html'));
+  res.redirect('/forgot-password');
+});
+
 // Auth
 app.use('/auth', authRoutes);
+app.use('/auth', passwordResetRoutes);
+app.use('/api/calendar', calendarRoutes);
 
 // Session-based dashboard
 app.use('/dashboard', dashboardRoutes);
@@ -134,27 +171,72 @@ app.use('/api/dashboard', dashboardApiRoutes);
 app.use('/billing', billingRoutes);
 
 // Landing page
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
+// Clean URL routes for static pages
+app.get('/pricing', async (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/pricing.html'));
+});
+app.get('/login', async (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/login.html'));
+});
+app.get('/signup', async (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/login.html'));
+});
+app.get('/settings', async (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/settings.html'));
+});
+app.get('/forgot-password', async (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/forgot-password.html'));
+});
+app.get('/terms', async (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/terms.html'));
+});
+app.get('/privacy', async (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/privacy.html'));
+});
+
 // Health check
-app.get('/health', (req, res) => {
-  const tenants = db.getAllTenants();
-  res.json({
-    status: 'ok',
+app.get('/health', async (req, res) => {
+  const checks = { database: false, geminiKey: false, twilioKeys: false };
+  let status = 'ok';
+
+  // Database check
+  try {
+    const tenants = await db.getAllTenants();
+    checks.database = true;
+    checks.activeTenants = tenants.filter(t => t.active).length;
+    checks.totalTenants = tenants.length;
+  } catch (e) {
+    status = 'degraded';
+    checks.databaseError = e.message;
+  }
+
+  // API key presence checks
+  checks.geminiKey = !!process.env.GEMINI_API_KEY;
+  checks.twilioKeys = !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN);
+  checks.stripeConfigured = !(process.env.STRIPE_SECRET_KEY || '').includes('PLACEHOLDER');
+  checks.smtpConfigured = !!process.env.SMTP_HOST;
+
+  if (!checks.geminiKey || !checks.twilioKeys) status = 'degraded';
+
+  res.status(status === 'ok' ? 200 : 503).json({
+    status,
     service: 'calva-platform',
-    version: '1.0.0',
+    version: '2.0.0',
     timestamp: new Date().toISOString(),
-    stats: {
-      activeTenants: tenants.filter(t => t.active === 1).length,
-      totalTenants: tenants.length
-    }
+    environment: process.env.NODE_ENV || 'development',
+    checks
   });
 });
 
 // 404 handler
 app.use((req, res) => {
+  if (req.accepts('html')) {
+    return res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+  }
   res.status(404).json({
     error: 'Not Found',
     message: `Route ${req.method} ${req.path} not found`

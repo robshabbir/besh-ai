@@ -7,12 +7,12 @@ const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 // Voice settings by language/persona
 const VOICES = {
   en: {
-    id: 'EXAVITQu4vr4xnSDxMaL', // Sarah - conversational/phone optimized, most human-sounding
+    id: 'EXAVITQu4vr4xnSDxMaL', // Sarah - professional American female, no accent
     settings: {
-      stability: 0.25,         // LOW = more natural variation, less robotic monotone
-      similarity_boost: 0.75,
-      style: 0.6,              // HIGH = more expressive, emotional
-      use_speaker_boost: true  // Enhanced clarity for phone calls
+      stability: 0.3,         // Low = natural variation, not robotic
+      similarity_boost: 0.8,  // High = stay close to voice character
+      style: 0.5,             // Moderate expressiveness
+      use_speaker_boost: true // Enhanced clarity for phone calls
     }
   },
   es: {

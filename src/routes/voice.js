@@ -123,7 +123,7 @@ router.post('/voice', async (req, res) => {
   logger.info('Incoming call (ElevenLabs)', { callSid, to: toNumber, from: fromNumber });
 
   try {
-    const tenant = db.getTenantByPhoneNumber(toNumber) || db.getTenantByPhoneNumber(fromNumber);
+    const tenant = await db.getTenantByPhoneNumber(toNumber) || await db.getTenantByPhoneNumber(fromNumber);
 
     if (!tenant) {
       logger.error('No tenant found', { to: toNumber, from: fromNumber });
@@ -133,7 +133,7 @@ router.post('/voice', async (req, res) => {
       return res.send(twiml.toString());
     }
 
-    const callId = db.createCall(tenant.id, callSid, fromNumber);
+    const callId = await db.createCall(tenant.id, callSid, fromNumber);
     const session = getSession(callSid);
     session.tenantId = tenant.id;
     session.callId = callId;
@@ -202,7 +202,7 @@ router.post('/voice-cr', async (req, res) => {
   logger.info('Incoming call (ConversationRelay)', { callSid, to: toNumber, from: fromNumber });
 
   try {
-    const tenant = db.getTenantByPhoneNumber(toNumber) || db.getTenantByPhoneNumber(fromNumber);
+    const tenant = await db.getTenantByPhoneNumber(toNumber) || await db.getTenantByPhoneNumber(fromNumber);
 
     if (!tenant) {
       logger.error('No tenant found', { to: toNumber, from: fromNumber });
@@ -234,22 +234,26 @@ router.post('/voice-cr', async (req, res) => {
     // Low stability (0.20) = more natural variation, less robotic monotone
     // Moderate similarity (0.65) = recognizable but not rigid
     // Speed 0.95 = slightly slower than default, more relaxed/human
-    const crVoice = process.env.CR_VOICE || 'EXAVITQu4vr4xnSDxMaL-turbo_v2_5-0.95_0.20_0.65';
-    const crTtsProvider = process.env.CR_TTS_PROVIDER || 'ElevenLabs';
+    const crTtsProvider = process.env.CR_TTS_PROVIDER || 'Amazon';
+    
+    // Amazon Polly Ruth-Generative — best available without ElevenLabs
+    // ElevenLabs is blocked on this Twilio account (error 64101 block_elevenlabs)
+    // To unblock: Twilio Console → Voice → Settings → enable AI/ML addendum
+    let crVoice = process.env.CR_VOICE || 'Ruth-Generative';
     
     connect.conversationRelay({
       url: wsUrl,
-      // welcomeGreeting triggers CR to play TTS greeting and start WS session
-      // Our pre-recorded clip (sent via WS `play` on setup) will preempt this
-      // But we need a real greeting as fallback in case the clip doesn't play
       welcomeGreeting: greetingMessage,
       welcomeGreetingInterruptible: 'speech',
       voice: crVoice,
       ttsProvider: crTtsProvider,
+      // ElevenLabs text normalization OFF = lower TTS latency (we handle normalization ourselves)
+      elevenlabsTextNormalization: 'off',
       transcriptionProvider: 'deepgram',
       speechModel: 'nova-3-general',
       interruptible: 'true',
-      interruptSensitivity: 'medium',
+      // Higher sensitivity = faster endpointing = less wait after caller stops talking
+      interruptSensitivity: 'high',
       dtmfDetection: 'true',
       profanityFilter: 'false'
     });
@@ -329,14 +333,14 @@ router.post('/gather', async (req, res) => {
       throw new Error('Session has no tenant');
     }
 
-    const tenant = db.getTenantById(session.tenantId);
+    const tenant = await db.getTenantById(session.tenantId);
     const supportedLanguages = tenant.config.languages || ['en'];
     
     // Detect Spanish on first turn if supported
     if (session.turnCount === 1 && supportedLanguages.includes('es') && detectSpanish(speechResult)) {
       session.language = 'es';
       logger.info('Spanish language detected', { callSid });
-      db.updateCall(callSid, { language: 'es' });
+      await db.updateCall(callSid, { language: 'es' });
     }
     
     let systemPrompt = tenant.config.systemPrompt;
@@ -396,7 +400,7 @@ router.post('/gather', async (req, res) => {
     });
 
     // Update call record
-    db.updateCall(callSid, {
+    await db.updateCall(callSid, {
       transcript: session.messages,
       intent: session.intent,
       collected_data: session.collected
@@ -413,18 +417,18 @@ router.post('/gather', async (req, res) => {
       twiml.pause({ length: 1 });
       
       // Mark as transferred in database
-      db.updateCall(callSid, {
+      await db.updateCall(callSid, {
         transferred: 1,
         transfer_to: transferPhone
       });
       
       // Send SMS to owner before transfer
       const { sendSMS } = require('../services/notifications');
-      const callerPhone = db.getCallBySid(callSid)?.caller_phone || 'Unknown';
+      const callerPhone = await db.getCallBySid(callSid)?.caller_phone || 'Unknown';
       const businessPhone = tenant.phone_number;
       const summary = session.collected.service || session.collected.reason || 'assistance';
       
-      setImmediate(async () => {
+      setImmediateasync (async () => {
         try {
           await sendSMS(
             transferPhone,
@@ -458,7 +462,7 @@ router.post('/gather', async (req, res) => {
       twiml.hangup();
 
       // Post-call actions (non-blocking)
-      setImmediate(async () => {
+      setImmediateasync (async () => {
         try {
           if (result.intent === 'booking' || result.intent === 'new_client') {
             await createBooking(tenant.id, session.callId, session.collected, result.intent);
@@ -467,7 +471,7 @@ router.post('/gather', async (req, res) => {
             await handleEmergency(tenant.id, session.callId, session.collected);
           }
           const callData = {
-            caller_phone: db.getCallBySid(callSid)?.caller_phone,
+            caller_phone: await db.getCallBySid(callSid)?.caller_phone,
             intent: session.intent,
             collected: session.collected,
             urgency: result.urgency
@@ -564,7 +568,7 @@ router.post('/gather', async (req, res) => {
 /**
  * Status callback
  */
-router.post('/status', (req, res) => {
+router.post('/status', async (req, res) => {
   const callSid = req.body.CallSid;
   const callStatus = req.body.CallStatus;
   const duration = req.body.CallDuration;
@@ -576,7 +580,7 @@ router.post('/status', (req, res) => {
     delete sessions[callSid];
     if (duration) {
       try {
-        db.updateCall(callSid, { duration_seconds: parseInt(duration) });
+        await db.updateCall(callSid, { duration_seconds: parseInt(duration) });
       } catch (e) {}
     }
   }
@@ -587,7 +591,7 @@ router.post('/status', (req, res) => {
 /**
  * Recording status callback — Twilio sends this when recording is ready
  */
-router.post('/recording-status', (req, res) => {
+router.post('/recording-status', async (req, res) => {
   const callSid = req.body.CallSid;
   const recordingUrl = req.body.RecordingUrl;
   const recordingDuration = req.body.RecordingDuration;
@@ -603,7 +607,7 @@ router.post('/recording-status', (req, res) => {
   if (recordingStatus === 'completed' && recordingUrl) {
     try {
       // Store recording URL and duration in database
-      db.updateCall(callSid, {
+      await db.updateCall(callSid, {
         recording_url: recordingUrl,
         recording_duration: parseInt(recordingDuration) || 0
       });
@@ -619,7 +623,7 @@ router.post('/recording-status', (req, res) => {
 /**
  * Transfer status callback — handles when owner answers/doesn't answer
  */
-router.post('/transfer-status', (req, res) => {
+router.post('/transfer-status', async (req, res) => {
   const twiml = new twilio.twiml.VoiceResponse();
   const callSid = req.body.CallSid;
   const dialCallStatus = req.body.DialCallStatus;
@@ -637,7 +641,7 @@ router.post('/transfer-status', (req, res) => {
     // Owner didn't answer (no-answer, busy, failed)
     logger.info('Transfer failed, offering voicemail', { callSid, status: dialCallStatus });
     
-    const tenant = session.tenantId ? db.getTenantById(session.tenantId) : null;
+    const tenant = session.tenantId ? await db.getTenantById(session.tenantId) : null;
     const ownerName = tenant?.config?.businessConfig?.ownerName || 'the owner';
     
     twiml.say(VOICE, `Sorry, ${ownerName} isn't available right now.`);
@@ -683,7 +687,7 @@ router.post('/voicemail-status', async (req, res) => {
   if (recordingUrl && session.tenantId) {
     try {
       // Save voicemail to database
-      const voicemailId = db.createVoicemail({
+      const voicemailId = await db.createVoicemail({
         tenant_id: session.tenantId,
         caller_phone: callerPhone,
         recording_url: recordingUrl,
@@ -694,7 +698,7 @@ router.post('/voicemail-status', async (req, res) => {
       logger.info('Voicemail saved to database', { voicemailId, callSid });
       
       // Send SMS notification to owner
-      const tenant = db.getTenantById(session.tenantId);
+      const tenant = await db.getTenantById(session.tenantId);
       const ownerPhone = tenant.config?.transferPhone || tenant.config?.businessConfig?.ownerPhone;
       const businessPhone = tenant.phone_number;
       
@@ -725,7 +729,7 @@ router.post('/voicemail-status', async (req, res) => {
  */
 const { CACHE_DIR } = require('../services/tts');
 
-router.get('/tts-audio/:filename', (req, res) => {
+router.get('/tts-audio/:filename', async (req, res) => {
   const filename = req.params.filename;
   if (!filename.match(/^[a-f0-9]+\.mp3$/)) {
     return res.status(400).send('Invalid filename');

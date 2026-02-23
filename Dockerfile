@@ -1,34 +1,17 @@
-# Calva AI Receptionist - Production Dockerfile
+FROM node:22-alpine
 
-FROM node:20-alpine
-
-# Install build dependencies for better-sqlite3
-RUN apk add --no-cache python3 make g++
-
-# Set working directory
 WORKDIR /app
 
-# Copy package files
+# Install deps first for layer caching
 COPY package*.json ./
+RUN npm ci --production
 
-# Install dependencies
-RUN npm ci --only=production
-
-# Copy application code
+# Copy app
 COPY . .
 
-# Create data directory
-RUN mkdir -p /app/data
+# Create data directory for SQLite
+RUN mkdir -p data logs/transcripts logs/stats
 
-# Run migrations on startup
-RUN node src/db/migrate.js
+EXPOSE 3100
 
-# Expose port
-EXPOSE 3000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
-
-# Start server
 CMD ["node", "server.js"]

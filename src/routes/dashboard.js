@@ -25,36 +25,36 @@ router.use(requireAuth);
 
 const path = require('path');
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/dashboard/index.html'));
 });
 
 // All sub-pages served by the same SPA
-router.get('/calls', (req, res) => {
+router.get('/calls', async (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/dashboard/index.html'));
 });
 
-router.get('/customize', (req, res) => {
+router.get('/customize', async (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/dashboard/index.html'));
 });
 
-router.get('/settings', (req, res) => {
+router.get('/settings', async (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/dashboard/index.html'));
 });
 
-router.get('/billing', (req, res) => {
+router.get('/billing', async (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/dashboard/index.html'));
 });
 
 // ============= API ROUTES =============
 
 // Get current user + tenant info
-router.get('/api/me', (req, res) => {
+router.get('/api/me', async (req, res) => {
   try {
-    const user = db.getUserById(req.session.userId);
+    const user = await db.getUserById(req.session.userId);
     if (!user) return res.status(401).json({ error: 'User not found' });
 
-    const tenant = user.tenant_id ? db.getTenantById(user.tenant_id) : null;
+    const tenant = user.tenant_id ? await db.getTenantById(user.tenant_id) : null;
 
     res.json({
       user: { id: user.id, email: user.email, tenantId: user.tenant_id },
@@ -73,13 +73,13 @@ router.get('/api/me', (req, res) => {
 });
 
 // Get overview stats
-router.get('/api/overview', (req, res) => {
+router.get('/api/overview', async (req, res) => {
   try {
     const tenantId = req.session.tenantId;
     if (!tenantId) return res.json({ stats: {} });
 
-    const calls = db.getCallsByTenant(tenantId, 50);
-    const bookings = db.getBookingsByTenant(tenantId, 50);
+    const calls = await db.getCallsByTenant(tenantId, 50);
+    const bookings = await db.getBookingsByTenant(tenantId, 50);
     const now = Math.floor(Date.now() / 1000);
     const oneDayAgo = now - 86400;
     const oneWeekAgo = now - 7 * 86400;
@@ -106,13 +106,13 @@ router.get('/api/overview', (req, res) => {
 });
 
 // Get calls
-router.get('/api/calls', (req, res) => {
+router.get('/api/calls', async (req, res) => {
   try {
     const tenantId = req.session.tenantId;
     if (!tenantId) return res.json({ calls: [] });
 
     const limit = Math.min(parseInt(req.query.limit) || 50, 200);
-    const calls = db.getCallsByTenant(tenantId, limit);
+    const calls = await db.getCallsByTenant(tenantId, limit);
 
     res.json({
       calls: calls.map(c => ({
@@ -133,7 +133,7 @@ router.get('/api/calls', (req, res) => {
 });
 
 // Get available templates
-router.get('/api/templates', (req, res) => {
+router.get('/api/templates', async (req, res) => {
   try {
     const templates = listAvailableTemplates();
     res.json({ templates });
@@ -144,14 +144,14 @@ router.get('/api/templates', (req, res) => {
 });
 
 // Save customization (greeting, hours, FAQs)
-router.put('/api/customize', (req, res) => {
+router.put('/api/customize', async (req, res) => {
   try {
     const tenantId = req.session.tenantId;
     if (!tenantId) return res.status(400).json({ error: 'No tenant associated' });
 
     const { greeting, businessHours, faqs, businessName } = req.body;
 
-    const tenant = db.getTenantById(tenantId);
+    const tenant = await db.getTenantById(tenantId);
     if (!tenant) return res.status(404).json({ error: 'Tenant not found' });
 
     const config = tenant.config || {};
@@ -170,7 +170,7 @@ router.put('/api/customize', (req, res) => {
     const updates = { config_json: config };
     if (businessName) updates.name = businessName;
 
-    db.updateTenant(tenantId, updates);
+    await db.updateTenant(tenantId, updates);
 
     logger.info('Tenant customization saved', { tenantId });
     res.json({ success: true });

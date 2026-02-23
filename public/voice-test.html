@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Calva Voice A/B Test</title>
+<style>
+body { font-family: -apple-system, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; background: #0a0a0a; color: #eee; }
+h1 { color: #fff; }
+h2 { color: #4ade80; margin-top: 40px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+.voice-card { background: #1a1a1a; border-radius: 12px; padding: 20px; margin: 15px 0; }
+.voice-card h3 { margin: 0 0 5px; color: #fff; }
+.voice-card p { color: #888; margin: 5px 0 15px; font-size: 14px; }
+audio { width: 100%; margin: 5px 0; }
+.label { color: #4ade80; font-weight: bold; font-size: 13px; display: block; margin-bottom: 4px; }
+.note { background: #1e293b; padding: 15px; border-radius: 8px; margin: 20px 0; font-size: 14px; color: #94a3b8; }
+.vs { text-align: center; color: #666; font-size: 20px; margin: 10px 0; }
+</style>
+</head>
+<body>
+<h1>🎙️ Pick the Best Voice</h1>
+<p>Listen to both and tell me which one sounds more like a real person on the phone.</p>
+
+<h2>Greeting: "Mike's Plumbing, this is Sarah. How can I help ya?"</h2>
+
+<div class="voice-card">
+<h3>Voice A — Jessica</h3>
+<p>Playful, bright, warm — tagged "conversational" by ElevenLabs</p>
+<audio controls src="/audio/jessica_greeting.mp3"></audio>
+</div>
+
+<div class="vs">— VS —</div>
+
+<div class="voice-card">
+<h3>Voice B — Sarah</h3>
+<p>Mature, confident, professional — tagged "entertainment" by ElevenLabs</p>
+<audio controls src="/audio/sarah_greeting.mp3"></audio>
+</div>
+
+<h2>Full Conversation Sample</h2>
+<div class="note">
+"Oh gosh, that sounds awful! Where are you located? ... Yeah, that's usually around one fifty to three hundred. Want me to get someone out there to take a look? ... No worries, but I'd grab a spot cause the schedule fills up quick."
+</div>
+
+<div class="voice-card">
+<h3>Voice A — Jessica (Conversation)</h3>
+<audio controls src="/audio/jessica_conversation.mp3"></audio>
+</div>
+
+<div class="vs">— VS —</div>
+
+<div class="voice-card">
+<h3>Voice B — Sarah (Conversation)</h3>
+<audio controls src="/audio/sarah_conversation.mp3"></audio>
+</div>
+
+<h2>Other Options</h2>
+<div class="voice-card">
+<h3>Rachel — Casual, Young</h3>
+<audio controls src="/audio/voice_test_Rachel.mp3"></audio>
+</div>
+<div class="voice-card">
+<h3>Bella — Professional, Bright</h3>
+<audio controls src="/audio/voice_test_Bella.mp3"></audio>
+</div>
+
+<div class="note" style="margin-top: 40px;">
+<strong>Current live voice:</strong> Jessica (Voice A) — call +1 (929) 755-7288 to hear it live<br>
+<strong>Settings:</strong> ElevenLabs Flash 2.5, speed 1.0x, stability 0.35, similarity 0.75<br><br>
+Tell me which voice you prefer and I'll switch it immediately.
+</div>
+</body>
+</html>

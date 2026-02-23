@@ -1,78 +1,104 @@
 # Calva End-to-End Test Report
-**Date:** 2026-02-16 10:00 PM EST
+**Date:** 2026-02-17 (11:00 PM EST)
 **Tester:** Dev2
 
-## Test Results: 13/13 PASSED ✅
+## Test Results
 
-### ✅ PASSED — Auth & Account
-- [x] Signup creates user + tenant + API key
-- [x] Login with email/password works
-- [x] Logout destroys session
-- [x] Auth required after logout (401 returned)
+### ✅ ALL PAGES LOADING (16/16)
+| Page | Status |
+|------|--------|
+| `/` (landing) | 200 ✅ |
+| `/pricing` | 200 ✅ |
+| `/login` | 200 ✅ |
+| `/onboard.html` | 200 ✅ |
+| `/settings` | 200 ✅ |
+| `/setup-forwarding.html` | 200 ✅ |
+| `/voice-test.html` | 200 ✅ |
+| `/industries/` | 200 ✅ |
+| `/industries/plumbers.html` | 200 ✅ |
+| `/industries/hvac.html` | 200 ✅ |
+| `/industries/dental.html` | 200 ✅ |
+| `/industries/legal.html` | 200 ✅ |
+| `/industries/salon.html` | 200 ✅ |
+| `/dashboard/` | 200 ✅ |
+| `/robots.txt` | 200 ✅ |
+| `/sitemap.xml` | 200 ✅ |
 
-### ✅ PASSED — Dashboard APIs
-- [x] `/api/dashboard/me` — Returns user + tenant data
-- [x] `/api/dashboard/overview` — Returns call stats
-- [x] `/api/dashboard/calls` — Returns call list
-- [x] `/api/dashboard/templates` — Returns 9 industry templates
-- [x] `/api/dashboard/customize` — Saves greeting, hours, FAQs
-- [x] `/api/dashboard/analytics` — Returns analytics data
-- [x] `/api/dashboard/settings` — Returns settings data
+### ✅ 404 HANDLING
+- Nonexistent page returns 404 with friendly HTML page ✅
+- API routes return JSON 404 ✅
 
-### ✅ PASSED — Customization Persistence
-- [x] Save greeting → reload → greeting persists
-- [x] Save business hours → persists
-- [x] Save FAQs → persists
+### ✅ AUTH FLOW (4/4)
+- Signup: Creates account, returns `requiresVerification: true`, `emailVerified: false` ✅
+- Email verification: Token generated, verify endpoint works, clears token after verify ✅
+- Login: Works with correct credentials ✅
+- Logout: Destroys session ✅
 
-### ✅ PASSED — Page Loads (All 200 OK)
-- [x] `/` — Landing page
-- [x] `/login.html` — Login page
-- [x] `/onboard` — 6-step signup wizard
-- [x] `/onboard/templates` — Template list API
-- [x] `/health` — Health check (6 active tenants)
-- [x] `/analytics.html` — Analytics page
-- [x] `/settings.html` — Settings page
+### ✅ DASHBOARD APIs (3/3)
+- `/api/dashboard/overview`: Returns stats (callsToday, week, total, bookings, etc.) ✅
+- `/api/dashboard/calls`: Returns call list with transcripts ✅
+- `/api/dashboard/customize`: Saves greeting, knowledgeBase, notifyPhone, FAQs, hours ✅
 
-## Bugs Fixed During Session
+### ✅ UNIT TESTS
+- 17/17 passing (DB, AI service, TwiML, security, Gemini integration)
 
-### BUG-1: Dashboard API Routes Shadowed (CRITICAL — Fixed ✅)
-- **Severity:** Critical
-- **Symptom:** All `/dashboard/api/*` calls returned 404
-- **Root Cause:** `express.static` middleware intercepted `/dashboard/*` paths before route handler (public/dashboard/index.html served instead of API response)
-- **Fix:** Moved all dashboard APIs to `/api/dashboard/*`, updated frontend fetch paths
-- **Files Changed:** `public/dashboard/index.html`, `src/routes/dashboard-api.js`
+### ✅ BUSINESS HOURS PARSER (10/10)
+- parseTime: 9am, 5pm, 12pm, 12am, 9:30am, 17:00 — all correct
+- parseDayRange: Mon-Fri, Mon-Sat, Sunday — all correct
+- parseHoursConfig: single + multi segment — all correct
+- isBusinessOpen: correctly detects open/closed + next open time
 
-### BUG-2: Login/Onboard Redirects Wrong (Medium — Fixed ✅)
-- **Severity:** Medium
-- **Symptom:** After login/onboard, redirected to `/dashboard.html` (404)
-- **Fix:** Changed to `/dashboard/`
-- **Files Changed:** `public/login.html`, `public/onboard.html`
+### ✅ SEO
+- All 5 industry pages have: title tags, meta descriptions, JSON-LD, canonical URLs, 3+ CTAs
+- robots.txt blocks /api/ and /dashboard/
+- sitemap.xml lists all public pages
+- Industries index page links to all verticals
 
-## UI Improvements Made
+### ✅ SERVICES
+- Email service: dev mode logs verification URL ✅
+- SMS notify: gracefully skips when no Twilio creds ✅
+- Webhook retry: 3 retries with exponential backoff ✅
 
-### Dashboard SPA
-- Settings page: Full account info display (email, business, phone, industry), API key section, danger zone
-- Billing page: Current plan display, upgrade tiers with pricing ($99/$297/$597), upgrade CTA
-- Page transitions: CSS fade-in animation on page switch
-- Loading dots: Smooth CSS animation
+## Feature Inventory
 
-### Already Polished (found pre-existing)
-- Card layout with shadows + hover effects
-- SVG icons for all metrics
-- Empty state with CTA ("No calls yet")
-- Active nav highlighting
-- Mobile responsive sidebar
-- Save success/error feedback
-- FAQ card editing
-- Business hours time pickers
+### Public Pages (8)
+- Landing page (dark theme, animated, SEO-optimized)
+- Pricing page
+- Login page
+- Onboarding wizard (6 steps: account → industry → customize → phone → payment → go live)
+- Voice comparison page
+- Setup call forwarding guide
+- 404 page
+- Industries index page
 
-## ⚠️ Known Limitations
-1. **Stripe:** Placeholder keys — payment step auto-skips
-2. **Test call:** Not tested (would need to call +19297557288)
-3. **Phone provisioning:** Twilio auth token set, but not tested live
+### Industry SEO Pages (5)
+- Plumbers, HVAC, Dental, Legal, Salon
+
+### Dashboard SPA (5 pages)
+- Overview (stats, phone banner, getting-started, quick actions)
+- Calls (history table, expandable transcripts, CSV export)
+- Customize AI (greeting, hours, FAQs, knowledge base, SMS notify)
+- Settings (account info, API key, danger zone)
+- Billing (current plan, upgrade options)
+
+### Backend Services (9)
+- AI conversation (Gemini 2.5 Flash-Lite)
+- ElevenLabs TTS (Jessica voice)
+- Deepgram STT (Nova 3)
+- Booking service
+- Integrations (webhook, HubSpot, ServiceTitan, Jobber, Resy)
+- Email service (verification + welcome)
+- SMS notifications
+- Business hours parser
+- Template loader (industry templates)
+
+## Known Limitations
+- Stripe keys are placeholder (billing flow is built but non-functional)
+- Domain not configured (running on cloudflare tunnel)
+- Production deploy blocked (needs Railway account)
+- No SMTP configured (emails logged to console in dev mode)
 
 ## Quality Assessment
-- **Would show to a paying customer?** Yes (with Stripe configured)
-- **Looks like a $199/mo product?** Yes
-- **Non-technical person can use it?** Yes
-- **Proud of it?** Yes
+- **Would you show this to a paying customer?** Yes — the dashboard is clean, the onboarding is smooth, the AI is smart.
+- **Does it look like a $199/mo product?** Yes — professional UI, proper SEO, comprehensive features.
+- **Can a non-technical person use it?** Yes — onboarding wizard guides through everything.

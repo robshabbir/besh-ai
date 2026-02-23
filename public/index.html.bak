@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calva AI Receptionist - Every Call, Covered. 24/7.</title>
+    <meta name="description" content="AI receptionist that answers 24/7, books appointments, and captures every lead. Sounds human, not robotic. Setup in 5 minutes.">
+    <meta property="og:title" content="Calva AI Receptionist - Never Miss A Call Again">
+    <meta property="og:description" content="Your AI receptionist answers 24/7, sounds human, and never misses a lead. Try it free.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calva.ai">
+    <meta property="og:image" content="https://calva.ai/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📞</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-card: #111111;
+            --bg-elevated: #1a1a1a;
+            --border: #1f1f1f;
+            --border-light: #2a2a2a;
+            --text: #ffffff;
+            --text-muted: #a3a3a3;
+            --text-dim: #6b6b6b;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --accent-light: #60a5fa;
+            --success: #10b981;
+            --gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --gradient-radial: radial-gradient(ellipse at top, rgba(59, 130, 246, 0.15) 0%, transparent 60%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        /* Animated gradient background */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .hero-gradient {
+            background: radial-gradient(ellipse at top, rgba(59, 130, 246, 0.15) 0%, transparent 50%);
+            animation: gradientPulse 8s ease infinite;
+        }
+        
+        @keyframes gradientPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 0 80px;
+            position: relative;
+        }
+        
+        .hero-content {
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        h1 {
+            font-size: clamp(48px, 8vw, 84px);
+            font-weight: 900;
+            line-height: 1.05;
+            margin-bottom: 24px;
+            letter-spacing: -0.03em;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #ec4899 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 6s ease infinite;
+        }
+        
+        /* Typing animation */
+        .typing-text {
+            display: inline-block;
+            border-right: 3px solid var(--accent);
+            padding-right: 8px;
+            animation: blink 0.7s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { border-color: var(--accent); }
+            51%, 100% { border-color: transparent; }
+        }
+        
+        .hero-subtext {
+            font-size: clamp(20px, 3vw, 26px);
+            color: var(--text-muted);
+            margin-bottom: 48px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+        
+        /* Trust badges */
+        .trust-badges {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 40px 0;
+            padding: 24px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        .badge-icon {
+            font-size: 20px;
+        }
+        
+        /* Social proof counter */
+        .social-proof {
+            margin: 32px 0;
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+        
+        .proof-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--accent-light);
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        /* Buttons */
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px 36px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 17px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.35);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.5);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 2px solid var(--border-light);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .phone-link {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-top: 16px;
+        }
+        
+        .phone-link a {
+            color: var(--accent-light);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .phone-link a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+        
+        /* Section spacing */
+        section {
+            padding: 100px 0;
+            position: relative;
+        }
+        
+        @media (max-width: 768px) {
+            section {
+                padding: 60px 0;
+            }
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 72px;
+        }
+        
+        h2 {
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+        
+        .section-subtitle {
+            font-size: clamp(18px, 2.5vw, 22px);
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        /* Try It Live Section */
+        .try-live {
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.03) 0%, rgba(139, 92, 246, 0.03) 100%);
+        }
+        
+        .try-live-card {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 56px 48px;
+            background: rgba(17, 17, 17, 0.9);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            border-radius: 32px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6), 0 0 80px rgba(59, 130, 246, 0.15);
+            position: relative;
+        }
+        
+        @media (max-width: 640px) {
+            .try-live-card {
+                padding: 40px 28px;
+            }
+        }
+        
+        /* Animated glow effect */
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6), 0 0 80px rgba(59, 130, 246, 0.15); }
+            50% { box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6), 0 0 120px rgba(59, 130, 246, 0.25); }
+        }
+        
+        .try-live-card:hover {
+            animation: glow 3s ease infinite;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 640px) {
+            .form-row {
+                flex-direction: column;
+            }
+        }
+        
+        input[type="tel"] {
+            flex: 1;
+            padding: 20px 24px;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border-light);
+            border-radius: 14px;
+            color: var(--text);
+            font-size: 17px;
+            font-family: inherit;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="tel"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+        
+        input[type="tel"]::placeholder {
+            color: var(--text-dim);
+        }
+        
+        .demo-status {
+            min-height: 28px;
+            text-align: center;
+            font-size: 15px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+        
+        .demo-status.success {
+            color: var(--success);
+        }
+        
+        .demo-status.error {
+            color: #ef4444;
+        }
+        
+        /* Loading animation */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        
+        .demo-disclaimer {
+            font-size: 14px;
+            color: var(--text-dim);
+            text-align: center;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+        
+        .demo-disclaimer a {
+            color: var(--accent-light);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .demo-disclaimer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* How It Works */
+        .steps-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 48px;
+            position: relative;
+        }
+        
+        @media (max-width: 768px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+        
+        /* Connecting arrows */
+        .steps-container::before,
+        .steps-container::after {
+            content: '→';
+            position: absolute;
+            top: 60px;
+            font-size: 32px;
+            color: var(--border-light);
+            font-weight: 300;
+        }
+        
+        .steps-container::before {
+            left: 30%;
+        }
+        
+        .steps-container::after {
+            right: 30%;
+        }
+        
+        @media (max-width: 768px) {
+            .steps-container::before,
+            .steps-container::after {
+                display: none;
+            }
+        }
+        
+        .step-card {
+            text-align: center;
+            padding: 40px 32px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .step-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.2);
+        }
+        
+        .step-icon {
+            font-size: 56px;
+            margin-bottom: 24px;
+            display: block;
+            filter: grayscale(0.3);
+            transition: filter 0.3s ease;
+        }
+        
+        .step-card:hover .step-icon {
+            filter: grayscale(0);
+        }
+        
+        .step-number {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .step-card h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        
+        .step-card p {
+            color: var(--text-muted);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        /* Audio Demo Section */
+        .audio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 640px) {
+            .audio-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .audio-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .audio-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .audio-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+        }
+        
+        .audio-card:hover::before {
+            opacity: 1;
+        }
+        
+        .audio-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .audio-icon {
+            font-size: 40px;
+            filter: grayscale(0.2);
+        }
+        
+        .audio-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .audio-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        
+        .audio-description {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        /* Waveform-style audio player */
+        .audio-player-wrapper {
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .waveform {
+            display: flex;
+            gap: 3px;
+            height: 40px;
+            align-items: center;
+            margin-bottom: 16px;
+            justify-content: center;
+        }
+        
+        .wave-bar {
+            width: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+        
+        .audio-card:hover .wave-bar {
+            opacity: 0.6;
+        }
+        
+        .audio-player-wrapper.playing .wave-bar {
+            animation: wave 1s ease-in-out infinite;
+            opacity: 1;
+        }
+        
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.5); }
+        }
+        
+        .wave-bar:nth-child(1) { height: 20%; animation-delay: 0s; }
+        .wave-bar:nth-child(2) { height: 40%; animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { height: 60%; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 80%; animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { height: 100%; animation-delay: 0.4s; }
+        .wave-bar:nth-child(6) { height: 80%; animation-delay: 0.5s; }
+        .wave-bar:nth-child(7) { height: 60%; animation-delay: 0.6s; }
+        .wave-bar:nth-child(8) { height: 40%; animation-delay: 0.7s; }
+        .wave-bar:nth-child(9) { height: 20%; animation-delay: 0.8s; }
+        
+        audio {
+            width: 100%;
+            height: 40px;
+            border-radius: 8px;
+        }
+        
+        audio::-webkit-media-controls-panel {
+            background: var(--bg-elevated);
+        }
+        
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 36px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-6px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .pricing-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            padding: 48px 40px;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            border-color: var(--accent);
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+        }
+        
+        .pricing-featured {
+            border: 3px solid var(--accent);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+            transform: scale(1.05);
+        }
+        
+        .pricing-featured:hover {
+            transform: translateY(-12px) scale(1.07);
+        }
+        
+        .popular-badge {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 24px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .plan-name {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+        
+        .plan-price {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+        
+        .currency {
+            font-size: 28px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+        
+        .amount {
+            font-size: 64px;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+        
+        .period {
+            font-size: 18px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        .plan-desc {
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 16px;
+        }
+        
+        .plan-features {
+            list-style: none;
+            margin-bottom: 36px;
+        }
+        
+        .plan-features li {
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .check {
+            color: var(--success);
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .guarantee-badge {
+            text-align: center;
+            margin-top: 48px;
+            padding: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+        }
+        
+        .guarantee-badge p {
+            color: var(--success);
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        /* Testimonials */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto 48px;
+        }
+        
+        .testimonial-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+        }
+        
+        .stars {
+            color: #fbbf24;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .testimonial-text {
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .author-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        .author-title {
+            font-size: 14px;
+            color: var(--text-dim);
+        }
+        
+        .trust-logos {
+            display: flex;
+            gap: 48px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 40px 0;
+            opacity: 0.6;
+        }
+        
+        .trust-logo {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* FAQ */
+        .faq-list {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-item:hover {
+            border-color: var(--border-light);
+        }
+        
+        .faq-item.active {
+            border-color: var(--accent);
+        }
+        
+        .faq-question {
+            width: 100%;
+            padding: 28px 32px;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 18px;
+            font-weight: 700;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            font-family: inherit;
+        }
+        
+        .faq-question:hover {
+            color: var(--accent-light);
+        }
+        
+        .faq-icon {
+            font-size: 28px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+            color: var(--accent);
+            font-weight: 300;
+        }
+        
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 600px;
+        }
+        
+        .faq-answer p {
+            padding: 0 32px 32px;
+            color: var(--text-muted);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        
+        /* Footer */
+        footer {
+            border-top: 2px solid var(--border);
+            padding: 80px 0 40px;
+            background: var(--bg-card);
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+        
+        .footer-brand h3 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            font-weight: 800;
+        }
+        
+        .footer-brand p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .footer-links h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+        
+        .footer-links a {
+            display: block;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-bottom: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-light);
+            padding-left: 4px;
+        }
+        
+        .footer-bottom {
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 15px;
+        }
+        
+        .footer-tagline {
+            margin-top: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        
+        /* Scroll Reveal Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Utility */
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 48px; }
+            h2 { font-size: 36px; }
+            .hero { padding: 80px 0 60px; }
+            .container { padding: 0 20px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero hero-gradient">
+        <div class="container">
+            <div class="hero-content fade-in-up">
+                <h1>
+                    <span class="gradient-text">Every Call, Covered.</span>
+                </h1>
+                <p class="hero-subtext">
+                    Your AI receptionist answers 24/7, sounds human, books appointments, and never misses a lead. 
+                    <br>Setup in 5 minutes. No training required.
+                </p>
+                
+                <div class="trust-badges">
+                    <div class="badge">
+                        <span class="badge-icon">🤖</span>
+                        <span>24/7 AI Answering</span>
+                    </div>
+                    <div class="badge">
+                        <span class="badge-icon">🎙️</span>
+                        <span>Natural Voice</span>
+                    </div>
+                    <div class="badge">
+                        <span class="badge-icon">⚡</span>
+                        <span>Setup in 5 min</span>
+                    </div>
+                    <div class="badge">
+                        <span class="badge-icon">💰</span>
+                        <span>From $99/mo</span>
+                    </div>
+                </div>
+                
+                <div class="cta-group">
+                    <a href="#try-live" class="btn btn-primary">Try It Live — We'll Call You</a>
+                    <a href="tel:+19297557288" class="btn btn-secondary">📞 Call (929) 755-7288</a>
+                </div>
+                
+                <div class="social-proof">
+                    <span class="proof-number">500+</span>
+                    Calls answered and counting
+                </div>
+                
+                <p class="phone-link">Hear Calva answer live: <a href="tel:+19297557288">(929) 755-7288</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Try It Live Section -->
+    <section class="try-live fade-in" id="try-live">
+        <div class="container">
+            <div class="section-header">
+                <h2><span class="gradient-text">Try It Right Now</span></h2>
+                <p class="section-subtitle">
+                    Enter your number. We'll call you in seconds. Talk to Calva—our actual AI receptionist.
+                </p>
+            </div>
+            <div class="try-live-card">
+                <form id="demoForm" onsubmit="triggerDemoCall(event)">
+                    <div class="form-row">
+                        <input 
+                            type="tel" 
+                            id="demoPhone" 
+                            placeholder="(555) 123-4567" 
+                            required
+                            maxlength="17"
+                        />
+                        <button type="submit" class="btn btn-primary" id="demoBtn">
+                            📞 Call Me Now
+                        </button>
+                    </div>
+                    <div id="demoStatus" class="demo-status"></div>
+                    <p class="demo-disclaimer">
+                        3 demo calls per hour. No spam, ever.<br>
+                        <strong>Or just call:</strong> <a href="tel:+19297557288">(929) 755-7288</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2>Get Started in 3 Simple Steps</h2>
+                <p class="section-subtitle">Go from zero to AI receptionist in under 5 minutes</p>
+            </div>
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <span class="step-icon">📱</span>
+                    <h3>Forward Your Calls</h3>
+                    <p>Use your existing number or get a new one. Forward calls to Calva—setup takes 60 seconds.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <span class="step-icon">🧠</span>
+                    <h3>AI Answers Like a Human</h3>
+                    <p>Calva greets callers, answers questions, books appointments, and captures leads—automatically.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <span class="step-icon">💬</span>
+                    <h3>Get Text Summaries</h3>
+                    <p>Receive instant SMS alerts with caller details, transcripts, and next steps. Stay in control.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Audio Demos -->
+    <section class="fade-in" style="background: linear-gradient(180deg, rgba(59, 130, 246, 0.02) 0%, rgba(139, 92, 246, 0.02) 100%);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Hear Calva in Action</h2>
+                <p class="section-subtitle">Real AI-generated voices. This is exactly how Calva sounds to your callers.</p>
+            </div>
+            <div class="audio-grid">
+                <div class="audio-card">
+                    <div class="audio-header">
+                        <span class="audio-icon">🔧</span>
+                        <div>
+                            <div class="audio-title">Plumbing Emergency</div>
+                            <div class="audio-subtitle">Urgent dispatch handling</div>
+                        </div>
+                    </div>
+                    <p class="audio-description">
+                        Watch how Calva handles a flooding emergency with empathy and speed
+                    </p>
+                    <div class="audio-player-wrapper" id="player-plumber">
+                        <div class="waveform">
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                        </div>
+                        <audio controls onplay="startWave('plumber')" onpause="stopWave('plumber')" onended="stopWave('plumber')">
+                            <source src="/audio/demo-plumber.mp3" type="audio/mpeg">
+                        </audio>
+                    </div>
+                </div>
+                
+                <div class="audio-card">
+                    <div class="audio-header">
+                        <span class="audio-icon">⚖️</span>
+                        <div>
+                            <div class="audio-title">Law Firm Intake</div>
+                            <div class="audio-subtitle">Client consultation booking</div>
+                        </div>
+                    </div>
+                    <p class="audio-description">
+                        Professional, empathetic intake for potential legal clients
+                    </p>
+                    <div class="audio-player-wrapper" id="player-law">
+                        <div class="waveform">
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                        </div>
+                        <audio controls onplay="startWave('law')" onpause="stopWave('law')" onended="stopWave('law')">
+                            <source src="/audio/demo-law.mp3" type="audio/mpeg">
+                        </audio>
+                    </div>
+                </div>
+                
+                <div class="audio-card">
+                    <div class="audio-header">
+                        <span class="audio-icon">🍽️</span>
+                        <div>
+                            <div class="audio-title">Restaurant Reservation</div>
+                            <div class="audio-subtitle">Table booking & confirmations</div>
+                        </div>
+                    </div>
+                    <p class="audio-description">
+                        Friendly, efficient reservation handling for your restaurant
+                    </p>
+                    <div class="audio-player-wrapper" id="player-restaurant">
+                        <div class="waveform">
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                        </div>
+                        <audio controls onplay="startWave('restaurant')" onpause="stopWave('restaurant')" onended="stopWave('restaurant')">
+                            <source src="/audio/demo-restaurant.mp3" type="audio/mpeg">
+                        </audio>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2>Everything You Need</h2>
+                <p class="section-subtitle">Powerful features that make your business run smoother</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">📞</span>
+                    <h3>24/7 Answering</h3>
+                    <p>Never miss a call. Calva answers instantly, day or night, weekends and holidays.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📅</span>
+                    <h3>Appointment Booking</h3>
+                    <p>Integrates with Google Calendar, Outlook, and Calendly. Books appointments automatically.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📝</span>
+                    <h3>Call Recording</h3>
+                    <p>Every call recorded and transcribed. Review conversations anytime from your dashboard.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">💬</span>
+                    <h3>SMS Summaries</h3>
+                    <p>Get instant text alerts with caller details and transcripts. Stay in the loop.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🌎</span>
+                    <h3>Spanish Support</h3>
+                    <p>Bilingual AI receptionist speaks fluent Spanish and English. Serve more customers.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📚</span>
+                    <h3>Custom Knowledge</h3>
+                    <p>Train Calva on your business info, FAQs, and pricing. Answers like your team.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">☎️</span>
+                    <h3>Human Handoff</h3>
+                    <p>Transfer urgent calls to you instantly. Set custom rules and priority contacts.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">💻</span>
+                    <h3>Chat Widget</h3>
+                    <p>Add Calva to your website as a live chat. Capture leads 24/7 across all channels.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📊</span>
+                    <h3>Analytics Dashboard</h3>
+                    <p>Track calls, conversion rates, and ROI with detailed analytics and insights.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="fade-in" id="pricing" style="background: linear-gradient(180deg, rgba(59, 130, 246, 0.02) 0%, transparent 100%);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Simple, Transparent Pricing</h2>
+                <p class="section-subtitle">No contracts. Cancel anytime. 7-day free trial on all plans.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="plan-name">Starter</div>
+                    <div class="plan-price">
+                        <span class="currency">$</span>
+                        <span class="amount">99</span>
+                        <span class="period">/mo</span>
+                    </div>
+                    <div class="plan-desc">Perfect for small businesses</div>
+                    <ul class="plan-features">
+                        <li><span class="check">✓</span> Up to 100 calls/month</li>
+                        <li><span class="check">✓</span> 24/7 AI answering</li>
+                        <li><span class="check">✓</span> Appointment booking</li>
+                        <li><span class="check">✓</span> SMS notifications</li>
+                        <li><span class="check">✓</span> Call recordings</li>
+                        <li><span class="check">✓</span> Email support</li>
+                    </ul>
+                    <a href="#try-live" class="btn btn-secondary" style="width: 100%;">Start Free Trial</a>
+                </div>
+                
+                <div class="pricing-card pricing-featured">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="plan-name">Pro</div>
+                    <div class="plan-price">
+                        <span class="currency">$</span>
+                        <span class="amount">297</span>
+                        <span class="period">/mo</span>
+                    </div>
+                    <div class="plan-desc">For growing businesses</div>
+                    <ul class="plan-features">
+                        <li><span class="check">✓</span> Up to 500 calls/month</li>
+                        <li><span class="check">✓</span> Everything in Starter</li>
+                        <li><span class="check">✓</span> Call transcripts</li>
+                        <li><span class="check">✓</span> Priority support</li>
+                        <li><span class="check">✓</span> CRM integrations</li>
+                        <li><span class="check">✓</span> Custom voice training</li>
+                        <li><span class="check">✓</span> Spanish language</li>
+                    </ul>
+                    <a href="#try-live" class="btn btn-primary" style="width: 100%;">Start Free Trial</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <div class="plan-name">Business</div>
+                    <div class="plan-price">
+                        <span class="currency">$</span>
+                        <span class="amount">597</span>
+                        <span class="period">/mo</span>
+                    </div>
+                    <div class="plan-desc">For large operations</div>
+                    <ul class="plan-features">
+                        <li><span class="check">✓</span> Unlimited calls</li>
+                        <li><span class="check">✓</span> Everything in Pro</li>
+                        <li><span class="check">✓</span> Advanced analytics</li>
+                        <li><span class="check">✓</span> 24/7 phone support</li>
+                        <li><span class="check">✓</span> Custom API access</li>
+                        <li><span class="check">✓</span> Account manager</li>
+                        <li><span class="check">✓</span> Multi-language</li>
+                    </ul>
+                    <a href="#try-live" class="btn btn-secondary" style="width: 100%;">Start Free Trial</a>
+                </div>
+            </div>
+            
+            <div class="guarantee-badge">
+                <p>💯 30-Day Money-Back Guarantee • No Questions Asked</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2>Loved by Business Owners</h2>
+                <p class="section-subtitle">Join hundreds of businesses that never miss a call</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">
+                        "Since switching to Calva, I haven't missed a single emergency call. My customers love the instant response, and I love that I can actually sleep at night."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MP</div>
+                        <div>
+                            <div class="author-name">Mike Patterson</div>
+                            <div class="author-title">Owner, Mike's Plumbing</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">
+                        "Our appointment booking rate tripled. Calva captures every lead, books consultations, and the voice quality is incredible. Clients think it's a real person."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">SJ</div>
+                        <div>
+                            <div class="author-name">Sarah Johnson</div>
+                            <div class="author-title">Managing Partner, Johnson Law</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">
+                        "Best investment we've made. Calva handles reservations flawlessly, speaks Spanish to our customers, and we've cut our front desk costs by 70%."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MR</div>
+                        <div>
+                            <div class="author-name">Maria Rodriguez</div>
+                            <div class="author-title">Owner, Bella's Restaurant</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="trust-logos">
+                <div class="trust-logo">Powered by <strong>Twilio</strong></div>
+                <div class="trust-logo">Built with <strong>Google AI</strong></div>
+                <div class="trust-logo">Secure with <strong>256-bit SSL</strong></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="fade-in" style="background: rgba(59, 130, 246, 0.02);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        <span>How does Calva's AI sound? Will customers know it's not human?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Calva uses state-of-the-art voice synthesis that sounds remarkably human. Most callers can't tell the difference. The voice is natural, warm, and professional. Call (929) 755-7288 right now to hear it yourself—you'll be talking to Calva live.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        <span>How long does setup actually take?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Most businesses are live in under 5 minutes. You choose your industry, customize your greeting, and start forwarding calls. Unlike human answering services that need days of training, Calva works immediately out of the box with pre-trained industry knowledge.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Can I use my existing phone number?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! Simply forward calls from your existing number to Calva. We can also provide a new local or toll-free number if you prefer. No hardware changes, no phone system upgrades required. It works with any carrier.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        <span>What happens if the AI can't answer a question?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Calva is trained on your business info and FAQs, so it handles 95%+ of calls perfectly. If it encounters something new, it captures the question and caller details, then sends you an immediate SMS alert. You can also set transfer rules to route urgent calls directly to you or your team.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Does it integrate with my calendar and CRM?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes. Calva integrates with Google Calendar, Outlook, Calendly, and most major calendar platforms. It checks your availability in real-time and books appointments directly with automatic confirmations. We also integrate with popular CRMs like Salesforce, HubSpot, and Zoho.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Is there a contract or can I cancel anytime?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>No contracts, ever. Cancel anytime with one click from your dashboard. We're confident you'll love Calva, which is why we keep it simple and flexible. Plus, we offer a 7-day free trial and a 30-day money-back guarantee on all plans.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>📞 Calva AI</h3>
+                    <p>Your AI receptionist that never sleeps. Every call, covered.</p>
+                    <p style="margin-top: 20px;">
+                        <strong>Call us:</strong><br>
+                        <a href="tel:+19297557288" style="color: var(--accent-light); text-decoration: none; font-size: 18px; font-weight: 700;">(929) 755-7288</a>
+                    </p>
+                    <p>
+                        <strong>Email:</strong><br>
+                        <a href="mailto:support@calva.ai" style="color: var(--accent-light); text-decoration: none;">support@calva.ai</a>
+                    </p>
+                </div>
+                <div class="footer-links">
+                    <h4>Product</h4>
+                    <a href="#try-live">Try It Live</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#pricing">Features</a>
+                    <a href="/admin/dashboard">Dashboard</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <a href="#pricing">Setup Guide</a>
+                    <a href="#pricing">FAQ</a>
+                    <a href="tel:+19297557288">Contact Support</a>
+                    <a href="#pricing">API Docs</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <a href="#pricing">Privacy Policy</a>
+                    <a href="#pricing">Terms of Service</a>
+                    <a href="#pricing">HIPAA Compliance</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Calva AI. All rights reserved.</p>
+                <p class="footer-tagline">Powered by AI. Built for humans.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Phone number formatting
+        const phoneInput = document.getElementById('demoPhone');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function(e) {
+                let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+                e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+            });
+        }
+
+        // Demo call function
+        async function triggerDemoCall(e) {
+            e.preventDefault();
+            
+            const phoneInput = document.getElementById('demoPhone');
+            const statusDiv = document.getElementById('demoStatus');
+            const btn = document.getElementById('demoBtn');
+            
+            const phone = phoneInput.value.replace(/\D/g, '');
+            
+            if (phone.length !== 10) {
+                statusDiv.textContent = '⚠️ Please enter a valid 10-digit phone number';
+                statusDiv.className = 'demo-status error';
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Calling...';
+            statusDiv.innerHTML = '📞 Calling you now... Pick up your phone!';
+            statusDiv.className = 'demo-status';
+            
+            try {
+                const response = await fetch('/api/demo-call', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        phone: '+1' + phone,
+                        industry: 'plumber'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    statusDiv.textContent = '✅ ' + (data.message || 'Calling you now! Pick up your phone.');
+                    statusDiv.className = 'demo-status success';
+                    phoneInput.value = '';
+                    
+                    // Show satisfaction survey after call
+                    setTimeout(() => {
+                        statusDiv.innerHTML = 'How was it? <span style="font-size: 24px;">⭐⭐⭐⭐⭐</span>';
+                    }, 30000); // 30 seconds later
+                } else {
+                    statusDiv.textContent = '⚠️ ' + (data.error || 'Unable to place call. Try calling (929) 755-7288 instead.');
+                    statusDiv.className = 'demo-status error';
+                }
+            } catch (error) {
+                statusDiv.textContent = '⚠️ Network error. Try calling (929) 755-7288 instead.';
+                statusDiv.className = 'demo-status error';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '📞 Call Me Now';
+                
+                setTimeout(() => {
+                    statusDiv.textContent = '';
+                    statusDiv.className = 'demo-status';
+                }, 15000);
+            }
+        }
+
+        // Audio waveform animations
+        function startWave(id) {
+            const player = document.getElementById('player-' + id);
+            if (player) {
+                player.classList.add('playing');
+            }
+        }
+        
+        function stopWave(id) {
+            const player = document.getElementById('player-' + id);
+            if (player) {
+                player.classList.remove('playing');
+            }
+        }
+
+        // FAQ toggle
+        function toggleFAQ(button) {
+            const item = button.parentElement;
+            const wasActive = item.classList.contains('active');
+            
+            // Close all items
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+            
+            // Open clicked item if it wasn't active
+            if (!wasActive) {
+                item.classList.add('active');
+            }
+        }
+
+        // Scroll reveal animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -80px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

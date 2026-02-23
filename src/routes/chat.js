@@ -112,7 +112,7 @@ router.post('/chat', rateLimit(30, 60000), validateChatMessage, async (req, res)
     }
     
     // Get tenant
-    const tenant = db.getTenantByApiKey(apiKey);
+    const tenant = await db.getTenantByApiKey(apiKey);
     
     if (!tenant) {
       logger.warn('Invalid API key for chat', { apiKey: apiKey.substring(0, 15) + '...' });
@@ -197,7 +197,7 @@ router.post('/chat', rateLimit(30, 60000), validateChatMessage, async (req, res)
  * GET /api/chat/stats
  * Get chat statistics for a tenant (requires API key)
  */
-router.get('/chat/stats', (req, res) => {
+router.get('/chat/stats', async (req, res) => {
   try {
     const apiKey = req.headers.authorization?.replace('Bearer ', '');
     
@@ -205,7 +205,7 @@ router.get('/chat/stats', (req, res) => {
       return res.status(401).json({ error: 'API key required' });
     }
     
-    const tenant = db.getTenantByApiKey(apiKey);
+    const tenant = await db.getTenantByApiKey(apiKey);
     
     if (!tenant) {
       return res.status(401).json({ error: 'Invalid API key' });
