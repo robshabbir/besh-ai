@@ -6,39 +6,73 @@ const {
   sanitizeSmsReply,
   normalizePhone
 } = require('../services/besh-sms');
+const { createBeshSmsStore } = require('../services/besh-sms-store');
 
-const router = express.Router();
+function createSmsBeshHandler({ store }) {
+  return async (req, res) => {
+    const from = normalizePhone(req.body.From || '');
+    const to = normalizePhone(req.body.To || '');
+    const body = String(req.body.Body || '').trim();
 
-// Temporary in-memory onboarding state (Sprint 1 placeholder)
-const onboardingByPhone = new Map();
+    const classification = classifyInboundText({
+      from,
+      to,
+      knownOwnerPhones: new Set(),
+      businessByNumber: {}
+    });
 
-router.post('/sms/besh', async (req, res) => {
-  const from = normalizePhone(req.body.From || '');
-  const to = normalizePhone(req.body.To || '');
-  const body = String(req.body.Body || '').trim();
+    let reply;
 
-  const classification = classifyInboundText({
-    from,
-    to,
-    knownOwnerPhones: new Set(),
-    businessByNumber: {}
-  });
+    if (classification.kind === 'new_user') {
+      const onboarding = await store.getOnboardingState(from);
+      await store.appendConversation({
+        userId: onboarding.user.id,
+        direction: 'inbound',
+        content: body,
+        meta: { to }
+      });
 
-  let reply;
+      const step = nextOnboardingStep(
+        { stage: onboarding.stage, profile: onboarding.profile },
+        body
+      );
 
-  if (classification.kind === 'new_user') {
-    const state = onboardingByPhone.get(from) || { stage: 'ask_name', profile: {} };
-    const step = nextOnboardingStep(state, body);
-    onboardingByPhone.set(from, step.state);
-    reply = step.response;
-  } else {
-    reply = 'Besh SMS route is active. More flows coming in Sprint 1.';
-  }
+      const savedUser = await store.saveOnboardingStep({
+        userId: onboarding.user.id,
+        phone: from,
+        state: step.state,
+        done: step.done
+      });
 
-  const twiml = new twilio.twiml.MessagingResponse();
-  twiml.message(sanitizeSmsReply(reply, 160));
+      reply = step.response;
 
-  res.type('text/xml').send(twiml.toString());
-});
+      await store.appendConversation({
+        userId: savedUser.id,
+        direction: 'outbound',
+        content: reply,
+        meta: { stage: step.state.stage }
+      });
+    } else {
+      reply = 'Besh SMS route is active. More flows coming in Sprint 1.';
+    }
+
+    const twiml = new twilio.twiml.MessagingResponse();
+    twiml.message(sanitizeSmsReply(reply, 160));
+
+    res.type('text/xml').send(twiml.toString());
+  };
+}
+
+function createSmsBeshRouter({ store } = {}) {
+  const router = express.Router();
+  const finalStore = store || createBeshSmsStore();
+
+  router.post('/sms/besh', createSmsBeshHandler({ store: finalStore }));
+  return router;
+}
+
+const router = createSmsBeshRouter();
 
 module.exports = router;
+module.exports.createSmsBeshRouter = createSmsBeshRouter;
+module.exports.createSmsBeshHandler = createSmsBeshHandler;
