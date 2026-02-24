@@ -1,12 +1,15 @@
 const { createClient } = require('@supabase/supabase-js');
 
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://ekdoyzytrpflltsucbxg.supabase.co';
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrZG95enl0cnBmbGx0c3VjYnhnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NjYwNDQzOCwiZXhwIjoyMDgyMTgwNDM4fQ.SuPzMqySiATjYmlz3IaOVsIv2lWAMADxxOlFPH5pq8A';
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
 let supabase = null;
 
 function init() {
   if (supabase) return supabase;
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+    throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_KEY environment variables');
+  }
   supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
   console.log('[DB] Connected to Supabase');
   return supabase;
