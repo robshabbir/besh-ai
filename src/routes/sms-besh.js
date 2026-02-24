@@ -67,7 +67,19 @@ function createSmsBeshRouter({ store } = {}) {
   const router = express.Router();
   const finalStore = store || createBeshSmsStore();
 
-  router.post('/sms/besh', createSmsBeshHandler({ store: finalStore }));
+  // Middleware to validate Twilio signature
+  const validateTwilioRequest = (req, res, next) => {
+    if (process.env.NODE_ENV === 'test' || process.env.SKIP_TWILIO_AUTH === 'true') {
+      return next();
+    }
+    
+    twilio.webhook({ 
+      authToken: process.env.TWILIO_AUTH_TOKEN,
+      validate: true
+    })(req, res, next);
+  };
+
+  router.post('/sms/besh', validateTwilioRequest, createSmsBeshHandler({ store: finalStore }));
   return router;
 }
 
