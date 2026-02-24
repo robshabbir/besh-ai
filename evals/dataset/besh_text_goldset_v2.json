@@ -122,7 +122,8 @@
     "inbound": "I want to increase revenue by bringing in new customers while keeping existing ones happy and making sure no one cancels at the last minute",
     "expects": ["timezone"],
     "must_not_contain": ["goal=", ";"],
-    "expect_stage": "ask_timezone"
+    "expect_stage": "ask_timezone",
+    "expect_profile": { "goal": "I want to increase revenue by bringing in new customers while keeping existing ones happy and making sure no one cancels at the last minute" }
   },
   {
     "id": "onboard_goal_blank_fallback",
@@ -210,7 +211,8 @@
     "expects": ["Updated", "timezone"],
     "must_not_contain": ["goal=", ";"],
     "expect_stage": "ask_timezone",
-    "expect_profile": { "goal": "change my goal to reduce cancellations" }
+    "expect_profile": { "goal": "change my goal to reduce cancellations" },
+    "_note": "Known parser limitation: strips 'actually, ' prefix but stores remaining text verbatim, including meta-instruction phrasing ('change my goal to'). This test asserts current behavior, not ideal behavior. Future: strip intent prefixes ('change my goal to', 'set it to', etc.) before storing. Do not change expect_profile without fixing the parser."
   },
   {
     "id": "onboard_correction_no_content",
@@ -231,7 +233,8 @@
     "inbound": "ACTUALLY make that book more events",
     "expects": ["Updated", "timezone"],
     "must_not_contain": ["goal=", ";"],
-    "expect_stage": "ask_timezone"
+    "expect_stage": "ask_timezone",
+    "expect_profile": { "goal": "book more events" }
   },
   {
     "id": "onboard_correction_then_complete",
@@ -241,7 +244,8 @@
     "inbound": "America/New_York",
     "expects": ["all set", "reduce no-shows"],
     "must_not_contain": ["goal=", ";"],
-    "expect_stage": "complete"
+    "expect_stage": "complete",
+    "_note": "Sample name implies post-correction flow, but the test itself is a standard timezone capture (profile already has corrected goal pre-set). Tagged capture_timezone for accurate category counts. The full correction→completion sequence is validated by onboard_correction_simple + this sample read in sequence."
   },
   {
     "id": "summary_quality_standard",
@@ -341,7 +345,9 @@
     "inbound": "why are you texting me?",
     "expects": ["Nice to meet you", "main goal"],
     "must_not_contain": ["goal=", ";"],
-    "expect_stage": "ask_goal"
+    "expect_stage": "ask_goal",
+    "expect_profile": { "name": "why are you texting me?" },
+    "_note": "Hostile input stored verbatim as name. Response will be: 'Nice to meet you, why are you texting me?' — awkward but not a failure mode for Stage 1. Future: add intent classification to detect non-name inputs."
   },
   {
     "id": "adversarial_hostile_question_goal",
@@ -351,7 +357,9 @@
     "inbound": "I don't have a goal, stop bothering me",
     "expects": ["timezone"],
     "must_not_contain": ["goal=", ";"],
-    "expect_stage": "ask_timezone"
+    "expect_stage": "ask_timezone",
+    "expect_profile": { "goal": "I don't have a goal, stop bothering me" },
+    "_note": "Hostile input stored verbatim as goal. Onboarding advances but stores a nonsense goal. Future: opt-out detection; for now this is known accepted behavior."
   },
   {
     "id": "adversarial_typo_timezone",
@@ -362,7 +370,8 @@
     "expects": ["all set", "stay consistent"],
     "must_not_contain": ["goal=", ";"],
     "expect_stage": "complete",
-    "expect_profile": { "timezone": "Amercia/New_York" }
+    "expect_profile": { "timezone": "Amercia/New_York" },
+    "_note": "This test asserts current behavior (invalid IANA string accepted silently), NOT approved behavior. Storing an unrecognized timezone will cause downstream scheduling failures. Future: validate against known IANA zone list before storing; prompt user to re-enter on mismatch."
   },
   {
     "id": "adversarial_injection_attempt",
