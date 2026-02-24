@@ -55,6 +55,21 @@ function createBeshSmsStore(client = null) {
     return result.data;
   }
 
+  async function findConversationByMessageSid(messageSid) {
+    if (!messageSid) return null;
+
+    const result = await getClient()
+      .from('besh_conversations')
+      .select('id, user_id, direction, content, meta_json')
+      .eq('direction', 'inbound')
+      .contains('meta_json', { messageSid })
+      .limit(1)
+      .maybeSingle();
+
+    if (result.error) throw result.error;
+    return result.data || null;
+  }
+
   async function appendConversation({ userId, direction, content, meta = {} }) {
     const result = await getClient()
       .from('besh_conversations')
@@ -76,6 +91,7 @@ function createBeshSmsStore(client = null) {
     getOrCreateUserByPhone,
     getOnboardingState,
     saveOnboardingStep,
+    findConversationByMessageSid,
     appendConversation
   };
 }

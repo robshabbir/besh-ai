@@ -8,7 +8,8 @@ const {
   createBeshSmsStore
 } = require('../src/services/besh-sms-store');
 const {
-  createSmsBeshHandler
+  createSmsBeshHandler,
+  getSmsBeshMetrics
 } = require('../src/routes/sms-besh');
 
 let passed = 0;
@@ -188,11 +189,14 @@ async function run() {
     const entries = [];
     const fakeStore = {
       async getOnboardingState() {
-        return { user: { id: 'user_1' }, stage: 'ask_name', profile: {} };
+        return { user: { id: 'user_1', onboarding_complete: false }, stage: 'ask_name', profile: {} };
       },
       async saveOnboardingStep(payload) {
         entries.push({ type: 'save', payload });
         return { id: 'user_1' };
+      },
+      async findConversationByMessageSid() {
+        return null;
       },
       async appendConversation(payload) {
         entries.push({ type: 'conversation', payload });
@@ -201,7 +205,7 @@ async function run() {
 
     const handler = createSmsBeshHandler({ store: fakeStore });
 
-    const req = { body: { From: '+1 (555) 000-1111', To: '+1 (555) 999-0000', Body: 'Alex' } };
+    const req = { body: { MessageSid: 'SM_1', From: '+1 (555) 000-1111', To: '+1 (555) 999-0000', Body: 'Alex' } };
     let contentType = '';
     let body = '';
     const res = {
@@ -215,6 +219,42 @@ async function run() {
     assert(body.includes('<Response>'));
     assert(entries.some(e => e.type === 'save'));
     assert(entries.filter(e => e.type === 'conversation').length >= 2);
+  });
+
+  await asyncTest('sms handler ignores duplicate MessageSid', async () => {
+    let appendCount = 0;
+    const fakeStore = {
+      async findConversationByMessageSid() {
+        return { id: 'existing' };
+      },
+      async getOnboardingState() {
+        throw new Error('should not be called');
+      },
+      async saveOnboardingStep() {
+        throw new Error('should not be called');
+      },
+      async appendConversation() {
+        appendCount += 1;
+      }
+    };
+
+    const handler = createSmsBeshHandler({ store: fakeStore });
+    let body = '';
+    const res = {
+      type() { return this; },
+      send(v) { body = v; return this; }
+    };
+
+    await handler({ body: { MessageSid: 'SM_DUP', From: '+15550001111', To: '+15559990000', Body: 'hi' } }, res);
+    assert(body.includes('already processed'));
+    assert.equal(appendCount, 0);
+  });
+
+  await asyncTest('sms handler exposes metrics shape', async () => {
+    const metrics = getSmsBeshMetrics();
+    assert.equal(typeof metrics.inbound, 'number');
+    assert.equal(typeof metrics.outbound, 'number');
+    assert.equal(typeof metrics.duplicatesIgnored, 'number');
   });
 
   console.log(`\nResults: ${passed} passed, ${failed} failed`);
