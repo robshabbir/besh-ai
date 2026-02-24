@@ -1,0 +1,41 @@
+[
+  {
+    "id": "onboard_name",
+    "stage": "ask_name",
+    "inbound": "Rifat",
+    "expects": ["Nice to meet you", "main goal"],
+    "must_not_contain": ["goal=", ";"]
+  },
+  {
+    "id": "onboard_goal",
+    "stage": "ask_goal",
+    "profile": { "name": "Rifat" },
+    "inbound": "Get more booked appointments",
+    "expects": ["timezone"],
+    "must_not_contain": ["goal=", ";"]
+  },
+  {
+    "id": "onboard_goal_correction",
+    "stage": "ask_timezone",
+    "profile": { "name": "Rifat", "goal": "Get more booked appointments" },
+    "inbound": "actually make that reduce no-shows",
+    "expects": ["Updated", "timezone", "reduce no-shows"],
+    "must_not_contain": ["goal=", ";"]
+  },
+  {
+    "id": "onboard_complete",
+    "stage": "ask_timezone",
+    "profile": { "name": "Rifat", "goal": "reduce no-shows" },
+    "inbound": "America/New_York",
+    "expects": ["all set", "reduce no-shows"],
+    "must_not_contain": ["goal=", ";"]
+  },
+  {
+    "id": "summary_quality",
+    "stage": "complete",
+    "profile": { "name": "Rifat", "goal": "reduce no-shows", "timezone": "America/New_York" },
+    "inbound": "summary",
+    "expects": ["Summary for Rifat", "reduce no-shows", "America/New_York"],
+    "must_not_contain": []
+  }
+]
