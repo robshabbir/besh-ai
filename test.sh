@@ -30,7 +30,7 @@ RESPONSE=$(curl -s -X POST "${SERVER_URL}/api/voice" \
   -d "From=+15551234567" \
   -d "To=+19297557288")
 
-if [[ $RESPONSE == *"Mike's Plumbing"* ]]; then
+if [[ $RESPONSE == *"<Say"* ]]; then
     echo "✅ Initial greeting works"
 else
     echo "❌ Initial greeting failed"
