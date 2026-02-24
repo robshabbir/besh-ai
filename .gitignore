@@ -11,5 +11,8 @@ voice-samples/
 # Local one-off notes
 UI-POLISH-LOG.md
 
+# Local backups/archives
+archive/
+
 # Generated audio temp
 public/audio/temp/*.mp3
