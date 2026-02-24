@@ -47,6 +47,11 @@ for (const sample of dataset) {
     }
   }
 
+  if (sample.expect_stage && result?.state?.stage !== sample.expect_stage) {
+    console.error(`❌ ${sample.id}: expected stage ${sample.expect_stage}, got ${result?.state?.stage}`);
+    failures++;
+  }
+
   totalNaturalness += naturalnessScore(out);
   console.log(`✅ ${sample.id}`);
 }

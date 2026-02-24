@@ -4,7 +4,8 @@
     "stage": "ask_name",
     "inbound": "Rifat",
     "expects": ["Nice to meet you", "main goal"],
-    "must_not_contain": ["goal=", ";"]
+    "must_not_contain": ["goal=", ";"],
+    "expect_stage": "ask_goal"
   },
   {
     "id": "onboard_goal",
@@ -12,7 +13,8 @@
     "profile": { "name": "Rifat" },
     "inbound": "Get more booked appointments",
     "expects": ["timezone"],
-    "must_not_contain": ["goal=", ";"]
+    "must_not_contain": ["goal=", ";"],
+    "expect_stage": "ask_timezone"
   },
   {
     "id": "onboard_goal_correction",
@@ -20,7 +22,8 @@
     "profile": { "name": "Rifat", "goal": "Get more booked appointments" },
     "inbound": "actually make that reduce no-shows",
     "expects": ["Updated", "timezone", "reduce no-shows"],
-    "must_not_contain": ["goal=", ";"]
+    "must_not_contain": ["goal=", ";"],
+    "expect_stage": "ask_timezone"
   },
   {
     "id": "onboard_complete",
@@ -28,7 +31,8 @@
     "profile": { "name": "Rifat", "goal": "reduce no-shows" },
     "inbound": "America/New_York",
     "expects": ["all set", "reduce no-shows"],
-    "must_not_contain": ["goal=", ";"]
+    "must_not_contain": ["goal=", ";"],
+    "expect_stage": "complete"
   },
   {
     "id": "summary_quality",
@@ -36,6 +40,34 @@
     "profile": { "name": "Rifat", "goal": "reduce no-shows", "timezone": "America/New_York" },
     "inbound": "summary",
     "expects": ["Summary for Rifat", "reduce no-shows", "America/New_York"],
-    "must_not_contain": []
+    "must_not_contain": [],
+    "expect_stage": "complete"
+  },
+  {
+    "id": "blank_goal_fallback",
+    "stage": "ask_goal",
+    "profile": { "name": "Sam" },
+    "inbound": "   ",
+    "expects": ["timezone"],
+    "must_not_contain": ["goal=", ";"],
+    "expect_stage": "ask_timezone"
+  },
+  {
+    "id": "blank_timezone_fallback",
+    "stage": "ask_timezone",
+    "profile": { "name": "Sam", "goal": "stay consistent" },
+    "inbound": "   ",
+    "expects": ["all set", "stay consistent"],
+    "must_not_contain": ["goal=", ";"],
+    "expect_stage": "complete"
+  },
+  {
+    "id": "already_setup_message",
+    "stage": "complete",
+    "profile": { "name": "Sam", "goal": "stay consistent", "timezone": "UTC" },
+    "inbound": "hello",
+    "expects": ["already set up", "summary"],
+    "must_not_contain": [],
+    "expect_stage": "complete"
   }
 ]
