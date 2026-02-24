@@ -24,6 +24,7 @@ function classifyInboundText({ from, to, knownOwnerPhones = new Set(), businessB
 
 function nextOnboardingStep(state, inboundText) {
   const text = String(inboundText || '').trim();
+  const lower = text.toLowerCase();
   const current = state || { stage: 'ask_name', profile: {} };
   const profile = { ...(current.profile || {}) };
 
@@ -46,10 +47,36 @@ function nextOnboardingStep(state, inboundText) {
   }
 
   if (current.stage === 'ask_timezone') {
+    if (lower.startsWith('actually')) {
+      const correctedGoal = text
+        .replace(/^actually[,:\s-]*/i, '')
+        .replace(/^make that[,:\s-]*/i, '')
+        .trim();
+      if (correctedGoal) {
+        profile.goal = correctedGoal;
+      }
+      return {
+        state: { stage: 'ask_timezone', profile },
+        response: `Updated — your goal is now: ${profile.goal || 'stay consistent'}. What timezone are you in? (e.g., America/New_York)`,
+        done: false
+      };
+    }
+
     profile.timezone = text || 'UTC';
     return {
       state: { stage: 'complete', profile },
       response: `Perfect. You're all set. I'll help you stay on track for: ${profile.goal}.`,
+      done: true
+    };
+  }
+
+  if (lower.includes('summary')) {
+    const name = profile.name || 'there';
+    const goal = profile.goal || 'stay consistent';
+    const timezone = profile.timezone || 'UTC';
+    return {
+      state: current,
+      response: `Summary for ${name}: goal=${goal}; timezone=${timezone}.`,
       done: true
     };
   }

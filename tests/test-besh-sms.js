@@ -83,6 +83,32 @@ async function run() {
     assert.equal(step.done, true);
   });
 
+  test('nextOnboardingStep handles goal correction at timezone step', () => {
+    const state = {
+      stage: 'ask_timezone',
+      profile: { name: 'Alex', goal: 'Get fit' }
+    };
+
+    const step = nextOnboardingStep(state, 'actually make that build my sales pipeline');
+    assert.equal(step.state.stage, 'ask_timezone');
+    assert.equal(step.state.profile.goal, 'build my sales pipeline');
+    assert.equal(step.done, false);
+    assert(step.response.toLowerCase().includes('timezone'));
+  });
+
+  test('nextOnboardingStep returns a useful summary after completion', () => {
+    const state = {
+      stage: 'complete',
+      profile: { name: 'Alex', goal: 'Book more appointments', timezone: 'America/New_York' }
+    };
+
+    const step = nextOnboardingStep(state, 'summary');
+    assert.equal(step.done, true);
+    assert(step.response.includes('Alex'));
+    assert(step.response.includes('Book more appointments'));
+    assert(step.response.includes('America/New_York'));
+  });
+
   test('sanitizeSmsReply keeps responses short', () => {
     const long = 'a'.repeat(400);
     const out = sanitizeSmsReply(long, 160);
