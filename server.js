@@ -26,6 +26,7 @@ const passwordResetRoutes = require('./src/routes/password-reset');
 const calendarRoutes = require('./src/routes/calendar');
 const { setupConversationRelay } = require('./src/routes/conversation-relay');
 const voiceWidgetRoutes = require('./src/routes/voice-widget');
+const smsBeshRoutes = require('./src/routes/sms-besh');
 
 const app = express();
 const PORT = process.env.PORT || 3100;
@@ -146,6 +147,9 @@ app.use('/api', chatRoutes);
 
 // Voice widget API (browser talk-to-agent)
 app.use('/api', voiceWidgetRoutes);
+
+// Besh SMS (personal assistant prototype)
+app.use('/api', smsBeshRoutes);
 
 // Onboarding
 app.use('/onboard', onboardRoutes);
