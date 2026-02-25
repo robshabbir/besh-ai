@@ -83,8 +83,8 @@ router.post('/create-checkout', async (req, res) => {
         industry: industry || 'general',
         plan: plan
       },
-      success_url: `${process.env.BASE_URL}/onboard/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.BASE_URL}/pricing?canceled=true`,
+      success_url: `${process.env.BASE_URL || 'http://localhost:3100'}/onboard/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.BASE_URL || 'http://localhost:3100'}/pricing?canceled=true`,
       allow_promotion_codes: true,
       phone_number_collection: { enabled: true }
     });
@@ -167,7 +167,7 @@ router.get('/portal', async (req, res) => {
     
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: `${process.env.BASE_URL}/admin/dashboard`
+      return_url: `${process.env.BASE_URL || 'http://localhost:3100'}/admin/dashboard`
     });
     
     res.json({ url: session.url });
@@ -286,7 +286,7 @@ async function handleCheckoutCompleted(session) {
     }
     
     // Get the base URL for dashboard link
-    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3100';
     const dashboardUrl = `${baseUrl}/admin/dashboard`;
     
     // Send welcome SMS when provisioning succeeded and customer phone is available.
