@@ -85,7 +85,8 @@ router.post('/create-checkout', async (req, res) => {
       },
       success_url: `${process.env.BASE_URL}/onboard/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.BASE_URL}/pricing?canceled=true`,
-      allow_promotion_codes: true
+      allow_promotion_codes: true,
+      phone_number_collection: { enabled: true }
     });
     
     logger.info('Checkout session created', { sessionId: session.id, plan, email });
@@ -288,23 +289,14 @@ async function handleCheckoutCompleted(session) {
     const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
     const dashboardUrl = `${baseUrl}/admin/dashboard`;
     
-    // Send welcome SMS if we have phone provisioned and customer email
-    if (phoneNumber !== '+1000000000' && customerEmail) {
+    // Send welcome SMS when provisioning succeeded and customer phone is available.
+    // Customer phone is collected via Stripe phone_number_collection at checkout.
+    const customerPhone = session?.customer_details?.phone || null;
+    if (phoneNumber !== '+1000000000' && customerPhone) {
       try {
-        // Try to extract phone from customer email or use a notification system
-        // For now, we'll log this - in production, you'd capture phone during checkout
-        const welcomeMessage = `Welcome to Calva! Your AI receptionist is ready at ${phoneNumber}. ` +
-          `Dashboard: ${dashboardUrl} | API Key: ${apiKey.substring(0, 20)}... (check your email for full key)`;
-        
-        logger.info('Welcome notification prepared', { 
-          tenantId, 
-          phoneNumber,
-          message: welcomeMessage.substring(0, 50) + '...'
-        });
-        
-        // TODO: Send actual SMS if we capture customer phone during checkout
-        // await sendSMS(customerPhone, welcomeMessage);
-        
+        const welcomeMessage = buildCheckoutWelcomeSms({ name: business_name }, phoneNumber, baseUrl);
+        await sendSMS(customerPhone, phoneNumber, welcomeMessage);
+        logger.info('Welcome SMS sent', { tenantId, to: customerPhone, from: phoneNumber });
       } catch (smsError) {
         logger.warn('Welcome SMS failed', { error: smsError.message, tenantId });
       }
@@ -420,6 +412,18 @@ async function handleSubscriptionDeleted(subscription) {
 }
 
 /**
+ * Build the welcome SMS sent after successful checkout + provisioning.
+ * @param {{ name: string }} tenantMeta - minimal tenant info (name)
+ * @param {string} businessPhone - the provisioned Twilio number (FROM)
+ * @param {string} baseUrl - app base URL for dashboard link
+ */
+function buildCheckoutWelcomeSms(tenantMeta, businessPhone, baseUrl) {
+  const name = tenantMeta?.name || 'your business';
+  const dashboardUrl = `${baseUrl}/admin/dashboard`;
+  return `🎉 Welcome to Calva! Your AI receptionist for ${name} is live at ${businessPhone}. Dashboard: ${dashboardUrl}`;
+}
+
+/**
  * Handle payment failure
  */
 function buildFailedPaymentSms(tenant, invoice) {
@@ -505,6 +509,8 @@ router.get('/status', async (req, res) => {
 });
 
 router.__testHooks = {
+  handleCheckoutCompleted,
+  buildCheckoutWelcomeSms,
   handlePaymentFailed,
   buildFailedPaymentSms
 };
