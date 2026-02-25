@@ -669,7 +669,7 @@ function cleanForSpeech(text) {
 function detectInjectionAttempt(userMessage) {
   const lower = userMessage.toLowerCase();
   const patterns = [
-    { regex: /ignore (your |all |previous |prior )?instructions/i, name: 'ignore_instructions' },
+    { regex: /(ignore|disregard)\s+((your|all|previous|prior)\s+)*instructions/i, name: 'ignore_instructions' },
     { regex: /forget (your |all |previous |prior )?(prompt|instructions|rules)/i, name: 'forget_prompt' },
     { regex: /you are now/i, name: 'role_override' },
     { regex: /pretend (to be|you'?re)/i, name: 'pretend' },
