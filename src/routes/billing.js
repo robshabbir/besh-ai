@@ -3,7 +3,7 @@ const db = require('../db');
 const logger = require('../utils/logger');
 const crypto = require('crypto');
 const { provisionPhoneNumberForTenant } = require('../services/twilio-provisioning');
-const { sendSMS } = require('../services/notify');
+const { sendSMS } = require('../services/notifications');
 const { loadTemplate } = require('../services/template-loader');
 const { rateLimit } = require('../middleware/rateLimit');
 
@@ -422,13 +422,60 @@ async function handleSubscriptionDeleted(subscription) {
 /**
  * Handle payment failure
  */
+function buildFailedPaymentSms(tenant, invoice) {
+  const businessName = tenant.config?.businessConfig?.name || tenant.name || 'your business';
+  const cents = invoice.amount_due ?? invoice.amount_remaining ?? invoice.total ?? 0;
+  const amountDue = (Number(cents) / 100).toFixed(2);
+  let message = `⚠️ Payment failed for ${businessName}. Amount due: $${amountDue}.`;
+
+  if (invoice.hosted_invoice_url) {
+    message += ` Update payment method: ${invoice.hosted_invoice_url}`;
+  }
+
+  return message;
+}
+
 async function handlePaymentFailed(invoice) {
   const customerId = invoice.customer;
   
   logger.warn('Payment failed', { customerId, invoiceId: invoice.id });
-  
-  // TODO: Send notification to business owner about failed payment
-  // Could deactivate after multiple failures
+
+  try {
+    const tenants = await db.getAllTenants();
+    const tenant = tenants.find(t => t.config?.stripeCustomerId === customerId);
+
+    if (!tenant) {
+      logger.warn('No tenant found for failed payment', { customerId, invoiceId: invoice.id });
+      return;
+    }
+
+    const ownerPhone = tenant.config?.businessConfig?.ownerPhone;
+    const businessPhone = tenant.phone_number;
+
+    if (!ownerPhone || !businessPhone) {
+      logger.warn('Skipping failed payment SMS due to missing phone data', {
+        tenantId: tenant.id,
+        hasOwnerPhone: !!ownerPhone,
+        hasBusinessPhone: !!businessPhone
+      });
+      return;
+    }
+
+    const message = buildFailedPaymentSms(tenant, invoice);
+    await sendSMS(ownerPhone, businessPhone, message);
+
+    logger.info('Failed payment SMS notification sent', {
+      tenantId: tenant.id,
+      invoiceId: invoice.id,
+      customerId
+    });
+  } catch (error) {
+    logger.error('Failed payment notification failed', {
+      error: error.message,
+      customerId,
+      invoiceId: invoice.id
+    });
+  }
 }
 
 /**
@@ -456,5 +503,10 @@ router.get('/status', async (req, res) => {
     plan: config.plan || null
   });
 });
+
+router.__testHooks = {
+  handlePaymentFailed,
+  buildFailedPaymentSms
+};
 
 module.exports = router;
