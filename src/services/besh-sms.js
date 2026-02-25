@@ -48,16 +48,20 @@ function nextOnboardingStep(state, inboundText) {
 
   if (current.stage === 'ask_timezone') {
     if (lower.startsWith('actually')) {
+      const priorGoal = profile.goal || 'stay consistent';
       const correctedGoal = text
         .replace(/^actually[,:\s-]*/i, '')
         .replace(/^make that[,:\s-]*/i, '')
         .trim();
-      if (correctedGoal) {
+      const didUpdate = Boolean(correctedGoal);
+      if (didUpdate) {
         profile.goal = correctedGoal;
       }
       return {
         state: { stage: 'ask_timezone', profile },
-        response: `Updated — your goal is now: ${profile.goal || 'stay consistent'}. What timezone are you in? (e.g., America/New_York)`,
+        response: didUpdate
+          ? `Updated — your goal is now: ${profile.goal}. What timezone are you in? (e.g., America/New_York)`
+          : `Got it — we'll keep your goal as: ${priorGoal}. What timezone are you in? (e.g., America/New_York)`,
         done: false
       };
     }

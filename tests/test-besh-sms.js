@@ -97,6 +97,20 @@ async function run() {
     assert(step.response.toLowerCase().includes('timezone'));
   });
 
+  test('nextOnboardingStep does not claim update when correction is blank', () => {
+    const state = {
+      stage: 'ask_timezone',
+      profile: { name: 'Alex', goal: 'more bookings' }
+    };
+
+    const step = nextOnboardingStep(state, 'actually   ');
+    assert.equal(step.state.stage, 'ask_timezone');
+    assert.equal(step.state.profile.goal, 'more bookings');
+    assert.equal(step.done, false);
+    assert(!step.response.toLowerCase().includes('updated'));
+    assert(step.response.toLowerCase().includes('timezone'));
+  });
+
   test('nextOnboardingStep returns a useful summary after completion', () => {
     const state = {
       stage: 'complete',
