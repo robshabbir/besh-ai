@@ -671,7 +671,7 @@ function detectInjectionAttempt(userMessage) {
   const patterns = [
     { regex: /(ignore|disregard)\s+((your|all|previous|prior)\s+)*instructions/i, name: 'ignore_instructions' },
     { regex: /forget (your |all |previous |prior )?(prompt|instructions|rules)/i, name: 'forget_prompt' },
-    { regex: /you are now/i, name: 'role_override' },
+    { regex: /(you are now|from now on\s*,?\s*you are)/i, name: 'role_override' },
     { regex: /pretend (to be|you'?re)/i, name: 'pretend' },
     { regex: /act as (a |an )?/i, name: 'act_as' },
     { regex: /system prompt/i, name: 'system_prompt' },
