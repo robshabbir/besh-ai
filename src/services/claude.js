@@ -683,7 +683,7 @@ function detectInjectionAttempt(userMessage) {
     { regex: /what (are )?your (instructions|rules|directives|programming)/i, name: 'ask_instructions' },
     { regex: /are you (a |an )?(ai|robot|bot|chatbot|language model|computer|artificial|machine)/i, name: 'identity_probe' },
     { regex: /override (your |the )?(system|prompt|safety|rules)/i, name: 'override' },
-    { regex: /new (instructions|rules|prompt|persona)/i, name: 'new_instructions' },
+    { regex: /new (instructions|rules|prompt|persona|directives)/i, name: 'new_instructions' },
   ];
   
   for (const { regex, name } of patterns) {
