@@ -1,6 +1,7 @@
 const logger = require('../utils/logger');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
@@ -42,6 +43,16 @@ function getCacheKey(messages, userMessage) {
     if (pattern.test(lower)) return key;
   }
   return null;
+}
+
+function getTenantScopedCacheKey(systemPrompt, baseKey) {
+  if (!baseKey) return null;
+  const tenantHash = crypto
+    .createHash('sha1')
+    .update(String(systemPrompt || ''))
+    .digest('hex')
+    .slice(0, 12);
+  return `${tenantHash}:${baseKey}`;
 }
 
 // ============= PRE-WARM =============
@@ -301,6 +312,19 @@ async function processConversation(systemPrompt, messages, userMessage, sessionC
   const conversationMessages = [...messages, { role: 'user', content: userMessage }];
   const { fullSystemPrompt, collected, missing } = buildFullSystemPrompt(systemPrompt, conversationMessages, sessionCollected);
 
+  const cacheKey = getTenantScopedCacheKey(systemPrompt, getCacheKey(messages, userMessage));
+  const cached = getCachedResponse(cacheKey);
+  if (cached) {
+    const message = cleanForSpeech(cached.trim());
+    const intent = detectIntent(message, conversationMessages);
+    const complete = detectCompletion(message);
+    return {
+      result: { message, intent, collected, complete, missing },
+      assistantMessage: message,
+      updatedMessages: [...conversationMessages, { role: 'assistant', content: message }]
+    };
+  }
+
   try {
     const t0 = Date.now();
     const geminiContents = conversationMessages.map(m => ({
@@ -338,6 +362,8 @@ async function processConversation(systemPrompt, messages, userMessage, sessionC
     const intent = detectIntent(message, conversationMessages);
     const complete = detectCompletion(message);
 
+    if (cacheKey) setCachedResponse(cacheKey, message);
+
     logger.info('⏱️ LLM timing', { totalMs: t1 - t0, chars: rawText.length, turns: conversationMessages.length });
 
     return {
@@ -369,10 +395,19 @@ async function processConversationStream(systemPrompt, messages, userMessage, on
   const conversationMessages = [...messages, { role: 'user', content: userMessage }];
   const { fullSystemPrompt, collected, missing } = buildFullSystemPrompt(systemPrompt, conversationMessages, sessionCollected);
 
-  // Check cache for simple first-turn queries
-  const cacheKey = getCacheKey(messages, userMessage);
-  // Note: caching disabled for now since responses depend on tenant prompt
-  // TODO: enable per-tenant caching if needed
+  // Check cache for simple first-turn queries (tenant-scoped)
+  const cacheKey = getTenantScopedCacheKey(systemPrompt, getCacheKey(messages, userMessage));
+  const cached = getCachedResponse(cacheKey);
+  if (cached) {
+    const message = cleanForSpeech(cached.trim());
+    const intent = detectIntent(message, conversationMessages);
+    const complete = detectCompletion(message);
+    return {
+      result: { message, intent, collected, complete, missing },
+      assistantMessage: message,
+      updatedMessages: [...conversationMessages, { role: 'assistant', content: message }]
+    };
+  }
 
   const geminiContents = conversationMessages.map(m => ({
     role: m.role === 'assistant' ? 'model' : 'user',
@@ -481,6 +516,8 @@ async function processConversationStream(systemPrompt, messages, userMessage, on
   const message = cleanForSpeech(fullText.trim());
   const intent = detectIntent(message, conversationMessages);
   const complete = detectCompletion(message);
+
+  if (cacheKey) setCachedResponse(cacheKey, message);
 
   logger.info('⏱️ LLM stream', { firstChunkMs, totalMs, chars: fullText.length, turns: conversationMessages.length });
 
