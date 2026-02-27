@@ -229,6 +229,8 @@ app.get('/health', async (req, res) => {
   checks.twilioKeys = !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN);
   checks.stripeConfigured = !(process.env.STRIPE_SECRET_KEY || '').includes('PLACEHOLDER');
   checks.smtpConfigured = !!process.env.SMTP_HOST;
+  checks.beshSmsConfigured = !!(process.env.TWILIO_PHONE_NUMBER);
+  checks.schedulerEnabled = process.env.NODE_ENV !== 'test';
 
   if (!checks.geminiKey || !checks.twilioKeys) status = 'degraded';
 
