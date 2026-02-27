@@ -28,6 +28,7 @@ const { setupConversationRelay } = require('./src/routes/conversation-relay');
 const voiceWidgetRoutes = require('./src/routes/voice-widget');
 const smsBeshRoutes = require('./src/routes/sms-besh');
 const { createBeshScheduler } = require('./src/services/besh-scheduler');
+const { createBeshAdminRouter } = require('./src/routes/besh-admin-api');
 const { createBeshSmsStore } = require('./src/services/besh-sms-store');
 const app = express();
 const PORT = process.env.PORT || 3100;
