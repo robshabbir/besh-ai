@@ -41,6 +41,7 @@ function createBeshSmsStore(client = null) {
       onboarding_stage: state.stage,
       onboarding_complete: !!done,
       profile_json: state.profile || {},
+      display_name: (state.profile && state.profile.name) || undefined,
       updated_at: new Date().toISOString()
     };
     if (userId) payload.id = userId;
