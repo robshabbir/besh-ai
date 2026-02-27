@@ -148,6 +148,9 @@ app.use('/api', apiRoutes);
 // NOT related to the removed besh-chat-api.js SMS pivot — this is the voice widget frontend
 app.use('/api', chatRoutes);
 
+// Besh Admin API — text user list, goals, reminders (session-auth guarded)
+app.use('/api/besh/admin', createBeshAdminRouter());
+
 // Voice widget API (browser talk-to-agent)
 app.use('/api', voiceWidgetRoutes);
 

@@ -98,17 +98,22 @@ function createSmsBeshHandler({ store, llm } = {}) {
                 scheduleJson: { hour: parsed.hour, minute: parsed.minute, recurring: parsed.recurring },
                 nextFireAt: parsed.nextFireAt
               });
+            } else {
+              // parseReminder couldn't extract a time — ask explicitly rather than silently dropping
+              reply = "Got it — what time should I remind you? Something like 'at 9am' works great.";
             }
           }
 
-          const ctx = await memory.buildContext(onboarding.user.id);
-          const result = await ai.generateResponse({
-            context: ctx,
-            userMessage: body,
-            intent
-          });
-
-          reply = result.response;
+          // Only call AI if a handler above hasn't already set an explicit reply
+          if (!reply) {
+            const ctx = await memory.buildContext(onboarding.user.id);
+            const result = await ai.generateResponse({
+              context: ctx,
+              userMessage: body,
+              intent
+            });
+            reply = result.response;
+          }
 
           await store.appendConversation({
             userId: onboarding.user.id,
