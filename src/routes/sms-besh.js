@@ -64,21 +64,9 @@ function createSmsBeshHandler({ store, llm } = {}) {
 
         // Dynamic commands that need DB
         if (specialCmd.command === 'stop') {
-          // Mark user as unsubscribed
           const stopUser = await store.getOrCreateUserByPhone(from);
           if (store.updateUser) await store.updateUser(stopUser.id, { unsubscribed: true });
-          // Increment message counters
-      const newDailyCount = userMsgsToday + 1;
-      const newMonthlyCount = userMsgsMonth + 1;
-      
-      // Update counters in background
-      store.updateUserMessageCount && store.updateUserMessageCount(user.id, {
-        messages_today: newDailyCount,
-        last_message_date: new Date().toISOString().split('T')[0],
-        messages_this_month: newMonthlyCount
-      });
-
-      smsBeshMetrics.outbound += 1;
+          smsBeshMetrics.outbound += 1;
           const twiml = new twilio.twiml.MessagingResponse();
           twiml.message(cmdReply || 'You have been unsubscribed. Text START to resubscribe.');
           return res.type('text/xml').send(twiml.toString());
@@ -125,6 +113,33 @@ function createSmsBeshHandler({ store, llm } = {}) {
         });
 
         if (onboarding.user.onboarding_complete) {
+          // ===== RATE LIMIT CHECK (free tier) =====
+          if (!hasPaidSubscription(onboarding.user)) {
+            const today = new Date().toISOString().split('T')[0];
+            const userMsgsToday = (onboarding.user.last_message_date === today)
+              ? (onboarding.user.messages_today || 0)
+              : 0;
+            const userMsgsMonth = onboarding.user.messages_this_month || 0;
+
+            if (userMsgsToday >= FREE_TIER_DAILY_LIMIT) {
+              smsBeshMetrics.outbound += 1;
+              const twiml = new twilio.twiml.MessagingResponse();
+              twiml.message(sanitizeSmsReply(
+                "You\'ve hit your daily limit (30 messages). Upgrade to Pro for unlimited texts — reply UPGRADE to learn more, or text me again tomorrow! 🚀", 320
+              ));
+              return res.type('text/xml').send(twiml.toString());
+            }
+
+            if (userMsgsMonth >= FREE_TIER_MONTHLY_LIMIT) {
+              smsBeshMetrics.outbound += 1;
+              const twiml = new twilio.twiml.MessagingResponse();
+              twiml.message(sanitizeSmsReply(
+                "You\'ve hit your monthly limit (300 messages). Upgrade to Pro for unlimited texts — reply UPGRADE to learn more! 🚀", 320
+              ));
+              return res.type('text/xml').send(twiml.toString());
+            }
+          }
+
           // ===== POST-ONBOARDING: AI CONVERSATION =====
           smsBeshMetrics.aiConversations += 1;
 
@@ -222,6 +237,21 @@ function createSmsBeshHandler({ store, llm } = {}) {
         }
       } else {
         reply = 'Besh SMS route is active. More flows coming in Sprint 1.';
+      }
+
+      // Increment rate limit counters for post-onboarding users
+      if (classification.kind === 'new_user') {
+        const counterUser = await store.getOrCreateUserByPhone(from);
+        if (counterUser.onboarding_complete && !hasPaidSubscription(counterUser) && store.updateUserMessageCount) {
+          const today = new Date().toISOString().split('T')[0];
+          const curDaily = (counterUser.last_message_date === today)
+            ? (counterUser.messages_today || 0) : 0;
+          store.updateUserMessageCount(counterUser.id, {
+            messages_today: curDaily + 1,
+            last_message_date: today,
+            messages_this_month: (counterUser.messages_this_month || 0) + 1
+          });
+        }
       }
 
       smsBeshMetrics.outbound += 1;
