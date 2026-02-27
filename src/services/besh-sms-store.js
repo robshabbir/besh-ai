@@ -25,6 +25,11 @@ function createBeshSmsStore(client = null) {
     return created.data;
   }
 
+  async function isUnsubscribed(phone) {
+    const user = await getOrCreateUserByPhone(phone);
+    return !!user.unsubscribed;
+  }
+
   async function getOnboardingState(phone) {
     const user = await getOrCreateUserByPhone(phone);
     return {
