@@ -24,6 +24,8 @@ async function runTests() {
         }];
       },
       async advanceReminder(id, next) { advanced.push({ id, next }); },
+      async getOnboardedUsersWithGoals() { return []; },
+      async hasCheckinToday() { return false; },
       async appendConversation(c) { conversations.push(c); }
     };
 
@@ -57,6 +59,8 @@ async function runTests() {
         }];
       },
       async advanceReminder(id, next) { advanced.push({ id, next }); },
+      async getOnboardedUsersWithGoals() { return []; },
+      async hasCheckinToday() { return false; },
       async appendConversation() {}
     };
 
@@ -88,6 +92,8 @@ async function runTests() {
         }];
       },
       async advanceReminder(id, next) { advanced.push({ id, next }); },
+      async getOnboardedUsersWithGoals() { return []; },
+      async hasCheckinToday() { return false; },
       async appendConversation() {}
     };
 
