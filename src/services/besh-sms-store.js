@@ -87,15 +87,86 @@ function createBeshSmsStore(client = null) {
     return result.data.id;
   }
 
+  async function getConversationHistory(userId, limit = 10) {
+    const { data, error } = await getClient()
+      .from('besh_conversations')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) throw error;
+    return (data || []).reverse();
+  }
+
+  async function getUser(userId) {
+    const { data, error } = await getClient()
+      .from('besh_users')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    return data || null;
+  }
+
+  async function getActiveGoals(userId) {
+    const { data, error } = await getClient()
+      .from('besh_goals')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('status', 'active')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  async function createGoal({ userId, title, cadence }) {
+    const { data, error } = await getClient()
+      .from('besh_goals')
+      .insert({
+        user_id: userId,
+        title,
+        cadence: cadence || null,
+        status: 'active'
+      })
+      .select('*')
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async function updateGoal(goalId, updates) {
+    const { data, error } = await getClient()
+      .from('besh_goals')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', goalId)
+      .select('*')
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async function completeGoal(goalId) {
+    return updateGoal(goalId, { status: 'done' });
+  }
+
   return {
     getOrCreateUserByPhone,
     getOnboardingState,
     saveOnboardingStep,
     findConversationByMessageSid,
-    appendConversation
+    appendConversation,
+    getConversationHistory,
+    getUser,
+    getActiveGoals,
+    createGoal,
+    updateGoal,
+    completeGoal
   };
 }
 
-module.exports = {
-  createBeshSmsStore
-};
+module.exports = { createBeshSmsStore };
