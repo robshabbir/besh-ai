@@ -69,15 +69,21 @@ function createSmsBeshHandler({ store, llm } = {}) {
 
           const intent = memory.detectIntent(body);
 
-          // Create goal if goal intent detected
+          // Create goal if goal intent detected (deduplicated by title)
           if (intent === 'goal' && store.createGoal) {
             const goalText = memory.extractGoalText(body);
             if (goalText) {
-              await store.createGoal({
-                userId: onboarding.user.id,
-                title: goalText,
-                cadence: null
-              });
+              const activeGoals = await store.getActiveGoals(onboarding.user.id);
+              const duplicate = activeGoals.find(
+                g => g.title.toLowerCase() === goalText.toLowerCase()
+              );
+              if (!duplicate) {
+                await store.createGoal({
+                  userId: onboarding.user.id,
+                  title: goalText,
+                  cadence: null
+                });
+              }
             }
           }
 

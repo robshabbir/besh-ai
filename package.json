@@ -11,7 +11,8 @@
     "setup": "npm run migrate && npm run seed",
     "setup-tts": "pip3 install edge-tts",
     "test": "./test.sh",
-    "clean-tts-cache": "node -e \"require('./src/services/tts').cleanOldCache(7)\""
+    "clean-tts-cache": "node -e \"require('./src/services/tts').cleanOldCache(7)\"",
+    "test:live": "node tests/test-besh-live.js"
   },
   "keywords": [
     "ai",
