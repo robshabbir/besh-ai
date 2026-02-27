@@ -4,6 +4,7 @@
  */
 
 const logger = require('../utils/logger');
+const { formatExamplesForPrompt, formatToneRules } = require('../prompts/besh-personality');
 const { detectInjectionAttempt } = require('./claude');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -105,6 +106,8 @@ CONTEXT:
     }
 
     prompt += intentCtx;
+    prompt += formatToneRules();
+    prompt += formatExamplesForPrompt(6);
 
     return prompt;
   }
