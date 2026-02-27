@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Besh — Your AI, one text away</title>
+  <meta name="description" content="Text Besh to set goals, build habits, and stay on track. Your personal AI assistant that lives in your texts.">
+  <meta property="og:title" content="Besh — Your AI, one text away">
+  <meta property="og:description" content="Text Besh to set goals, build habits, and stay on track.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #000000;
+      --text: #ffffff;
+      --text-2: #a1a1aa;
+      --text-3: #71717a;
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --green: #34d399;
+      --surface: #18181b;
+      --surface-2: #27272a;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(99,102,241,0.1);
+      border: 1px solid rgba(99,102,241,0.2);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent-light);
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s ease-out;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    h1 {
+      font-size: clamp(40px, 10vw, 72px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 20px;
+      animation: fadeUp 0.6s ease-out 0.1s both;
+    }
+
+    h1 .gradient {
+      background: linear-gradient(135deg, var(--accent-light), #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: clamp(16px, 3vw, 20px);
+      color: var(--text-2);
+      line-height: 1.6;
+      max-width: 460px;
+      margin-bottom: 40px;
+      animation: fadeUp 0.6s ease-out 0.2s both;
+    }
+
+    /* ===== CTA: Text Us ===== */
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      animation: fadeUp 0.6s ease-out 0.3s both;
+    }
+
+    .text-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      border-radius: 16px;
+      background: var(--accent);
+      color: white;
+      font-family: var(--font);
+      font-size: 18px;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 40px rgba(99,102,241,0.3);
+    }
+
+    .text-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 60px rgba(99,102,241,0.4);
+    }
+
+    .text-btn:active {
+      transform: scale(0.98);
+    }
+
+    .text-btn svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .phone-number {
+      font-size: 14px;
+      color: var(--text-3);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    .phone-number span {
+      color: var(--text-2);
+    }
+
+    /* ===== PHONE MOCKUP ===== */
+    .phone-demo {
+      margin-top: 56px;
+      position: relative;
+      animation: fadeUp 0.8s ease-out 0.5s both;
+    }
+
+    .phone-frame {
+      width: 320px;
+      max-width: 85vw;
+      background: var(--surface);
+      border-radius: 32px;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 16px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
+
+    .sms-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 16px;
+    }
+
+    .sms-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .sms-name {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .sms-status {
+      font-size: 11px;
+      color: var(--green);
+    }
+
+    .sms-messages {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 200px;
+    }
+
+    .sms-bubble {
+      max-width: 85%;
+      padding: 10px 14px;
+      border-radius: 18px;
+      font-size: 14px;
+      line-height: 1.4;
+      animation: bubbleIn 0.3s ease-out both;
+    }
+
+    .sms-bubble.user {
+      align-self: flex-end;
+      background: #007AFF;
+      color: white;
+      border-bottom-right-radius: 6px;
+    }
+
+    .sms-bubble.ai {
+      align-self: flex-start;
+      background: var(--surface-2);
+      color: var(--text);
+      border-bottom-left-radius: 6px;
+    }
+
+    .sms-time {
+      font-size: 10px;
+      color: var(--text-3);
+      text-align: center;
+      padding: 4px 0;
+    }
+
+    @keyframes bubbleIn {
+      0% { opacity: 0; transform: scale(0.9) translateY(8px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* ===== HOW IT WORKS ===== */
+    .how-section {
+      padding: 80px 24px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .how-section h2 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: rgba(99,102,241,0.1);
+      border: 1px solid rgba(99,102,241,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent-light);
+      flex-shrink: 0;
+    }
+
+    .step-text h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .step-text p {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      font-size: 13px;
+      color: var(--text-3);
+    }
+
+    footer a {
+      color: var(--text-2);
+      text-decoration: none;
+    }
+
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 480px) {
+      .hero { padding: 16px; }
+      .text-btn { padding: 14px 28px; font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Besh is live
+    </div>
+
+    <h1>
+      Your AI.<br>
+      <span class="gradient">One text away.</span>
+    </h1>
+
+    <p class="subtitle">
+      Text Besh to set goals, build habits, and stay on track. 
+      No app to download. No account to create. Just text.
+    </p>
+
+    <div class="cta-group">
+      <a href="sms:+19297557288&body=Hey" class="text-btn" id="textBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        Text Besh Now
+      </a>
+      <p class="phone-number">or text <span>(929) 755-7288</span></p>
+    </div>
+
+    <div class="phone-demo">
+      <div class="phone-frame">
+        <div class="sms-header">
+          <div class="sms-avatar">B</div>
+          <div>
+            <div class="sms-name">Besh</div>
+            <div class="sms-status">Online</div>
+          </div>
+        </div>
+        <div class="sms-time">Today 9:41 AM</div>
+        <div class="sms-messages" id="demoMessages">
+          <!-- Animated via JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-section">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <h3>Text "Hey" to Besh</h3>
+          <p>Open your Messages app and text our number. No download, no signup.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <h3>Tell Besh your goal</h3>
+          <p>What do you want to achieve? Fitness, reading, mindfulness — anything.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <h3>Besh keeps you on track</h3>
+          <p>Get check-ins, reminders, and encouragement — all through text.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 Besh AI · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a></p>
+  </footer>
+
+  <script>
+    // Animate demo conversation
+    const messages = [
+      { type: 'user', text: 'Hey', delay: 800 },
+      { type: 'ai', text: "Hey! I'm Besh 👋 What's your name?", delay: 1200 },
+      { type: 'user', text: "I'm Alex", delay: 1800 },
+      { type: 'ai', text: "Nice to meet you, Alex. What's your main goal this week?", delay: 1400 },
+      { type: 'user', text: 'Run 3 times this week', delay: 2000 },
+      { type: 'ai', text: "Love it. I'll check in on you. Let's make it happen 🏃", delay: 1500 },
+    ];
+
+    const container = document.getElementById('demoMessages');
+    let totalDelay = 1000;
+
+    messages.forEach((msg, i) => {
+      totalDelay += msg.delay;
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = `sms-bubble ${msg.type}`;
+        el.textContent = msg.text;
+        el.style.animationDelay = '0s';
+        container.appendChild(el);
+        container.scrollTop = container.scrollHeight;
+      }, totalDelay);
+    });
+
+    // iOS sms: URI fix (& vs ?)
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const textBtn = document.getElementById('textBtn');
+    if (isIOS) {
+      textBtn.href = 'sms:+19297557288&body=Hey';
+    } else {
+      textBtn.href = 'sms:+19297557288?body=Hey';
+    }
+  </script>
+</body>
+</html>

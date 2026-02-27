@@ -27,7 +27,6 @@ const calendarRoutes = require('./src/routes/calendar');
 const { setupConversationRelay } = require('./src/routes/conversation-relay');
 const voiceWidgetRoutes = require('./src/routes/voice-widget');
 const smsBeshRoutes = require('./src/routes/sms-besh');
-const { createBeshChatRouter } = require('./src/routes/besh-chat-api');
 const app = express();
 const PORT = process.env.PORT || 3100;
 
@@ -151,8 +150,6 @@ app.use('/api', voiceWidgetRoutes);
 // Besh SMS (personal assistant prototype)
 app.use('/api', smsBeshRoutes);
 
-// Besh text-first web chat API
-app.use('/api', createBeshChatRouter());
 // Onboarding
 app.use('/onboard', onboardRoutes);
 
@@ -194,9 +191,6 @@ app.get('/signup', async (req, res) => {
 app.get('/settings', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public/settings.html'));
 });
-app.get('/chat', async (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/chat.html'));
-});
 app.get('/forgot-password', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public/forgot-password.html'));
 });
@@ -205,6 +199,9 @@ app.get('/terms', async (req, res) => {
 });
 app.get('/privacy', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public/privacy.html'));
+});
+app.get('/text', async (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/text.html'));
 });
 
 // Health check
