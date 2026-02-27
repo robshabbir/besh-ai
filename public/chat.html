@@ -384,12 +384,12 @@
     <div class="messages" id="messages">
       <div class="welcome" id="welcome">
         <div class="welcome-icon">✨</div>
-        <h2>Hey there</h2>
-        <p>I'm Besh, your personal AI assistant. I help you set goals, stay on track, and get things done.</p>
+        <h2>Hey there 👋</h2>
+        <p>I'm Besh, your personal AI assistant. Tell me your name to get started — I'll help you set goals, build habits, and stay on track.</p>
         <div class="quick-actions">
-          <button class="quick-action" data-msg="Set a goal for this week">🎯 Set a goal</button>
-          <button class="quick-action" data-msg="How am I doing?">📊 Check in</button>
-          <button class="quick-action" data-msg="Remind me to exercise at 6pm">⏰ Set reminder</button>
+          <button class="quick-action" data-msg="I'm Alex">👋 I'm Alex</button>
+          <button class="quick-action" data-msg="Hey, I'm Sam">✌️ Hey, I'm Sam</button>
+          <button class="quick-action" data-msg="Call me Jo">🙋 Call me Jo</button>
         </div>
       </div>
     </div>
@@ -414,14 +414,16 @@
     const sendBtn = document.getElementById('sendBtn');
     const welcomeEl = document.getElementById('welcome');
 
-    let sessionId = null;
-    let apiKey = null;
+    let sessionId = localStorage.getItem('besh_session_id') || null;
+    let isOnboarding = true;
     const API_BASE = '/api';
 
-    // Try to get API key from URL params or localStorage
-    const params = new URLSearchParams(window.location.search);
-    apiKey = params.get('key') || localStorage.getItem('besh_api_key');
-    if (apiKey) localStorage.setItem('besh_api_key', apiKey);
+    // Restore session if returning user
+    if (sessionId) {
+      // Returning user — hide welcome, show a "Welcome back" message
+      if (welcomeEl) welcomeEl.style.display = 'none';
+      addMessage("Welcome back! What's on your mind?", 'ai');
+    }
 
     // Auto-resize textarea
     inputEl.addEventListener('input', () => {
@@ -439,6 +441,23 @@
     });
 
     sendBtn.addEventListener('click', sendMessage);
+
+    function updateQuickActionsForChat() {
+      const qa = document.querySelector('.quick-actions');
+      if (!qa) return;
+      qa.innerHTML = `
+        <button class="quick-action" data-msg="Set a goal for this week">🎯 Set a goal</button>
+        <button class="quick-action" data-msg="How am I doing?">📊 Check in</button>
+        <button class="quick-action" data-msg="Remind me to exercise at 6pm">⏰ Reminder</button>
+      `;
+      qa.querySelectorAll('.quick-action').forEach(btn => {
+        btn.addEventListener('click', () => {
+          inputEl.value = btn.dataset.msg;
+          sendBtn.classList.add('active');
+          sendMessage();
+        });
+      });
+    }
 
     // Quick actions
     document.querySelectorAll('.quick-action').forEach(btn => {
@@ -508,8 +527,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             message: text,
-            sessionId,
-            
+            sessionId
           })
         });
 
@@ -518,6 +536,13 @@
 
         if (data.response) {
           sessionId = data.sessionId || sessionId;
+          localStorage.setItem('besh_session_id', sessionId);
+          isOnboarding = data.onboarding || false;
+          
+          // After onboarding completes, update quick actions
+          if (!isOnboarding && document.querySelector('.quick-actions')) {
+            updateQuickActionsForChat();
+          }
           addMessage(data.response, 'ai');
         } else {
           addMessage("Hmm, I didn't catch that. Try again?", 'ai');
