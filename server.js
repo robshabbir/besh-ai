@@ -192,6 +192,9 @@ app.get('/signup', async (req, res) => {
 app.get('/settings', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public/settings.html'));
 });
+app.get('/chat', async (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/chat.html'));
+});
 app.get('/forgot-password', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public/forgot-password.html'));
 });
