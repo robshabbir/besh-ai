@@ -9,6 +9,7 @@ const INTENT_PATTERNS = [
   { regex: /\bset\s+(a\s+)?goal\b/i, intent: 'goal' },
   { regex: /\bmy\s+(new\s+)?goal\b/i, intent: 'goal' },
   { regex: /\b(check\s*in|how\s+am\s+i|my\s+progress|status\s+update)\b/i, intent: 'checkin' },
+  { regex: /\bi want to\b/i, intent: 'goal' },
   { regex: /\bhow('?s|'?m)\s+(it|i)\s+(going|doing)\b/i, intent: 'checkin' },
 ];
 

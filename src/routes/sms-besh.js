@@ -67,8 +67,21 @@ function createSmsBeshHandler({ store, llm } = {}) {
           // ===== POST-ONBOARDING: AI CONVERSATION =====
           smsBeshMetrics.aiConversations += 1;
 
-          const ctx = await memory.buildContext(onboarding.user.id);
           const intent = memory.detectIntent(body);
+
+          // Create goal if goal intent detected
+          if (intent === 'goal' && store.createGoal) {
+            const goalText = memory.extractGoalText(body);
+            if (goalText) {
+              await store.createGoal({
+                userId: onboarding.user.id,
+                title: goalText,
+                cadence: null
+              });
+            }
+          }
+
+          const ctx = await memory.buildContext(onboarding.user.id);
           const result = await ai.generateResponse({
             context: ctx,
             userMessage: body,
