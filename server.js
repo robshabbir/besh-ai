@@ -144,7 +144,8 @@ app.use('/admin', adminRoutes);
 // REST API
 app.use('/api', apiRoutes);
 
-// Chat widget API
+// Chat widget API (Claude-powered — serves public/widget.js + dashboard /api/chat/stats)
+// NOT related to the removed besh-chat-api.js SMS pivot — this is the voice widget frontend
 app.use('/api', chatRoutes);
 
 // Voice widget API (browser talk-to-agent)
