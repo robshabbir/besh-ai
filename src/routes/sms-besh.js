@@ -12,6 +12,9 @@ const { createBeshAI } = require('../services/besh-ai');
 const { parseReminder } = require('../services/besh-reminders');
 const { detectSpecialCommands, detectGoalCompletion, formatGoalsList, formatSummary } = require('../services/besh-commands');
 
+const FREE_TIER_DAILY_LIMIT = 30; // free tier: 30 msgs/day
+const FREE_TIER_MONTHLY_LIMIT = 300; // free tier: 300 msgs/month
+
 const smsBeshMetrics = {
   inbound: 0,
   outbound: 0,
@@ -56,7 +59,18 @@ function createSmsBeshHandler({ store, llm } = {}) {
           // Mark user as unsubscribed
           const stopUser = await store.getOrCreateUserByPhone(from);
           if (store.updateUser) await store.updateUser(stopUser.id, { unsubscribed: true });
-          smsBeshMetrics.outbound += 1;
+          // Increment message counters
+      const newDailyCount = userMsgsToday + 1;
+      const newMonthlyCount = userMsgsMonth + 1;
+      
+      // Update counters in background
+      store.updateUserMessageCount && store.updateUserMessageCount(user.id, {
+        messages_today: newDailyCount,
+        last_message_date: new Date().toISOString().split('T')[0],
+        messages_this_month: newMonthlyCount
+      });
+
+      smsBeshMetrics.outbound += 1;
           const twiml = new twilio.twiml.MessagingResponse();
           twiml.message(cmdReply || 'You have been unsubscribed. Text START to resubscribe.');
           return res.type('text/xml').send(twiml.toString());

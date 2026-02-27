@@ -157,6 +157,24 @@ function createBeshSmsStore(client = null) {
     return data;
   }
 
+  async function updateUserMessageCount(userId, { messages_today, last_message_date, messages_this_month }) {
+    const updates = {};
+    if (messages_today !== undefined) updates.messages_today = messages_today;
+    if (last_message_date) updates.last_message_date = last_message_date;
+    if (messages_this_month !== undefined) updates.messages_this_month = messages_this_month;
+    updates.updated_at = new Date().toISOString();
+
+    const { data, error } = await getClient()
+      .from('besh_users')
+      .update(updates)
+      .eq('id', userId)
+      .select('id')
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
   async function updateUser(userId, updates) {
     const { data, error } = await getClient()
       .from('besh_users')
@@ -277,6 +295,7 @@ function createBeshSmsStore(client = null) {
     getConversationHistory,
     getUser,
     updateUser,
+    updateUserMessageCount,
     getActiveGoals,
     createGoal,
     updateGoal,
