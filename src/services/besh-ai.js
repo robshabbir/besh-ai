@@ -4,6 +4,7 @@
  */
 
 const logger = require('../utils/logger');
+const { detectInjectionAttempt } = require('./claude');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
@@ -134,6 +135,17 @@ CONTEXT:
       content: m.content
     }));
     messages.push({ role: 'user', content: userMessage });
+
+    // Security: block injection attempts
+    const injectionCheck = detectInjectionAttempt(userMessage);
+    if (injectionCheck.isInjection) {
+      logger.warn('Injection blocked in text path', { userName, pattern: injectionCheck.pattern });
+      return {
+        response: sanitizeResponse("Hey, let's keep things on track! What can I help you with today?"),
+        intent: intent || 'chat',
+        blocked: true
+      };
+    }
 
     try {
       const result = await callLLM(systemPrompt, messages);
