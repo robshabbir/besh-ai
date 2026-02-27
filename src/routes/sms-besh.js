@@ -12,8 +12,16 @@ const { createBeshAI } = require('../services/besh-ai');
 const { parseReminder } = require('../services/besh-reminders');
 const { detectSpecialCommands, detectGoalCompletion, formatGoalsList, formatSummary } = require('../services/besh-commands');
 
+const SUBSCRIPTION_TIERS = { free: 'free', pro: 'pro', premium: 'premium' };
 const FREE_TIER_DAILY_LIMIT = 30; // free tier: 30 msgs/day
 const FREE_TIER_MONTHLY_LIMIT = 300; // free tier: 300 msgs/month
+
+function hasPaidSubscription(user) {
+  if (!user) return false;
+  const tier = user.subscription_tier || 'free';
+  const status = user.subscription_status || 'active';
+  return tier !== 'free' && status === 'active';
+}
 
 const smsBeshMetrics = {
   inbound: 0,

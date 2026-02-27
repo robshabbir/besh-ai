@@ -157,6 +157,39 @@ function createBeshSmsStore(client = null) {
     return data;
   }
 
+  // Subscription management - called IMMEDIATELY on payment, not waiting for webhook
+  async function setSubscription({ userId, phone, tier, status, expiresAt, stripeCustomerId, stripeSubscriptionId }) {
+    const updates = {
+      subscription_tier: tier || 'pro',
+      subscription_status: status || 'active',
+      updated_at: new Date().toISOString()
+    };
+    if (expiresAt) updates.subscription_expires_at = expiresAt;
+    if (stripeCustomerId) updates.stripe_customer_id = stripeCustomerId;
+    if (stripeSubscriptionId) updates.stripe_subscription_id = stripeSubscriptionId;
+    if (tier !== 'free' && !updates.paid_at) updates.paid_at = new Date().toISOString();
+
+    const { data, error } = await getClient()
+      .from('besh_users')
+      .update(updates)
+      .eq(phone ? 'phone' : 'id', phone || userId)
+      .select('*')
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async function getSubscription(userId) {
+    const { data, error } = await getClient()
+      .from('besh_users')
+      .select('subscription_tier, subscription_status, subscription_expires_at, paid_at')
+      .eq('id', userId)
+      .single();
+    if (error) return null;
+    return data;
+  }
+
   async function updateUserMessageCount(userId, { messages_today, last_message_date, messages_this_month }) {
     const updates = {};
     if (messages_today !== undefined) updates.messages_today = messages_today;
@@ -296,6 +329,8 @@ function createBeshSmsStore(client = null) {
     getUser,
     updateUser,
     updateUserMessageCount,
+    setSubscription,
+    getSubscription,
     getActiveGoals,
     createGoal,
     updateGoal,
