@@ -59,7 +59,7 @@ function createBeshAI({ llm } = {}) {
   /**
    * Build system prompt with user context and intent
    */
-  function buildSystemPrompt({ userName, profile, intent }) {
+  function buildSystemPrompt({ userName, profile, intent, goals }) {
     const name = userName || 'there';
     const goal = profile?.goal || null;
     const rawTz = profile?.timezone || 'UTC';
@@ -92,6 +92,12 @@ CONTEXT:
 - Current time: ${dateStr}`;
 
     if (goal) prompt += `\n- Active goal: ${goal}`;
+
+    // Active goals
+    if (goals && goals.length > 0) {
+      prompt += '\n- Active goals:';
+      goals.forEach(g => { prompt += `\n  • ${g.title}${g.cadence ? ' (' + g.cadence + ')' : ''}`; });
+    }
 
     const prefs = profile?.preferences;
     if (prefs && typeof prefs === 'object' && Object.keys(prefs).length > 0) {
@@ -130,7 +136,7 @@ CONTEXT:
    */
   async function generateResponse({ context, userMessage, intent }) {
     const { userName, profile, recentMessages } = context;
-    const systemPrompt = buildSystemPrompt({ userName, profile, intent: intent || 'chat' });
+    const systemPrompt = buildSystemPrompt({ userName, profile, intent: intent || 'chat', goals: context.goals || [] });
 
     // Build messages array: history + new message
     const messages = (recentMessages || []).map(m => ({

@@ -12,6 +12,14 @@ const INTENT_PATTERNS = [
   { regex: /\bhow('?s|'?m)\s+(it|i)\s+(going|doing)\b/i, intent: 'checkin' },
 ];
 
+const GOAL_PATTERNS = [
+  { regex: /set a goal to (.+)/i, group: 1 },
+  { regex: /my goal is to (.+)/i, group: 1 },
+  { regex: /new goal:\s*(.+)/i, group: 1 },
+  { regex: /i want to (.+)/i, group: 1 },
+  { regex: /goal:\s*(.+)/i, group: 1 },
+];
+
 function createBeshMemory({ store, contextWindow = 10 } = {}) {
   if (!store) throw new Error('store is required');
 
@@ -19,9 +27,10 @@ function createBeshMemory({ store, contextWindow = 10 } = {}) {
    * Build full context for a user — profile + recent messages
    */
   async function buildContext(userId) {
-    const [user, messages] = await Promise.all([
+    const [user, messages, goals] = await Promise.all([
       store.getUser(userId),
-      store.getConversationHistory(userId, contextWindow)
+      store.getConversationHistory(userId, contextWindow),
+      store.getActiveGoals ? store.getActiveGoals(userId) : Promise.resolve([])
     ]);
 
     const profile = (user && user.profile_json) || {};
@@ -32,6 +41,7 @@ function createBeshMemory({ store, contextWindow = 10 } = {}) {
       userName,
       profile,
       recentMessages: messages || [],
+      goals: goals || [],
       onboardingComplete: !!(user && user.onboarding_complete)
     };
   }
@@ -59,10 +69,19 @@ function createBeshMemory({ store, contextWindow = 10 } = {}) {
     return 'chat';
   }
 
+  function extractGoalText(text) {
+    for (const { regex, group } of GOAL_PATTERNS) {
+      const m = text.match(regex);
+      if (m && m[group]) return m[group].trim().replace(/[.!?]+$/, '');
+    }
+    return text.trim();
+  }
+
   return {
     buildContext,
     formatForLLM,
-    detectIntent
+    detectIntent,
+    extractGoalText
   };
 }
 
