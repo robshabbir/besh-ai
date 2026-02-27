@@ -6,6 +6,7 @@
 const logger = require('../utils/logger');
 const { computeNextFire } = require('./besh-reminders');
 const { getCheckinsDue } = require('./besh-checkins');
+const { getWeeklySummariesDue } = require('./besh-weekly');
 
 function createBeshScheduler({ store, twilioClient, fromNumber, intervalMs = 60000 } = {}) {
   let timer = null;
@@ -111,6 +112,22 @@ function createBeshScheduler({ store, twilioClient, fromNumber, intervalMs = 600
     } catch (checkinErr) {
       logger.error('Check-in processing error', { error: checkinErr.message });
     }
+
+    // === WEEKLY SUMMARIES (Sunday 7pm) ===
+    try {
+      const weeklies = await getWeeklySummariesDue({ store, now: new Date() });
+      for (const w of weeklies) {
+        try {
+          if (twilioClient && w.phone) {
+            await twilioClient.messages.create({ body: w.message, from: fromNumber, to: w.phone });
+            logger.info('📅 Weekly summary sent', { to: w.phone });
+          }
+          if (store.appendConversation) {
+            await store.appendConversation({ userId: w.userId, direction: 'outbound', content: w.message, meta: { type: 'checkin', checkinType: 'weekly' } });
+          }
+        } catch (e) { logger.error('Weekly summary send failed', { error: e.message }); }
+      }
+    } catch (e) { logger.error('Weekly summary error', { error: e.message }); }
 
     running = false;
   }
