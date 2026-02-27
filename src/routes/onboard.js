@@ -147,7 +147,7 @@ router.post('/create', rateLimit(5, 60000), validateOnboardingData, async (req, 
 
     if (!tenantId) {
       // No session tenant — create new one (legacy/API path)
-      apiKey = 'calva_' + crypto.randomBytes(32).toString('hex');
+      apiKey = 'besh_' + crypto.randomBytes(32).toString('hex');
       tenantId = await db.createTenant(
         businessName,
         industry || processedConfig.industry,

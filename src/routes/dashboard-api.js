@@ -324,7 +324,7 @@ router.get('/calls/export', async (req, res) => {
     }).join('\n');
     
     res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename="calva-calls-${new Date().toISOString().slice(0,10)}.csv"`);
+    res.setHeader('Content-Disposition', `attachment; filename="besh-calls-${new Date().toISOString().slice(0,10)}.csv"`);
     res.send(header + rows);
   } catch (e) {
     logger.error('Export error', { error: e.message });
@@ -415,7 +415,7 @@ router.post('/integrations/test-webhook', async (req, res) => {
     const result = await sendWebhook(url, {
       event: 'test',
       timestamp: new Date().toISOString(),
-      message: 'Calva integration test — if you see this, it works!'
+      message: 'Besh integration test — if you see this, it works!'
     }, { retries: 0, timeoutMs: 5000 });
     
     res.json(result);

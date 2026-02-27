@@ -161,7 +161,7 @@ router.post('/demo-call', async (req, res) => {
 
     res.json({ 
       success: true, 
-      message: 'Calling you now! Pick up to talk to Calva.',
+      message: 'Calling you now! Pick up to talk to Besh.',
       callSid: call.sid
     });
   } catch (error) {
@@ -280,7 +280,7 @@ router.post('/simulate-call', async (req, res) => {
 router.get('/health', async (req, res) => {
   res.json({
     status: 'ok',
-    service: 'calva-api',
+    service: 'besh-api',
     timestamp: new Date().toISOString()
   });
 });

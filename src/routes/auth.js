@@ -41,7 +41,7 @@ router.post('/signup', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
     // Create tenant placeholder (no phone, no template yet)
-    const apiKey = 'calva_' + crypto.randomBytes(32).toString('hex');
+    const apiKey = 'besh_' + crypto.randomBytes(32).toString('hex');
     const tenantId = await db.createTenant(
       businessName,
       'pending', // industry set later during wizard
@@ -146,7 +146,7 @@ router.post('/resend-verification', async (req, res) => {
 });
 
 function verifyResultPage(success, message) {
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Email Verification - Calva</title>
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Email Verification - Besh</title>
 <script src="https://cdn.tailwindcss.com"></script>
 ${success ? '<meta http-equiv="refresh" content="3;url=/dashboard">' : ''}
 </head><body class="bg-gray-50 min-h-screen flex items-center justify-center">

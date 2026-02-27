@@ -1,5 +1,5 @@
 /**
- * Structured logger for Calva platform
+ * Structured logger for Besh platform
  */
 
 const LOG_LEVELS = {

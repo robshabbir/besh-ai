@@ -1,5 +1,5 @@
 /**
- * Calva Integrations — Push call data to customer CRM/booking systems
+ * Besh Integrations — Push call data to customer CRM/booking systems
  * 
  * Supported:
  * - Webhook (generic — works with Zapier, Make, n8n)
@@ -147,7 +147,7 @@ async function createCalendarEvent(credentials, bookingData) {
 
 // ============= EMAIL SUMMARY =============
 
-async function sendCallSummaryEmail(to, callData, { from = 'noreply@calva.ai' } = {}) {
+async function sendCallSummaryEmail(to, callData, { from = 'noreply@besh.ai' } = {}) {
   if (!to) return { success: false, error: 'No email address' };
   
   try {
@@ -173,7 +173,7 @@ async function sendCallSummaryEmail(to, callData, { from = 'noreply@calva.ai' } 
           ${callData.intent === 'booking' ? `<tr><td style="padding: 8px 0; color: #666;">Preferred Time</td><td style="padding: 8px 0; font-weight: 600;">${preferredTime}</td></tr>` : ''}
         </table>
         ${isEmergency ? '<p style="color: #dc2626; font-weight: bold; margin-top: 16px;">⚠️ This was flagged as an EMERGENCY. Call back ASAP.</p>' : ''}
-        <p style="color: #999; font-size: 12px; margin-top: 24px;">Sent by Calva AI Receptionist</p>
+        <p style="color: #999; font-size: 12px; margin-top: 24px;">Sent by Besh AI Receptionist</p>
       </div>
     `;
     
@@ -371,7 +371,7 @@ async function pushToJobber(config, callData) {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          query: `mutation { requestCreate(input: { clientId: "${clientId}", title: "AI Receptionist Lead: ${callData.collected?.service || 'General'}", details: "Caller: ${callData.callerPhone}\\nService: ${callData.collected?.service || 'Not specified'}\\nSource: Calva AI Receptionist" }) { request { id } } }`
+          query: `mutation { requestCreate(input: { clientId: "${clientId}", title: "AI Receptionist Lead: ${callData.collected?.service || 'General'}", details: "Caller: ${callData.callerPhone}\\nService: ${callData.collected?.service || 'Not specified'}\\nSource: Besh AI Receptionist" }) { request { id } } }`
         })
       });
     }

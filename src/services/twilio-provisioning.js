@@ -62,7 +62,7 @@ async function provisionPhoneNumberForTenant(tenantId, areaCode = null, country 
           statusCallbackMethod: 'POST',
           smsUrl: `${baseUrl}/api/sms`, // For future SMS support
           smsMethod: 'POST',
-          friendlyName: `Calva Tenant ${tenantId} - ${number.locality || 'Local'}`
+          friendlyName: `Besh Tenant ${tenantId} - ${number.locality || 'Local'}`
         });
 
         logger.info('Phone number purchased successfully', {

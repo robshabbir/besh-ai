@@ -1,5 +1,5 @@
 /**
- * Calva AI Voice Widget
+ * Besh AI Voice Widget
  * Talk to the AI receptionist directly from the website.
  * Uses Web Speech API for STT + ElevenLabs for TTS.
  */
@@ -46,7 +46,7 @@
             </svg>
           </div>
           <div>
-            <div class="calva-name">Calva AI</div>
+            <div class="calva-name">Besh AI</div>
             <div class="calva-status" id="calva-status">Click mic to start talking</div>
           </div>
         </div>

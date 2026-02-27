@@ -1,5 +1,5 @@
 {
-  "name": "calva-ai-receptionist",
+  "name": "besh-ai-receptionist",
   "version": "2.0.0",
   "description": "Multi-tenant AI-powered receptionist platform using Twilio Voice and Claude",
   "main": "server.js",
@@ -22,7 +22,7 @@
     "saas",
     "multi-tenant"
   ],
-  "author": "Calva AI",
+  "author": "Besh AI",
   "license": "MIT",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",

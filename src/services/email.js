@@ -24,7 +24,7 @@ if (process.env.SMTP_HOST) {
   transporter = null;
 }
 
-const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@calva.ai';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@besh.ai';
 const APP_URL = process.env.APP_URL || 'http://localhost:3100';
 
 /**
@@ -41,7 +41,7 @@ async function sendVerificationEmail(email, token) {
         </div>
       </div>
       <h1 style="font-size: 24px; font-weight: 700; text-align: center; margin-bottom: 16px; color: #111827;">Verify your email</h1>
-      <p style="color: #6b7280; text-align: center; margin-bottom: 32px;">Click the button below to verify your email and activate your Calva AI Receptionist.</p>
+      <p style="color: #6b7280; text-align: center; margin-bottom: 32px;">Click the button below to verify your email and activate your Besh AI Receptionist.</p>
       <div style="text-align: center; margin-bottom: 32px;">
         <a href="${verifyUrl}" style="display: inline-block; background: #4f46e5; color: white; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">Verify Email</a>
       </div>
@@ -53,9 +53,9 @@ async function sendVerificationEmail(email, token) {
   if (transporter) {
     try {
       await transporter.sendMail({
-        from: `"Calva AI" <${FROM_EMAIL}>`,
+        from: `"Besh AI" <${FROM_EMAIL}>`,
         to: email,
-        subject: 'Verify your Calva account',
+        subject: 'Verify your Besh account',
         html,
       });
       logger.info('Verification email sent', { email });
@@ -76,7 +76,7 @@ async function sendVerificationEmail(email, token) {
 async function sendWelcomeEmail(email, businessName) {
   const html = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 480px; margin: 0 auto; padding: 40px 20px;">
-      <h1 style="font-size: 24px; font-weight: 700; text-align: center; color: #111827;">Welcome to Calva! 🎉</h1>
+      <h1 style="font-size: 24px; font-weight: 700; text-align: center; color: #111827;">Welcome to Besh! 🎉</h1>
       <p style="color: #6b7280; text-align: center; margin: 16px 0;">Your AI receptionist for <strong>${businessName}</strong> is almost ready.</p>
       <p style="color: #6b7280; text-align: center;">Complete your setup in the dashboard to start taking calls.</p>
       <div style="text-align: center; margin-top: 32px;">
@@ -88,9 +88,9 @@ async function sendWelcomeEmail(email, businessName) {
   if (transporter) {
     try {
       await transporter.sendMail({
-        from: `"Calva AI" <${FROM_EMAIL}>`,
+        from: `"Besh AI" <${FROM_EMAIL}>`,
         to: email,
-        subject: `Welcome to Calva, ${businessName}!`,
+        subject: `Welcome to Besh, ${businessName}!`,
         html,
       });
       logger.info('Welcome email sent', { email });
@@ -116,7 +116,7 @@ async function sendPasswordResetEmail(email, token) {
         </div>
       </div>
       <h1 style="font-size: 24px; font-weight: 700; text-align: center; margin-bottom: 16px; color: #111827;">Reset your password</h1>
-      <p style="color: #6b7280; text-align: center; margin-bottom: 32px;">Click the button below to reset your Calva account password. This link expires in 1 hour.</p>
+      <p style="color: #6b7280; text-align: center; margin-bottom: 32px;">Click the button below to reset your Besh account password. This link expires in 1 hour.</p>
       <div style="text-align: center; margin-bottom: 32px;">
         <a href="${resetUrl}" style="display: inline-block; background: #4f46e5; color: white; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">Reset Password</a>
       </div>
@@ -128,9 +128,9 @@ async function sendPasswordResetEmail(email, token) {
   if (transporter) {
     try {
       await transporter.sendMail({
-        from: `"Calva AI" <${FROM_EMAIL}>`,
+        from: `"Besh AI" <${FROM_EMAIL}>`,
         to: email,
-        subject: 'Reset your Calva password',
+        subject: 'Reset your Besh password',
         html,
       });
       logger.info('Password reset email sent', { email });
@@ -151,7 +151,7 @@ async function sendEmail({ to, subject, html, text }) {
   if (transporter) {
     try {
       await transporter.sendMail({
-        from: `"Calva AI" <${FROM_EMAIL}>`,
+        from: `"Besh AI" <${FROM_EMAIL}>`,
         to,
         subject,
         html,

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Call Forwarding Setup Guide - Calva AI</title>
+    <title>Call Forwarding Setup Guide - Besh AI</title>
     <style>
         * {
             margin: 0;
@@ -266,19 +266,19 @@
     <div class="container">
         <header>
             <h1>📞 Call Forwarding Setup Guide</h1>
-            <p>Connect your existing business number to Calva AI</p>
+            <p>Connect your existing business number to Besh AI</p>
         </header>
         
         <div class="content">
             <div class="intro">
                 <h2>Keep Your Existing Number!</h2>
-                <p>Your customers can keep calling your current business number. When you're busy or can't answer, calls automatically forward to your Calva AI receptionist.</p>
-                <p><strong>How it works:</strong> Set up conditional call forwarding so calls only go to Calva when you don't answer after a few rings.</p>
+                <p>Your customers can keep calling your current business number. When you're busy or can't answer, calls automatically forward to your Besh AI receptionist.</p>
+                <p><strong>How it works:</strong> Set up conditional call forwarding so calls only go to Besh when you don't answer after a few rings.</p>
             </div>
             
             <div class="phone-input">
-                <label for="calva-number">Your Calva AI Phone Number:</label>
-                <input type="tel" id="calva-number" placeholder="Enter your Calva number" value="">
+                <label for="calva-number">Your Besh AI Phone Number:</label>
+                <input type="tel" id="calva-number" placeholder="Enter your Besh number" value="">
             </div>
             
             <!-- AT&T -->
@@ -311,7 +311,7 @@
                             <li>Go to "My wireless" > "Manage my device"</li>
                             <li>Select "Call forwarding"</li>
                             <li>Enable "Forward when busy" or "Forward when unanswered"</li>
-                            <li>Enter your Calva number</li>
+                            <li>Enter your Besh number</li>
                             <li>Save changes</li>
                         </ol>
                     </div>
@@ -353,7 +353,7 @@
                             <li>Tap "Manage device" > "Controls"</li>
                             <li>Select "Call Forwarding"</li>
                             <li>Enable "Forward when unreachable"</li>
-                            <li>Enter your Calva number and save</li>
+                            <li>Enter your Besh number and save</li>
                         </ol>
                     </div>
                     
@@ -393,7 +393,7 @@
                             <li>Tap "Account" > "Line settings"</li>
                             <li>Select "Call forwarding"</li>
                             <li>Enable "When unanswered"</li>
-                            <li>Enter your Calva number</li>
+                            <li>Enter your Besh number</li>
                             <li>Set delay (10-30 seconds) and save</li>
                         </ol>
                     </div>
@@ -434,7 +434,7 @@
                             <li>Select your phone line</li>
                             <li>Go to "Settings" > "Call Settings"</li>
                             <li>Select "Call Forwarding"</li>
-                            <li>Enable and enter your Calva number</li>
+                            <li>Enable and enter your Besh number</li>
                             <li>Save changes</li>
                         </ol>
                     </div>
@@ -450,7 +450,7 @@
                 <ol class="steps">
                     <li>Call your business number from another phone</li>
                     <li>Let it ring without answering</li>
-                    <li>Calva AI should pick up after the delay you set</li>
+                    <li>Besh AI should pick up after the delay you set</li>
                     <li>Try a conversation to test the AI</li>
                 </ol>
                 <div class="tip">
@@ -461,7 +461,7 @@
         
         <footer>
             <p>Need help? Contact <a href="mailto:support@calva.ai">support@calva.ai</a></p>
-            <p style="margin-top: 10px; opacity: 0.7;">© 2024 Calva AI - Never miss a call again</p>
+            <p style="margin-top: 10px; opacity: 0.7;">© 2024 Besh AI - Never miss a call again</p>
         </footer>
     </div>
     
@@ -483,7 +483,7 @@
             header.classList.toggle('active');
         }
         
-        // Update Calva number placeholders when input changes
+        // Update Besh number placeholders when input changes
         const calvaInput = document.getElementById('calva-number');
         calvaInput.addEventListener('input', function() {
             const number = this.value;
@@ -492,7 +492,7 @@
             });
         });
         
-        // Try to get Calva number from URL parameter or API
+        // Try to get Besh number from URL parameter or API
         const urlParams = new URLSearchParams(window.location.search);
         const calvaNumber = urlParams.get('number');
         if (calvaNumber) {

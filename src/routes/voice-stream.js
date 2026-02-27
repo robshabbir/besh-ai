@@ -63,7 +63,7 @@ router.post('/voice-stream', async (req, res) => {
     const connect = twiml.connect();
     const stream = connect.stream({
       url: wsUrl,
-      name: 'CalvaMediaStream'
+      name: 'BeshMediaStream'
     });
     // Pass params as custom parameters (available in start event)
     stream.parameter({ name: 'tenantId', value: String(tenant.id) });

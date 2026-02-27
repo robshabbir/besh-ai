@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
       div.innerHTML = `<p class="text-[10px] text-dark-500 mb-0.5">Caller</p><p class="text-dark-200">${text}</p>`;
     } else {
       div.className = 'bubble-ai px-3 py-2 max-w-[90%] ml-auto bubble-animate';
-      div.innerHTML = `<p class="text-[10px] text-brand-300 mb-0.5">Calva AI</p><p class="text-dark-100">${text}</p>`;
+      div.innerHTML = `<p class="text-[10px] text-brand-300 mb-0.5">Besh AI</p><p class="text-dark-100">${text}</p>`;
     }
     convo.appendChild(div);
     convo.scrollTop = convo.scrollHeight;

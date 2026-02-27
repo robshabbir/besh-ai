@@ -1,4 +1,4 @@
-# Calva - AI Receptionist Platform
+# Besh - AI Receptionist Platform
 
 **Every call, covered.** Multi-tenant AI receptionist platform powered by Twilio Voice and Claude.
 
@@ -109,7 +109,7 @@ Visit `http://localhost:3000/admin/dashboard`
 All API endpoints require authentication:
 
 ```bash
-curl -H "Authorization: Bearer calva_YOUR_API_KEY" \
+curl -H "Authorization: Bearer besh_YOUR_API_KEY" \
      https://your-domain.com/api/calls
 ```
 
@@ -196,7 +196,7 @@ Create a new template file in `templates/`:
 
 ```bash
 # Build image
-docker build -t calva-ai .
+docker build -t besh-ai .
 
 # Run container
 docker run -d \
@@ -205,7 +205,7 @@ docker run -d \
   -e ANTHROPIC_API_KEY=sk-ant-... \
   -e TWILIO_ACCOUNT_SID=AC... \
   -e TWILIO_AUTH_TOKEN=... \
-  calva-ai
+  besh-ai
 ```
 
 ### Production Checklist
@@ -290,8 +290,8 @@ MIT
 
 For issues and questions:
 - GitHub Issues: [your-repo]
-- Email: support@calva.ai
-- Documentation: https://docs.calva.ai
+- Email: support@besh.ai
+- Documentation: https://docs.besh.ai
 
 ---
 

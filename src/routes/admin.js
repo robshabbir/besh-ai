@@ -372,7 +372,7 @@ router.get('/analytics/export', authenticateTenant, async (req, res) => {
     const csvContent = csvRows.join('\n');
     
     // Set headers for file download
-    const filename = `calva-analytics-${req.tenant.name.replace(/[^a-z0-9]/gi, '-')}-${Date.now()}.csv`;
+    const filename = `besh-analytics-${req.tenant.name.replace(/[^a-z0-9]/gi, '-')}-${Date.now()}.csv`;
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     

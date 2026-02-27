@@ -211,7 +211,7 @@ async function handleCheckoutCompleted(session) {
     }
     
     // Generate API key
-    const apiKey = 'calva_' + crypto.randomBytes(24).toString('hex');
+    const apiKey = 'besh_' + crypto.randomBytes(24).toString('hex');
     
     // Load template for industry
     const template = loadTemplate(industry || 'general');
@@ -315,7 +315,7 @@ async function handleCheckoutCompleted(session) {
       action: 'SEND_WELCOME_EMAIL', // Flag for external email service to pick up
       emailData: {
         to: customerEmail,
-        subject: `Welcome to Calva - Your AI Receptionist is Ready!`,
+        subject: `Welcome to Besh - Your AI Receptionist is Ready!`,
         businessName: business_name,
         phoneNumber,
         dashboardUrl,
@@ -420,7 +420,7 @@ async function handleSubscriptionDeleted(subscription) {
 function buildCheckoutWelcomeSms(tenantMeta, businessPhone, baseUrl) {
   const name = tenantMeta?.name || 'your business';
   const dashboardUrl = `${baseUrl}/admin/dashboard`;
-  return `🎉 Welcome to Calva! Your AI receptionist for ${name} is live at ${businessPhone}. Dashboard: ${dashboardUrl}`;
+  return `🎉 Welcome to Besh! Your AI receptionist for ${name} is live at ${businessPhone}. Dashboard: ${dashboardUrl}`;
 }
 
 /**

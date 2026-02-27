@@ -36,7 +36,7 @@ app.set('trust proxy', 1);
 
 // ============= STARTUP =============
 
-logger.info('Starting Calva AI Receptionist Platform');
+logger.info('Starting Besh AI Receptionist Platform');
 
 // Initialize database
 db.init();
@@ -90,7 +90,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Session middleware
-const SESSION_SECRET = process.env.SESSION_SECRET || (process.env.NODE_ENV === 'production' ? undefined : 'calva-dev-secret-change-in-production');
+const SESSION_SECRET = process.env.SESSION_SECRET || (process.env.NODE_ENV === 'production' ? undefined : 'besh-dev-secret-change-in-production');
 if (!SESSION_SECRET) {
   logger.error('SESSION_SECRET environment variable is required in production');
   process.exit(1);
@@ -228,7 +228,7 @@ app.get('/health', async (req, res) => {
 
   res.status(status === 'ok' ? 200 : 503).json({
     status,
-    service: 'calva-platform',
+    service: 'besh-platform',
     version: '2.0.0',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
@@ -298,7 +298,7 @@ setInterval(() => {
 // ============= START SERVER =============
 
 const server = app.listen(PORT, () => {
-  logger.info(`🚀 Calva platform running on port ${PORT}`);
+  logger.info(`🚀 Besh platform running on port ${PORT}`);
   logger.info(`📞 Voice webhook: http://localhost:${PORT}/api/voice`);
   logger.info(`🎙️  Media Streams webhook: http://localhost:${PORT}/api/voice-stream`);
   logger.info(`🗣️  ElevenLabs streaming TTS enabled (Sarah voice)`);

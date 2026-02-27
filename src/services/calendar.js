@@ -1,5 +1,5 @@
 /**
- * Google Calendar Integration for Calva AI
+ * Google Calendar Integration for Besh AI
  * 
  * Enables real-time appointment booking during calls.
  * Each tenant can connect their Google Calendar via OAuth2.
@@ -176,7 +176,7 @@ async function bookAppointment(tokens, appointment, options = {}) {
       service ? `Service: ${service}` : '',
       notes ? `Notes: ${notes}` : '',
       '',
-      'Booked by Calva AI Receptionist'
+      'Booked by Besh AI Receptionist'
     ].filter(Boolean).join('\n'),
     start: {
       dateTime: startDateTime.toISOString(),

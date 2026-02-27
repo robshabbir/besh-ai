@@ -67,7 +67,7 @@ const demoMessages = [
     {
         type: 'ai',
         avatar: '🤖',
-        text: 'Thank you for calling Calva Medical Center. This is your AI receptionist. How may I help you today?',
+        text: 'Thank you for calling Besh Medical Center. This is your AI receptionist. How may I help you today?',
         time: '2:34 PM'
     },
     {
@@ -643,7 +643,7 @@ industryData.custom = {
     messages: [
         { type: 'ai', avatar: '🤖', text: 'Thank you for calling. How may I help you today?', time: 'Now' },
         { type: 'customer', avatar: '👤', text: 'I have a question about your services.', time: 'Now' },
-        { type: 'ai', avatar: '🤖', text: 'I\'d be happy to help! Calva can be configured for ANY business that receives phone calls. Tell us about your business and we\'ll customize your AI receptionist in minutes.', time: 'Now' },
+        { type: 'ai', avatar: '🤖', text: 'I\'d be happy to help! Besh can be configured for ANY business that receives phone calls. Tell us about your business and we\'ll customize your AI receptionist in minutes.', time: 'Now' },
         { type: 'customer', avatar: '👤', text: 'That sounds perfect. How do I get started?', time: 'Now' },
         { type: 'ai', avatar: '🤖', text: 'Great! I can schedule a quick setup call with our team, or you can start your free trial right now at calva.ai. Which would you prefer?', time: 'Now' }
     ]
@@ -792,7 +792,7 @@ async function triggerDemoCall() {
     btn.disabled = true;
     btn.innerHTML = '📞 Calling...';
     statusEl.className = 'demo-call-status calling';
-    statusEl.textContent = '🔄 Connecting you to Calva...';
+    statusEl.textContent = '🔄 Connecting you to Besh...';
     
     try {
         const response = await fetch('/api/demo-call', {
@@ -805,7 +805,7 @@ async function triggerDemoCall() {
         
         if (response.ok && data.success) {
             statusEl.className = 'demo-call-status success';
-            statusEl.textContent = '✅ Calling you now! Pick up your phone — Calva is ready to talk.';
+            statusEl.textContent = '✅ Calling you now! Pick up your phone — Besh is ready to talk.';
             btn.innerHTML = '✅ Call Sent!';
             
             // Reset after 30 seconds
