@@ -1,3 +1,27 @@
+
+const TIMEZONE_ALIASES = {
+  'est': 'America/New_York', 'edt': 'America/New_York', 'eastern': 'America/New_York',
+  'cst': 'America/Chicago', 'cdt': 'America/Chicago', 'central': 'America/Chicago',
+  'mst': 'America/Denver', 'mdt': 'America/Denver', 'mountain': 'America/Denver',
+  'pst': 'America/Los_Angeles', 'pdt': 'America/Los_Angeles', 'pacific': 'America/Los_Angeles',
+  'gmt': 'UTC', 'utc': 'UTC', 'uk': 'Europe/London', 'london': 'Europe/London',
+  'dubai': 'Asia/Dubai', 'ist': 'Asia/Kolkata', 'india': 'Asia/Kolkata',
+  'dhaka': 'Asia/Dhaka', 'bst': 'Asia/Dhaka', 'bangladesh': 'Asia/Dhaka',
+  'tokyo': 'Asia/Tokyo', 'jst': 'Asia/Tokyo', 'sydney': 'Australia/Sydney',
+  'paris': 'Europe/Paris', 'berlin': 'Europe/Berlin', 'toronto': 'America/Toronto',
+};
+
+function resolveTimezone(input) {
+  if (!input) return null;
+  const lower = input.trim().toLowerCase();
+  if (TIMEZONE_ALIASES[lower]) return TIMEZONE_ALIASES[lower];
+  // Try as-is (e.g. 'America/New_York')
+  try {
+    new Date().toLocaleString('en-US', { timeZone: input.trim() });
+    return input.trim();
+  } catch { return null; }
+}
+
 function normalizePhone(phone = '') {
   const digits = String(phone).replace(/\D/g, '');
   if (!digits) return '';
@@ -32,7 +56,7 @@ function nextOnboardingStep(state, inboundText) {
     profile.name = text || 'there';
     return {
       state: { stage: 'ask_goal', profile },
-      response: `Nice to meet you, ${profile.name}. What's your main goal this week?`,
+      response: `Nice to meet you, ${profile.name}! 👋 I'm Besh — your personal AI, right in your texts. What's one goal you really want to crush this week?`,
       done: false
     };
   }
@@ -41,7 +65,7 @@ function nextOnboardingStep(state, inboundText) {
     profile.goal = text || 'stay consistent';
     return {
       state: { stage: 'ask_timezone', profile },
-      response: 'Great. What timezone are you in? (e.g., America/New_York)',
+      response: `Love that. I'll help keep you on track with that every day. Last thing — what's your timezone? (e.g. America/New_York or just say EST, PST, etc.)`,
       done: false
     };
   }
@@ -69,7 +93,7 @@ function nextOnboardingStep(state, inboundText) {
     profile.timezone = text || 'UTC';
     return {
       state: { stage: 'complete', profile },
-      response: `Perfect. You're all set. I'll help you stay on track for: ${profile.goal}.`,
+      response: `You're all set, ${profile.name}! 🎯 I've got your goal: ${profile.goal}. I'll check in on you daily and send reminders anytime you ask. Text me anything — let's make it happen.`,
       done: true
     };
   }
@@ -87,7 +111,7 @@ function nextOnboardingStep(state, inboundText) {
 
   return {
     state: current,
-    response: 'You are already set up. Text "summary" anytime.',
+    response: `Hey again! You're all set — just text me anything about your goals, and I'm here. Text "summary" to see your setup.`,
     done: true
   };
 }
@@ -99,6 +123,7 @@ function sanitizeSmsReply(text, maxLen = 320) {
 }
 
 module.exports = {
+  resolveTimezone,
   normalizePhone,
   classifyInboundText,
   nextOnboardingStep,

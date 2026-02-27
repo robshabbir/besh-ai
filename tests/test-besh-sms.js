@@ -276,3 +276,22 @@ async function run() {
 }
 
 run();
+// Bonus: timezone alias tests
+{
+  const { resolveTimezone } = require('../src/services/besh-sms');
+  if (resolveTimezone) {
+    const cases = [
+      ['EST', 'America/New_York'],
+      ['pst', 'America/Los_Angeles'],
+      ['Bangladesh', 'Asia/Dhaka'],
+      ['America/Chicago', 'America/Chicago'],
+    ];
+    let p = 0, f = 0;
+    cases.forEach(([input, expected]) => {
+      const result = resolveTimezone(input);
+      if (result === expected) { p++; console.log('✅ resolveTimezone:', input, '->', result); }
+      else { f++; console.error('❌ resolveTimezone:', input, '->', result, '(expected', expected + ')'); }
+    });
+    if (f > 0) process.exit(1);
+  }
+}
