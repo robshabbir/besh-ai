@@ -62,7 +62,10 @@ function createBeshAI({ llm } = {}) {
   function buildSystemPrompt({ userName, profile, intent }) {
     const name = userName || 'there';
     const goal = profile?.goal || null;
-    const tz = profile?.timezone || 'UTC';
+    const rawTz = profile?.timezone || 'UTC';
+    // Validate timezone - fall back to UTC if invalid
+    let tz = 'UTC';
+    try { new Date().toLocaleString('en-US', { timeZone: rawTz }); tz = rawTz; } catch (e) { tz = 'UTC'; }
     const intentCtx = INTENT_CONTEXT[intent] || '';
 
     const now = new Date();

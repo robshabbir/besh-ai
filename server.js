@@ -27,7 +27,7 @@ const calendarRoutes = require('./src/routes/calendar');
 const { setupConversationRelay } = require('./src/routes/conversation-relay');
 const voiceWidgetRoutes = require('./src/routes/voice-widget');
 const smsBeshRoutes = require('./src/routes/sms-besh');
-
+const { createBeshChatRouter } = require('./src/routes/besh-chat-api');
 const app = express();
 const PORT = process.env.PORT || 3100;
 
@@ -151,6 +151,8 @@ app.use('/api', voiceWidgetRoutes);
 // Besh SMS (personal assistant prototype)
 app.use('/api', smsBeshRoutes);
 
+// Besh text-first web chat API
+app.use('/api', createBeshChatRouter());
 // Onboarding
 app.use('/onboard', onboardRoutes);
 
