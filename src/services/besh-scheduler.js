@@ -5,6 +5,7 @@
 
 const logger = require('../utils/logger');
 const { computeNextFire } = require('./besh-reminders');
+const { getCheckinsDue } = require('./besh-checkins');
 
 function createBeshScheduler({ store, twilioClient, fromNumber, intervalMs = 60000 } = {}) {
   let timer = null;
@@ -73,6 +74,42 @@ function createBeshScheduler({ store, twilioClient, fromNumber, intervalMs = 600
       }
     } catch (err) {
       logger.error('Scheduler tick error', { error: err.message });
+    }
+
+    // === PROACTIVE CHECK-INS ===
+    try {
+      const checkins = await getCheckinsDue({ store, now: new Date() });
+      if (checkins.length > 0) {
+        logger.info(`💬 ${checkins.length} check-in(s) to send`);
+      }
+
+      for (const checkin of checkins) {
+        try {
+          if (twilioClient && checkin.phone) {
+            await twilioClient.messages.create({
+              body: checkin.message,
+              from: fromNumber,
+              to: checkin.phone
+            });
+            logger.info('💬 Check-in sent', { to: checkin.phone, type: checkin.type });
+          }
+
+          if (store.appendConversation) {
+            await store.appendConversation({
+              userId: checkin.userId,
+              direction: 'outbound',
+              content: checkin.message,
+              meta: { type: 'checkin', checkinType: checkin.type }
+            });
+          }
+
+          // Mark as sent (store tracks via conversation meta)
+        } catch (sendErr) {
+          logger.error('Failed to send check-in', { userId: checkin.userId, error: sendErr.message });
+        }
+      }
+    } catch (checkinErr) {
+      logger.error('Check-in processing error', { error: checkinErr.message });
     }
 
     running = false;

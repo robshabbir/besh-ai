@@ -211,6 +211,54 @@ function createBeshSmsStore(client = null) {
     return data;
   }
 
+  async function getOnboardedUsersWithGoals() {
+    // Get onboarded users
+    const { data: users, error } = await getClient()
+      .from('besh_users')
+      .select('*')
+      .eq('onboarding_complete', true)
+      .limit(200);
+
+    if (error) throw error;
+    if (!users || users.length === 0) return [];
+
+    // Get active goals for each user
+    const userIds = users.map(u => u.id);
+    const { data: goals, error: goalsErr } = await getClient()
+      .from('besh_goals')
+      .select('*')
+      .in('user_id', userIds)
+      .eq('status', 'active');
+
+    if (goalsErr) throw goalsErr;
+
+    // Attach goals to users
+    const goalsByUser = {};
+    for (const g of (goals || [])) {
+      if (!goalsByUser[g.user_id]) goalsByUser[g.user_id] = [];
+      goalsByUser[g.user_id].push(g);
+    }
+
+    return users.map(u => ({ ...u, goals: goalsByUser[u.id] || [] }));
+  }
+
+  async function hasCheckinToday(userId, type) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const { data, error } = await getClient()
+      .from('besh_conversations')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('direction', 'outbound')
+      .gte('created_at', today.toISOString())
+      .contains('meta_json', { type: 'checkin', checkinType: type })
+      .limit(1);
+
+    if (error) throw error;
+    return data && data.length > 0;
+  }
+
   async function completeGoal(goalId) {
     return updateGoal(goalId, { status: 'done' });
   }
@@ -230,7 +278,9 @@ function createBeshSmsStore(client = null) {
     completeGoal,
     createReminder,
     getDueReminders,
-    advanceReminder
+    advanceReminder,
+    getOnboardedUsersWithGoals,
+    hasCheckinToday
   };
 }
 
