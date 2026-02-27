@@ -27,6 +27,8 @@ const calendarRoutes = require('./src/routes/calendar');
 const { setupConversationRelay } = require('./src/routes/conversation-relay');
 const voiceWidgetRoutes = require('./src/routes/voice-widget');
 const smsBeshRoutes = require('./src/routes/sms-besh');
+const { createBeshScheduler } = require('./src/services/besh-scheduler');
+const { createBeshSmsStore } = require('./src/services/besh-sms-store');
 const app = express();
 const PORT = process.env.PORT || 3100;
 
@@ -300,6 +302,25 @@ setInterval(() => {
 // ============= START SERVER =============
 
 const server = app.listen(PORT, () => {
+  // Start reminder scheduler
+  if (process.env.NODE_ENV !== 'test') {
+    try {
+      const beshStore = createBeshSmsStore();
+      const twilio = require('twilio');
+      const twilioClient = (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN)
+        ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
+        : null;
+      const scheduler = createBeshScheduler({
+        store: beshStore,
+        twilioClient,
+        fromNumber: process.env.TWILIO_PHONE_NUMBER,
+        intervalMs: 60000
+      });
+      scheduler.start();
+    } catch (schedErr) {
+      logger.warn('Reminder scheduler failed to start', { error: schedErr.message });
+    }
+  }
   logger.info(`🚀 Besh platform running on port ${PORT}`);
   logger.info(`📞 Voice webhook: http://localhost:${PORT}/api/voice`);
   logger.info(`🎙️  Media Streams webhook: http://localhost:${PORT}/api/voice-stream`);

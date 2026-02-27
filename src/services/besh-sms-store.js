@@ -42,6 +42,7 @@ function createBeshSmsStore(client = null) {
       onboarding_complete: !!done,
       profile_json: state.profile || {},
       display_name: (state.profile && state.profile.name) || undefined,
+      display_name: (state.profile && state.profile.name) || undefined,
       updated_at: new Date().toISOString()
     };
     if (userId) payload.id = userId;
@@ -151,6 +152,65 @@ function createBeshSmsStore(client = null) {
     return data;
   }
 
+  async function updateUser(userId, updates) {
+    const { data, error } = await getClient()
+      .from('besh_users')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', userId)
+      .select('*')
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async function createReminder({ userId, goalId, text, scheduleJson, nextFireAt }) {
+    const { data, error } = await getClient()
+      .from('besh_reminders')
+      .insert({
+        user_id: userId,
+        goal_id: goalId || null,
+        text,
+        schedule_json: scheduleJson || {},
+        next_fire_at: nextFireAt ? nextFireAt.toISOString() : null,
+        active: true
+      })
+      .select('*')
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async function getDueReminders(now) {
+    const { data, error } = await getClient()
+      .from('besh_reminders')
+      .select('*, besh_users!inner(phone, display_name, timezone)')
+      .eq('active', true)
+      .lte('next_fire_at', (now || new Date()).toISOString())
+      .order('next_fire_at', { ascending: true })
+      .limit(50);
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  async function advanceReminder(reminderId, nextFireAt) {
+    const updates = nextFireAt
+      ? { next_fire_at: nextFireAt.toISOString() }
+      : { active: false };
+
+    const { data, error } = await getClient()
+      .from('besh_reminders')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', reminderId)
+      .select('*')
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
   async function completeGoal(goalId) {
     return updateGoal(goalId, { status: 'done' });
   }
@@ -163,10 +223,14 @@ function createBeshSmsStore(client = null) {
     appendConversation,
     getConversationHistory,
     getUser,
+    updateUser,
     getActiveGoals,
     createGoal,
     updateGoal,
-    completeGoal
+    completeGoal,
+    createReminder,
+    getDueReminders,
+    advanceReminder
   };
 }
 

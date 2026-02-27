@@ -6,6 +6,7 @@
 
 const INTENT_PATTERNS = [
   { regex: /\bremind(er)?\s+(me|to)\b/i, intent: 'reminder' },
+  { regex: /\bset\s+(a\s+)?reminder\b/i, intent: 'reminder' },
   { regex: /\bset\s+(a\s+)?goal\b/i, intent: 'goal' },
   { regex: /\bmy\s+(new\s+)?goal\b/i, intent: 'goal' },
   { regex: /\b(check\s*in|how\s+am\s+i|my\s+progress|status\s+update)\b/i, intent: 'checkin' },

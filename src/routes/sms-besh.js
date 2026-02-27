@@ -9,6 +9,7 @@ const {
 const { createBeshSmsStore } = require('../services/besh-sms-store');
 const { createBeshMemory } = require('../services/besh-memory');
 const { createBeshAI } = require('../services/besh-ai');
+const { parseReminder } = require('../services/besh-reminders');
 
 const smsBeshMetrics = {
   inbound: 0,
@@ -84,6 +85,19 @@ function createSmsBeshHandler({ store, llm } = {}) {
                   cadence: null
                 });
               }
+            }
+          }
+
+          // Create reminder if reminder intent detected
+          if (intent === 'reminder' && store.createReminder) {
+            const parsed = parseReminder(body, (onboarding.user.profile_json || {}).timezone || 'UTC');
+            if (parsed) {
+              await store.createReminder({
+                userId: onboarding.user.id,
+                text: parsed.text,
+                scheduleJson: { hour: parsed.hour, minute: parsed.minute, recurring: parsed.recurring },
+                nextFireAt: parsed.nextFireAt
+              });
             }
           }
 
