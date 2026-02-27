@@ -10,6 +10,7 @@ const { createBeshSmsStore } = require('../services/besh-sms-store');
 const { createBeshMemory } = require('../services/besh-memory');
 const { createBeshAI } = require('../services/besh-ai');
 const { parseReminder } = require('../services/besh-reminders');
+const { detectSpecialCommands, detectGoalCompletion, formatGoalsList, formatSummary } = require('../services/besh-commands');
 
 const smsBeshMetrics = {
   inbound: 0,
@@ -43,6 +44,43 @@ function createSmsBeshHandler({ store, llm } = {}) {
           twiml.message(sanitizeSmsReply('Got it — already processed that message. Send your next update anytime.', 160));
           return res.type('text/xml').send(twiml.toString());
         }
+      }
+
+      // === SPECIAL COMMANDS (TCPA compliance — handle before anything else) ===
+      const specialCmd = detectSpecialCommands(body);
+      if (specialCmd) {
+        let cmdReply = specialCmd.response;
+
+        // Dynamic commands that need DB
+        if (specialCmd.command === 'stop') {
+          // Mark user as unsubscribed
+          const stopUser = await store.getOrCreateUserByPhone(from);
+          if (store.updateUser) await store.updateUser(stopUser.id, { unsubscribed: true });
+          smsBeshMetrics.outbound += 1;
+          const twiml = new twilio.twiml.MessagingResponse();
+          twiml.message(cmdReply || 'You have been unsubscribed. Text START to resubscribe.');
+          return res.type('text/xml').send(twiml.toString());
+        }
+
+        if (specialCmd.command === 'goals' || specialCmd.command === 'summary') {
+          const cmdUser = await store.getOrCreateUserByPhone(from);
+          const activeGoals = store.getActiveGoals ? await store.getActiveGoals(cmdUser.id) : [];
+          cmdReply = specialCmd.command === 'goals'
+            ? formatGoalsList(activeGoals, cmdUser.display_name || 'there')
+            : formatSummary(cmdUser, activeGoals);
+        }
+
+        await store.appendConversation && await store.appendConversation({
+          userId: (await store.getOrCreateUserByPhone(from)).id,
+          direction: 'outbound',
+          content: cmdReply,
+          meta: { command: specialCmd.command }
+        });
+
+        smsBeshMetrics.outbound += 1;
+        const twiml = new twilio.twiml.MessagingResponse();
+        twiml.message(sanitizeSmsReply(cmdReply, 320));
+        return res.type('text/xml').send(twiml.toString());
       }
 
       const classification = classifyInboundText({
@@ -107,7 +145,17 @@ function createSmsBeshHandler({ store, llm } = {}) {
           // Only call AI if a handler above hasn't already set an explicit reply
           if (!reply) {
             const ctx = await memory.buildContext(onboarding.user.id);
-            const result = await ai.generateResponse({
+            // Detect goal completion — celebrate + offer to mark done
+          const isCompletion = detectGoalCompletion(body);
+          if (isCompletion && store.getActiveGoals) {
+            const userGoals = await store.getActiveGoals(onboarding.user.id);
+            if (userGoals.length > 0) {
+              // Append completion context to AI message
+              body = body + ' [user is celebrating completing their goal: ' + userGoals[0].title + ']';
+            }
+          }
+
+          const result = await ai.generateResponse({
               context: ctx,
               userMessage: body,
               intent
