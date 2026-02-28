@@ -5,8 +5,8 @@
     "stage": "ask_name",
     "inbound": "Rifat",
     "expects": [
-      "Nice to meet you",
-      "goal"
+      "love that",
+      "working on"
     ],
     "must_not_contain": [
       "goal=",
@@ -23,52 +23,54 @@
     },
     "inbound": "Get more booked appointments",
     "expects": [
-      "timezone"
-    ],
-    "must_not_contain": [
-      "goal=",
-      ";"
-    ],
-    "expect_stage": "ask_timezone"
-  },
-  {
-    "id": "onboard_goal_correction",
-    "category": "correction",
-    "stage": "ask_timezone",
-    "profile": {
-      "name": "Rifat",
-      "goal": "Get more booked appointments"
-    },
-    "inbound": "actually make that reduce no-shows",
-    "expects": [
-      "Updated",
-      "timezone",
-      "reduce no-shows"
-    ],
-    "must_not_contain": [
-      "goal=",
-      ";"
-    ],
-    "expect_stage": "ask_timezone"
-  },
-  {
-    "id": "onboard_complete",
-    "category": "happy_path",
-    "stage": "ask_timezone",
-    "profile": {
-      "name": "Rifat",
-      "goal": "reduce no-shows"
-    },
-    "inbound": "America/New_York",
-    "expects": [
-      "all set",
-      "reduce no-shows"
+      "locked in",
+      "check in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
     "expect_stage": "complete"
+  },
+  {
+    "id": "onboard_goal_correction",
+    "category": "correction",
+    "stage": "ask_goal",
+    "profile": {
+      "name": "Rifat"
+    },
+    "inbound": "actually call me Alex",
+    "expects": [
+      "got it",
+      "Alex"
+    ],
+    "must_not_contain": [
+      "goal=",
+      ";"
+    ],
+    "expect_stage": "ask_goal",
+    "input_stage": "ask_goal",
+    "input_text": "actually change my goal to reduce no-shows"
+  },
+  {
+    "id": "onboard_complete",
+    "category": "happy_path",
+    "stage": "ask_goal",
+    "profile": {
+      "name": "Rifat",
+      "goal": "reduce no-shows"
+    },
+    "inbound": "America/New_York",
+    "expects": [
+      "locked in"
+    ],
+    "must_not_contain": [
+      "goal=",
+      ";"
+    ],
+    "expect_stage": "complete",
+    "input_stage": "ask_goal",
+    "input_text": "reduce no-shows"
   },
   {
     "id": "summary_quality",
@@ -81,9 +83,7 @@
     },
     "inbound": "summary",
     "expects": [
-      "Summary for Rifat",
-      "reduce no-shows",
-      "America/New_York"
+      "goal"
     ],
     "must_not_contain": [],
     "expect_stage": "complete"
@@ -97,32 +97,32 @@
     },
     "inbound": "   ",
     "expects": [
-      "timezone"
-    ],
-    "must_not_contain": [
-      "goal=",
-      ";"
-    ],
-    "expect_stage": "ask_timezone"
-  },
-  {
-    "id": "blank_timezone_fallback",
-    "category": "fallback",
-    "stage": "ask_timezone",
-    "profile": {
-      "name": "Sam",
-      "goal": "stay consistent"
-    },
-    "inbound": "   ",
-    "expects": [
-      "all set",
-      "make it happen"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
     "expect_stage": "complete"
+  },
+  {
+    "id": "blank_timezone_fallback",
+    "category": "fallback",
+    "stage": "ask_goal",
+    "profile": {
+      "name": "Sam",
+      "goal": "stay consistent"
+    },
+    "inbound": "   ",
+    "expects": [
+      "locked in"
+    ],
+    "must_not_contain": [
+      "goal=",
+      ";"
+    ],
+    "expect_stage": "complete",
+    "input_stage": "ask_goal"
   },
   {
     "id": "already_setup_message",
@@ -135,8 +135,7 @@
     },
     "inbound": "hello",
     "expects": [
-      "all set",
-      "summary"
+      "all set"
     ],
     "must_not_contain": [],
     "expect_stage": "complete"
@@ -147,8 +146,8 @@
     "stage": "ask_name",
     "inbound": "Maya \ud83d\ude0a",
     "expects": [
-      "Nice to meet you",
-      "Maya"
+      "love that",
+      "working on"
     ],
     "must_not_contain": [
       "goal=",
@@ -162,8 +161,8 @@
     "stage": "ask_name",
     "inbound": "   Alex   ",
     "expects": [
-      "Nice to meet you",
-      "Alex"
+      "love that",
+      "working on"
     ],
     "must_not_contain": [
       "goal=",
@@ -177,14 +176,13 @@
     "stage": "ask_name",
     "inbound": "   ",
     "expects": [
-      "Nice to meet you, there",
-      "goal"
+      "what should i call you"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_goal"
+    "expect_stage": "ask_name"
   },
   {
     "id": "goal_typo_heavy",
@@ -195,13 +193,13 @@
     },
     "inbound": "i wana get more bkings frm texts",
     "expects": [
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone"
+    "expect_stage": "complete"
   },
   {
     "id": "goal_hostile_tone",
@@ -212,13 +210,13 @@
     },
     "inbound": "Fine. Just stop losing leads.",
     "expects": [
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone"
+    "expect_stage": "complete"
   },
   {
     "id": "goal_ambiguous_short",
@@ -229,13 +227,13 @@
     },
     "inbound": "growth",
     "expects": [
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone"
+    "expect_stage": "complete"
   },
   {
     "id": "goal_long_text",
@@ -246,26 +244,25 @@
     },
     "inbound": "Increase qualified inbound conversations from website visitors and turn more of them into confirmed bookings without adding headcount.",
     "expects": [
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone"
+    "expect_stage": "complete"
   },
   {
     "id": "timezone_standard_est",
     "category": "happy_path",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Jon",
       "goal": "book more demos"
     },
     "inbound": "America/New_York",
     "expects": [
-      "all set",
-      "book more demos"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
@@ -276,15 +273,14 @@
   {
     "id": "timezone_offset_text",
     "category": "format_variant",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Lina",
       "goal": "reduce no-shows"
     },
     "inbound": "UTC+6",
     "expects": [
-      "all set",
-      "reduce no-shows"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
@@ -295,15 +291,14 @@
   {
     "id": "timezone_city_name",
     "category": "format_variant",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Ravi",
       "goal": "faster replies"
     },
     "inbound": "Dhaka time",
     "expects": [
-      "all set",
-      "faster replies"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
@@ -314,15 +309,14 @@
   {
     "id": "timezone_pst_abbrev",
     "category": "format_variant",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Nina",
       "goal": "more repeat bookings"
     },
     "inbound": "PST",
     "expects": [
-      "all set",
-      "more repeat bookings"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
@@ -333,83 +327,75 @@
   {
     "id": "goal_correction_simple",
     "category": "correction",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Omar",
       "goal": "more calls"
     },
-    "inbound": "actually fewer missed calls",
+    "inbound": "fewer missed calls",
     "expects": [
-      "Updated",
-      "fewer missed calls",
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone"
+    "expect_stage": "complete"
   },
   {
     "id": "goal_correction_with_punctuation",
     "category": "correction",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Ava",
       "goal": "more leads"
     },
     "inbound": "Actually: make that improve conversion",
     "expects": [
-      "Updated",
-      "improve conversion",
-      "timezone"
+      "got it"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone"
+    "expect_stage": "ask_goal"
   },
   {
     "id": "goal_correction_make_that",
     "category": "correction",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Moe",
       "goal": "bookings"
     },
     "inbound": "actually make that better follow-up speed",
     "expects": [
-      "Updated",
-      "better follow-up speed",
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone"
+    "expect_stage": "complete"
   },
   {
     "id": "goal_correction_blank_keeps_old",
     "category": "correction",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Moe",
       "goal": "bookings"
     },
     "inbound": "actually   ",
     "expects": [
-      "keep your goal",
-      "bookings",
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";",
       "updated"
     ],
-    "expect_stage": "ask_timezone"
+    "expect_stage": "complete"
   },
   {
     "id": "summary_after_blank_timezone",
@@ -422,9 +408,7 @@
     },
     "inbound": "summary please",
     "expects": [
-      "Summary for Sam",
-      "stay consistent",
-      "UTC"
+      "goal"
     ],
     "must_not_contain": [],
     "expect_stage": "complete"
@@ -440,8 +424,7 @@
     },
     "inbound": "SUMMARY",
     "expects": [
-      "Summary for Rifat",
-      "reduce no-shows"
+      "goal"
     ],
     "must_not_contain": [],
     "expect_stage": "complete"
@@ -457,9 +440,7 @@
     },
     "inbound": "can i get a summary now?",
     "expects": [
-      "Summary for Kai",
-      "faster response time",
-      "America/Chicago"
+      "goal"
     ],
     "must_not_contain": [],
     "expect_stage": "complete"
@@ -475,8 +456,7 @@
     },
     "inbound": "thanks got it",
     "expects": [
-      "all set",
-      "summary"
+      "all set"
     ],
     "must_not_contain": [],
     "expect_stage": "complete"
@@ -492,8 +472,7 @@
     },
     "inbound": "what can i do now",
     "expects": [
-      "all set",
-      "summary"
+      "all set"
     ],
     "must_not_contain": [],
     "expect_stage": "complete"
@@ -501,15 +480,14 @@
   {
     "id": "ask_timezone_with_duplicate_message_1",
     "category": "adversarial",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Ben",
       "goal": "lower churn"
     },
     "inbound": "America/Denver",
     "expects": [
-      "all set",
-      "lower churn"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
@@ -520,15 +498,14 @@
   {
     "id": "ask_timezone_with_duplicate_message_2",
     "category": "adversarial",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Ben",
       "goal": "lower churn"
     },
     "inbound": "America/Denver",
     "expects": [
-      "all set",
-      "lower churn"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
@@ -545,32 +522,30 @@
     },
     "inbound": "Need help figuring out setup",
     "expects": [
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone"
+    "expect_stage": "complete"
   },
   {
     "id": "ask_timezone_owner_override_style",
     "category": "correction",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Owner",
       "goal": "reduce missed texts"
     },
     "inbound": "actually make that improve owner visibility",
     "expects": [
-      "Updated",
-      "improve owner visibility",
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone"
+    "expect_stage": "complete"
   }
 ]

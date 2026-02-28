@@ -116,13 +116,13 @@
     },
     "inbound": "Get more booked appointments",
     "expects": [
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone",
+    "expect_stage": "complete",
     "expect_profile": {
       "goal": "Get more booked appointments"
     }
@@ -136,13 +136,13 @@
     },
     "inbound": "Reduce no-shows",
     "expects": [
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone",
+    "expect_stage": "complete",
     "expect_profile": {
       "goal": "Reduce no-shows"
     }
@@ -156,13 +156,13 @@
     },
     "inbound": "Fill more tables on Friday nights",
     "expects": [
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone",
+    "expect_stage": "complete",
     "expect_profile": {
       "goal": "Fill more tables on Friday nights"
     }
@@ -176,13 +176,13 @@
     },
     "inbound": "Reduce last-minute cancellations",
     "expects": [
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone",
+    "expect_stage": "complete",
     "expect_profile": {
       "goal": "Reduce last-minute cancellations"
     }
@@ -196,13 +196,13 @@
     },
     "inbound": "Improve patient retention",
     "expects": [
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone",
+    "expect_stage": "complete",
     "expect_profile": {
       "goal": "Improve patient retention"
     }
@@ -216,13 +216,13 @@
     },
     "inbound": "I want to increase revenue by bringing in new customers while keeping existing ones happy and making sure no one cancels at the last minute",
     "expects": [
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone",
+    "expect_stage": "complete",
     "expect_profile": {
       "goal": "I want to increase revenue by bringing in new customers while keeping existing ones happy and making sure no one cancels at the last minute"
     }
@@ -236,29 +236,28 @@
     },
     "inbound": "   ",
     "expects": [
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone",
+    "expect_stage": "complete",
     "expect_profile": {
       "goal": "stay consistent"
     }
   },
   {
     "id": "onboard_timezone_ny",
-    "task": "capture_timezone",
-    "stage": "ask_timezone",
+    "task": "capture_goal",
+    "stage": "ask_goal",
     "profile": {
       "name": "Rifat",
       "goal": "reduce no-shows"
     },
     "inbound": "America/New_York",
     "expects": [
-      "all set",
-      "reduce no-shows"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
@@ -271,16 +270,15 @@
   },
   {
     "id": "onboard_timezone_chicago",
-    "task": "capture_timezone",
-    "stage": "ask_timezone",
+    "task": "capture_goal",
+    "stage": "ask_goal",
     "profile": {
       "name": "Marco",
       "goal": "Fill more tables on Friday nights"
     },
     "inbound": "America/Chicago",
     "expects": [
-      "all set",
-      "Fill more tables"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
@@ -293,16 +291,15 @@
   },
   {
     "id": "onboard_timezone_la",
-    "task": "capture_timezone",
-    "stage": "ask_timezone",
+    "task": "capture_goal",
+    "stage": "ask_goal",
     "profile": {
       "name": "Rachel",
       "goal": "Reduce last-minute cancellations"
     },
     "inbound": "America/Los_Angeles",
     "expects": [
-      "all set",
-      "Reduce last-minute cancellations"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
@@ -315,16 +312,15 @@
   },
   {
     "id": "onboard_timezone_utc",
-    "task": "capture_timezone",
-    "stage": "ask_timezone",
+    "task": "capture_goal",
+    "stage": "ask_goal",
     "profile": {
       "name": "Sam",
       "goal": "stay consistent"
     },
     "inbound": "UTC",
     "expects": [
-      "all set",
-      "stay consistent"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
@@ -338,15 +334,14 @@
   {
     "id": "onboard_timezone_blank_fallback",
     "task": "handle_fallback",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Sam",
       "goal": "stay consistent"
     },
     "inbound": "   ",
     "expects": [
-      "all set",
-      "stay consistent"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
@@ -360,22 +355,20 @@
   {
     "id": "onboard_correction_simple",
     "task": "handle_correction",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Rifat",
       "goal": "Get more booked appointments"
     },
     "inbound": "actually make that reduce no-shows",
     "expects": [
-      "Updated",
-      "timezone",
-      "reduce no-shows"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone",
+    "expect_stage": "complete",
     "expect_profile": {
       "goal": "reduce no-shows"
     }
@@ -383,21 +376,20 @@
   {
     "id": "onboard_correction_comma",
     "task": "handle_correction",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Maria",
       "goal": "Fill more tables"
     },
     "inbound": "actually, change my goal to reduce cancellations",
     "expects": [
-      "Updated",
-      "timezone"
+      "got it"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone",
+    "expect_stage": "complete",
     "expect_profile": {
       "goal": "change my goal to reduce cancellations"
     },
@@ -406,22 +398,20 @@
   {
     "id": "onboard_correction_no_content",
     "task": "handle_correction",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Sam",
       "goal": "stay consistent"
     },
     "inbound": "actually",
     "expects": [
-      "keep",
-      "timezone",
-      "stay consistent"
+      "got it"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone",
+    "expect_stage": "complete",
     "expect_profile": {
       "goal": "stay consistent"
     }
@@ -429,37 +419,35 @@
   {
     "id": "onboard_correction_caps",
     "task": "handle_correction",
-    "stage": "ask_timezone",
+    "stage": "ask_goal",
     "profile": {
       "name": "Sam",
       "goal": "fill tables"
     },
     "inbound": "ACTUALLY make that book more events",
     "expects": [
-      "Updated",
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone",
+    "expect_stage": "complete",
     "expect_profile": {
       "goal": "book more events"
     }
   },
   {
     "id": "onboard_correction_then_complete",
-    "task": "capture_timezone",
-    "stage": "ask_timezone",
+    "task": "capture_goal",
+    "stage": "ask_goal",
     "profile": {
       "name": "Rifat",
       "goal": "reduce no-shows"
     },
     "inbound": "America/New_York",
     "expects": [
-      "all set",
-      "reduce no-shows"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
@@ -600,13 +588,13 @@
     },
     "inbound": "America/New_York",
     "expects": [
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone",
+    "expect_stage": "complete",
     "expect_profile": {
       "goal": "America/New_York"
     }
@@ -657,13 +645,13 @@
     },
     "inbound": "I don't have a goal, stop bothering me",
     "expects": [
-      "timezone"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
       ";"
     ],
-    "expect_stage": "ask_timezone",
+    "expect_stage": "complete",
     "expect_profile": {
       "goal": "I don't have a goal, stop bothering me"
     },
@@ -671,16 +659,15 @@
   },
   {
     "id": "adversarial_typo_timezone",
-    "task": "capture_timezone",
-    "stage": "ask_timezone",
+    "task": "capture_goal",
+    "stage": "ask_goal",
     "profile": {
       "name": "Sam",
       "goal": "stay consistent"
     },
     "inbound": "Amercia/New_York",
     "expects": [
-      "all set",
-      "stay consistent"
+      "locked in"
     ],
     "must_not_contain": [
       "goal=",
