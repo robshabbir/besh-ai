@@ -277,6 +277,7 @@ function createSmsBeshRouter({ store, llm } = {}) {
     }
     twilio.webhook({
       authToken: process.env.TWILIO_AUTH_TOKEN,
+      url: process.env.BASE_URL ? `${process.env.BASE_URL}/api/sms/besh` : undefined,
       validate: true
     })(req, res, next);
   };

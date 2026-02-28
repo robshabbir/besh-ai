@@ -53,6 +53,15 @@ function nextOnboardingStep(state, inboundText) {
   const profile = { ...(current.profile || {}) };
 
   if (current.stage === 'ask_name') {
+    // Detect greetings — don't store as name, ask again
+    const greetings = /^(hi|hey|hello|yo|sup|what'?s up|howdy|hola|greetings|good\s*(morning|afternoon|evening)|start|begin|ok|okay|sure|yeah|yes|yep|yea|nah|no)\s*[!?.]*$/i;
+    if (greetings.test(text.trim())) {
+      return {
+        state: { stage: 'ask_name', profile },
+        response: `Hey! 👋 I'm Besh — your personal AI, right in your texts. What's your first name?`,
+        done: false
+      };
+    }
     profile.name = text || 'there';
     return {
       state: { stage: 'ask_goal', profile },

@@ -16,3 +16,4 @@ archive/
 
 # Generated audio temp
 public/audio/temp/*.mp3
+supabase/.temp/
