@@ -6,6 +6,7 @@
 const express = require('express');
 const db = require('../db');
 const logger = require('../utils/logger');
+const { getSmsBeshMetrics } = require('./sms-besh');
 
 function createBeshAdminRouter() {
   const router = express.Router();
@@ -73,6 +74,7 @@ function createBeshAdminRouter() {
         getClient().from('besh_reminders').select('id', { count: 'exact', head: true }).eq('active', true)
       ]);
 
+      const aiMetrics = getSmsBeshMetrics();
       res.json({
         totalUsers: usersRes.count || 0,
         onboardedUsers: onboardedRes.count || 0,
@@ -81,7 +83,15 @@ function createBeshAdminRouter() {
         activeReminders: remindersRes.count || 0,
         onboardingRate: usersRes.count > 0
           ? Math.round((onboardedRes.count / usersRes.count) * 100)
-          : 0
+          : 0,
+        ai: {
+          requests: aiMetrics.aiRequests || 0,
+          success: aiMetrics.aiSuccess || 0,
+          failures: aiMetrics.aiFailures || 0,
+          avgResponseTimeMs: aiMetrics.avgResponseTimeMs || 0,
+          intentsDetected: aiMetrics.intentsDetected || {},
+          injectionsBlocked: aiMetrics.injectionsBlocked || 0
+        }
       });
     } catch (err) {
       logger.error('Besh admin stats error', { error: err.message });

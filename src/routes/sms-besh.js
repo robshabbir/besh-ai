@@ -30,8 +30,33 @@ const smsBeshMetrics = {
   onboardingCompleted: 0,
   aiConversations: 0,
   duplicatesIgnored: 0,
-  failures: 0
+  failures: 0,
+  // AI Quality Metrics
+  aiRequests: 0,
+  aiSuccess: 0,
+  aiFailures: 0,
+  totalResponseTimeMs: 0,
+  avgResponseTimeMs: 0,
+  intentsDetected: {},
+  injectionsBlocked: 0
 };
+
+function updateAIMetrics(success, responseTimeMs, intent, isInjection = false) {
+  smsBeshMetrics.aiRequests += 1;
+  if (success) {
+    smsBeshMetrics.aiSuccess += 1;
+    smsBeshMetrics.totalResponseTimeMs += responseTimeMs;
+    smsBeshMetrics.avgResponseTimeMs = Math.round(smsBeshMetrics.totalResponseTimeMs / smsBeshMetrics.aiRequests);
+  } else {
+    smsBeshMetrics.aiFailures += 1;
+  }
+  if (intent) {
+    smsBeshMetrics.intentsDetected[intent] = (smsBeshMetrics.intentsDetected[intent] || 0) + 1;
+  }
+  if (isInjection) {
+    smsBeshMetrics.injectionsBlocked += 1;
+  }
+}
 
 function createSmsBeshHandler({ store, llm } = {}) {
   const memory = createBeshMemory({ store });
@@ -192,12 +217,22 @@ function createSmsBeshHandler({ store, llm } = {}) {
             }
           }
 
-          const result = await ai.generateResponse({
+          const startTime = Date.now();
+          try {
+            const result = await ai.generateResponse({
               context: ctx,
               userMessage: body,
               intent
             });
+            const responseTime = Date.now() - startTime;
+            updateAIMetrics(true, responseTime, intent, result.blocked || false);
             reply = result.response;
+          } catch (aiErr) {
+            const responseTime = Date.now() - startTime;
+            updateAIMetrics(false, responseTime, intent, false);
+            logger.error('AI generation failed in SMS flow', { error: aiErr.message, userId: onboarding?.user?.id });
+            reply = "Hey, I hit a snag. Mind sending that again?";
+          }
           }
 
           await store.appendConversation({
