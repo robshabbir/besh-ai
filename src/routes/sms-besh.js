@@ -20,6 +20,15 @@ function hasPaidSubscription(user) {
   if (!user) return false;
   const tier = user.subscription_tier || 'free';
   const status = user.subscription_status || 'active';
+  
+  // Check if subscription has expired
+  if (user.subscription_expires_at) {
+    const expires = new Date(user.subscription_expires_at);
+    if (expires < new Date()) {
+      return false; // Expired - treat as free
+    }
+  }
+  
   return tier !== 'free' && status === 'active';
 }
 
@@ -103,6 +112,24 @@ function createSmsBeshHandler({ store, llm } = {}) {
           cmdReply = specialCmd.command === 'goals'
             ? formatGoalsList(activeGoals, cmdUser.display_name || 'there')
             : formatSummary(cmdUser, activeGoals);
+        }
+
+        // Handle UPGRADE command - check subscription status first
+        if (specialCmd.command === 'upgrade') {
+          const cmdUser = await store.getOrCreateUserByPhone(from);
+          
+          // Check if already subscribed
+          if (hasPaidSubscription(cmdUser)) {
+            cmdReply = "You're already on Pro! 🎉 Thanks for being a supporter. Need anything else?";
+          } else {
+            // Check if Stripe is configured
+            if (process.env.STRIPE_PUBLIC_KEY) {
+              // TODO: Generate Stripe checkout link
+              cmdReply = "Want to upgrade to Pro for unlimited texts? Check your dashboard at besh.ai/dashboard for upgrade options! 🚀";
+            } else {
+              cmdReply = "Pro is coming soon! You'll get unlimited texts, priority support, and early access to new features. Want me to notify you when it's ready?";
+            }
+          }
         }
 
         await store.appendConversation && await store.appendConversation({
