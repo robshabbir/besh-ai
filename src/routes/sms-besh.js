@@ -125,7 +125,7 @@ function createSmsBeshHandler({ store, llm } = {}) {
               smsBeshMetrics.outbound += 1;
               const twiml = new twilio.twiml.MessagingResponse();
               twiml.message(sanitizeSmsReply(
-                "You\'ve hit your daily limit (30 messages). Upgrade to Pro for unlimited texts — reply UPGRADE to learn more, or text me again tomorrow! 🚀", 320
+                "You\'ve hit your daily limit (20 messages). Upgrade to Pro for unlimited texts — reply UPGRADE to learn more, or text me again tomorrow! 🚀", 320
               ));
               return res.type('text/xml').send(twiml.toString());
             }
@@ -134,7 +134,7 @@ function createSmsBeshHandler({ store, llm } = {}) {
               smsBeshMetrics.outbound += 1;
               const twiml = new twilio.twiml.MessagingResponse();
               twiml.message(sanitizeSmsReply(
-                "You\'ve hit your monthly limit (300 messages). Upgrade to Pro for unlimited texts — reply UPGRADE to learn more! 🚀", 320
+                "You\'ve hit your monthly limit (600 messages). Upgrade to Pro for unlimited texts — reply UPGRADE to learn more! 🚀", 320
               ));
               return res.type('text/xml').send(twiml.toString());
             }

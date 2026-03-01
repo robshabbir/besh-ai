@@ -41,10 +41,11 @@ function createBeshAdminRouter() {
     try {
       const userId = req.params.id;
 
-      const [userRes, goalsRes, convRes] = await Promise.all([
+      const [userRes, goalsRes, convRes, remindersRes] = await Promise.all([
         getClient().from('besh_users').select('*').eq('id', userId).single(),
         getClient().from('besh_goals').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
-        getClient().from('besh_conversations').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(50)
+        getClient().from('besh_conversations').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(50),
+        getClient().from('besh_reminders').select('*').eq('user_id', userId).order('next_fire_at', { ascending: true })
       ]);
 
       if (userRes.error) throw userRes.error;
@@ -53,7 +54,7 @@ function createBeshAdminRouter() {
         user: userRes.data,
         goals: goalsRes.data || [],
         conversations: (convRes.data || []).reverse(),
-        reminders: [] // TODO: add when needed
+        reminders: remindersRes.data || []
       });
     } catch (err) {
       logger.error('Besh admin user detail error', { error: err.message });
