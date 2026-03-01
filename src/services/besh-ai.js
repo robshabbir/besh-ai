@@ -8,28 +8,21 @@ const { formatExamplesForPrompt, formatToneRules } = require('../prompts/besh-pe
 const { detectInjectionAttempt } = require('./claude');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
-
-const MAX_SMS_LEN = 320;
-
-const INTENT_CONTEXT = {
-  reminder: '\nThe user wants to set a reminder. Help them define what, when, and confirm it clearly. Keep it action-oriented.',
-  goal: '\nThe user wants to set or update a goal. Help them articulate it specifically. Confirm what you understood.',
-  checkin: '\nThe user wants a progress check-in. Reference their goals and recent activity. Be encouraging but honest.',
-  chat: ''
-};
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite';
+const GEMINI_FALLBACK_MODEL = process.env.GEMINI_FALLBACK_MODEL || 'gemini-1.5-flash-8b';
 
 /**
- * Default LLM call via Gemini
+ * Call Gemini API with specific model
  */
-async function defaultLLM(systemPrompt, messages) {
+async function callGemini(model, systemPrompt, messages) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+  
   const geminiContents = messages.map(m => ({
     role: m.role === 'assistant' ? 'model' : 'user',
     parts: [{ text: m.content }]
   }));
 
-  const response = await fetch(GEMINI_URL, {
+  const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -54,6 +47,59 @@ async function defaultLLM(systemPrompt, messages) {
   return { text };
 }
 
+/**
+ * Default LLM call via Gemini with automatic fallback
+ * Tries primary model first, falls back to backup on failure
+ */
+async function defaultLLM(systemPrompt, messages) {
+  try {
+    // Try primary model first
+    return await callGemini(GEMINI_MODEL, systemPrompt, messages);
+  } catch (primaryError) {
+    logger.warn('Primary Gemini model failed, trying fallback', { 
+      model: GEMINI_MODEL, 
+      error: primaryError.message 
+    });
+    
+    try {
+      // Fallback to secondary model
+      return await callGemini(GEMINI_FALLBACK_MODEL, systemPrompt, messages);
+    } catch (fallbackError) {
+      logger.error('Both Gemini models failed', { 
+        primary: GEMINI_MODEL, 
+        fallback: GEMINI_FALLBACK_MODEL,
+        primaryError: primaryError.message,
+        fallbackError: fallbackError.message
+      });
+      throw new Error(`All models failed: ${primaryError.message}, then ${fallbackError.message}`);
+    }
+  }
+}
+
+const MAX_SMS_LEN = 320;
+
+const INTENT_CONTEXT = {
+  reminder: '\nThe user wants to set a reminder. Help them define what, when, and confirm it clearly. Keep it action-oriented.',
+  goal: '\nThe user wants to set or update a goal. Help them articulate it specifically. Confirm what you understood.',
+  checkin: '\nThe user wants a progress check-in. Reference their goals and recent activity. Be encouraging but honest.',
+  chat: ''
+};
+
+
+// Age-aware tone instructions - dynamically loaded into prompts
+const AGE_TONE_INSTRUCTIONS = {
+  teen: "\n- you're talking to a teenager (13-19). keep messages SHORT (under 100 chars). use some emojis naturally. sound like a cool older cousin. be hyped, casual, fun. use current slang.",
+  young_adult: "\n- you're talking to someone in their 20s. keep it casual and relatable. be supportive but not preachy. a bit of emoji is fine. be conversational.",
+  adult: "\n- you're talking to someone in their 30s-40s. be respectful of their time. straightforward, warm, efficient. no excessive emojis. get to the point.",
+  mature_adult: "\n- you're talking to someone 50+. be respectful, warm, professional but friendly. concise, never condescending. treat them as equals."
+};
+
+const COMM_STYLE_INSTRUCTIONS = {
+  casual: "\n- text very casually. use contractions. be playful. relaxed energy.",
+  normal: "\n- text normally. friendly but not overly casual. balanced.",
+  formal: "\n- text politely and clearly. respectful tone. professional but warm."
+};
+
 function createBeshAI({ llm } = {}) {
   const callLLM = llm || defaultLLM;
 
@@ -75,8 +121,14 @@ function createBeshAI({ llm } = {}) {
     const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: tz });
     const dateStr = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()} at ${timeStr}`;
 
-    let prompt = `you are besh — a personal AI who texts with ${name}.
-you text like a real friend. warm, casual, lowercase. think: best friend who also keeps you on track.
+    // Get age-aware instructions
+    const ageGroup = profile?.age_group || 'young_adult';
+    const commStyle = profile?.comm_style || 'normal';
+    const ageTone = AGE_TONE_INSTRUCTIONS[ageGroup] || '';
+    const commTone = COMM_STYLE_INSTRUCTIONS[commStyle] || '';
+
+let prompt = `you are besh — a personal AI who texts with ${name}.
+you text like a real friend. warm, lowercase. think: best friend who also keeps you on track.${ageTone}${commTone}
 
 RULES:
 - keep responses under 160 characters. shorter = better. one or two sentences max.

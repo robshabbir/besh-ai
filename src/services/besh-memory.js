@@ -22,7 +22,7 @@ const GOAL_PATTERNS = [
   { regex: /goal:\s*(.+)/i, group: 1 },
 ];
 
-function createBeshMemory({ store, contextWindow = 10 } = {}) {
+function createBeshMemory({ store, contextWindow = 6 } = {}) {
   if (!store) throw new Error('store is required');
 
   /**
@@ -35,8 +35,18 @@ function createBeshMemory({ store, contextWindow = 10 } = {}) {
       store.getActiveGoals ? store.getActiveGoals(userId) : Promise.resolve([])
     ]);
 
-    const profile = (user && user.profile_json) || {};
-    const userName = (user && user.display_name) || profile.name || 'there';
+    // Merge profile_json with top-level user fields for AI context
+    const profileJson = (user && user.profile_json) || {};
+    const profile = {
+      ...profileJson,
+      // Top-level fields from besh_users table
+      age_group: user?.age_group || 'young_adult',
+      comm_style: user?.comm_style || 'normal',
+      birth_year: user?.birth_year || null,
+      goal: user?.goal || profileJson.goal || null,
+      timezone: user?.timezone || profileJson.timezone || 'UTC'
+    };
+    const userName = (user && user.display_name) || profileJson.name || 'there';
 
     return {
       userId,

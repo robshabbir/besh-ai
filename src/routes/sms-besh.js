@@ -13,8 +13,8 @@ const { parseReminder } = require('../services/besh-reminders');
 const { detectSpecialCommands, detectGoalCompletion, formatGoalsList, formatSummary } = require('../services/besh-commands');
 
 const SUBSCRIPTION_TIERS = { free: 'free', pro: 'pro', premium: 'premium' };
-const FREE_TIER_DAILY_LIMIT = 30; // free tier: 30 msgs/day
-const FREE_TIER_MONTHLY_LIMIT = 300; // free tier: 300 msgs/month
+const FREE_TIER_DAILY_LIMIT = 20; // free tier: 20 msgs/day
+const FREE_TIER_MONTHLY_LIMIT = 600; // free tier: 600 msgs/month
 
 function hasPaidSubscription(user) {
   if (!user) return false;

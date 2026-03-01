@@ -13,6 +13,7 @@ const SPECIAL_COMMANDS = {
   resume:     /^(resume|start|unpause)$/i,
   goals:      /^(goals|my goals|list goals|show goals)$/i,
   summary:    /^(summary|status|my status)$/i,
+  upgrade:    /^(upgrade|pro|premium|plus|upgrade to pro|upgrade to plus)$/i,
 };
 
 const COMPLETION_PATTERNS = [
@@ -83,9 +84,10 @@ function formatSummary(user, goals) {
 
 const COMMAND_RESPONSES = {
   stop:    'You\'ve been unsubscribed from Besh. Text "START" anytime to come back.',
-  help:    'Besh commands:\n• "goals" — see your goals\n• "summary" — quick status\n• "pause" — pause check-ins\n• "resume" — resume check-ins\n• "STOP" — unsubscribe\n\nOr just text me anything!',
+  help:    'Besh commands:\n• "goals" — see your goals\n• "summary" — quick status\n• "upgrade" — learn about Pro\n• "pause" — pause check-ins\n• "resume" — resume check-ins\n• "STOP" — unsubscribe\n\nOr just text me anything!',
   pause:   'Got it — pausing your daily check-ins. Text "resume" when you\'re ready to get back on track 💪',
   resume:  'Welcome back! 🎉 Daily check-ins are back on. What are we working on?',
+  upgrade: 'Besh Pro = unlimited texts, priority support, and early access to new features. Just $9.99/month or $79.99/year. Want me to send you a signup link?',
   goals:   null, // dynamic — needs DB
   summary: null, // dynamic — needs DB
 };

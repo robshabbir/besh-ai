@@ -131,7 +131,44 @@ function isGreeting(text) {
 }
 
 /**
- * Natural onboarding — 2 steps (name + goal)
+ * Age group detection from birth year
+ */
+function getAgeGroup(birthYear) {
+  const age = new Date().getFullYear() - birthYear;
+  if (age <= 19) return 'teen';
+  if (age <= 29) return 'young_adult';
+  if (age <= 49) return 'adult';
+  return 'mature_adult';
+}
+
+/**
+ * Parse birth year from user input
+ */
+function parseBirthYear(text) {
+  // Match 4-digit year between 1920 and 2015
+  const yearMatch = String(text).match(/\b(19[2-9]\d|200\d|201[0-5])\b/);
+  if (yearMatch) {
+    const year = parseInt(yearMatch[1], 10);
+    // Sanity check: reasonable age range (10-100 years old)
+    const age = new Date().getFullYear() - year;
+    if (age >= 10 && age <= 100) return year;
+  }
+  return null;
+}
+
+/**
+ * Parse communication style from user input
+ */
+function parseCommStyle(text) {
+  const lower = String(text).toLowerCase();
+  if (lower.includes('casual') || lower.includes('relaxed') || lower.includes('fun')) return 'casual';
+  if (lower.includes('formal') || lower.includes('professional') || lower.includes('serious')) return 'formal';
+  if (lower.includes('emoji') || lower.includes('lots of emoji') || lower.includes('many emoji')) return 'emoji';
+  return 'normal'; // default
+}
+
+/**
+ * Natural onboarding — 4 steps (name → goal → age → comm style)
  * Timezone auto-detected from phone area code
  * Tone: casual, lowercase, friend-like (like Tomo)
  */
@@ -141,6 +178,7 @@ function nextOnboardingStep(state, inboundText, phoneNumber) {
   const current = state || { stage: 'ask_name', profile: {} };
   const profile = { ...(current.profile || {}) };
 
+  // === STAGE 1: Ask Name ===
   if (current.stage === 'ask_name') {
     if (isGreeting(text) || !text) {
       return {
@@ -161,11 +199,12 @@ function nextOnboardingStep(state, inboundText, phoneNumber) {
     if (autoTz) profile.timezone = autoTz;
     return {
       state: { stage: 'ask_goal', profile },
-      response: `${profile.name}! love that. so what's something you're working on right now? a goal, a habit, anything — i'll help you stay on it 💪`,
+      response: name + '! love that. so what\'s something you\'re working on right now? a goal, a habit, anything — i\'ll help you stay on it 💪',
       done: false
     };
   }
 
+  // === STAGE 2: Ask Goal ===
   if (current.stage === 'ask_goal') {
     // Handle name corrections
     if (lower.startsWith('actually') || lower.startsWith('wait') || lower.startsWith('change')) {
@@ -175,17 +214,63 @@ function nextOnboardingStep(state, inboundText, phoneNumber) {
         profile.name = corrected.charAt(0).toUpperCase() + corrected.slice(1);
         return {
           state: { stage: 'ask_goal', profile },
-          response: `got it, ${profile.name}! so what's something you're working on? 💪`,
+          response: 'got it, ' + profile.name + '! so what\'s something you\'re working on? 💪',
           done: false
         };
       }
     }
 
     profile.goal = text || 'stay consistent';
+    // Ask for birth year next
+    return {
+      state: { stage: 'ask_age', profile },
+      response: "nice! one more thing — what year were you born? i just want to get a sense of how to text you best 📱",
+      done: false
+    };
+  }
+
+  // === STAGE 3: Ask Age ===
+  if (current.stage === 'ask_age') {
+    // Handle skip/don't want to answer
+    if (lower.includes('skip') || lower.includes("don't") || lower.includes('dont') || lower.includes('prefer not')) {
+      profile.birth_year = null;
+      profile.age_group = 'young_adult'; // default
+    } else {
+      const year = parseBirthYear(text);
+      if (year) {
+        profile.birth_year = year;
+        profile.age_group = getAgeGroup(year);
+      } else {
+        // Couldn't parse - use default
+        profile.birth_year = null;
+        profile.age_group = 'young_adult';
+      }
+    }
+    
+    // Ask for communication style next
+    return {
+      state: { stage: 'ask_comm_style', profile },
+      response: "cool! last thing — how do you like to text? casual & relaxed, normal & friendly, or more formal?",
+      done: false
+    };
+  }
+
+  // === STAGE 4: Ask Comm Style ===
+  if (current.stage === 'ask_comm_style') {
+    // Handle skip
+    if (lower.includes('skip') || lower.includes("don't") || lower.includes('dont') || lower.includes('whatever') || lower.includes('any')) {
+      profile.comm_style = 'normal';
+    } else {
+      profile.comm_style = parseCommStyle(text);
+    }
+    
+    // Ensure timezone is set
     if (!profile.timezone) profile.timezone = 'UTC';
+    
+    // Complete onboarding
     return {
       state: { stage: 'complete', profile },
-      response: `locked in 🔥 i got you on "${profile.goal}". i'll check in with you daily and you can text me literally anything. let's get it, ${profile.name}.`,
+      response: 'locked in 🔥 i got you on "' + profile.goal + '". i\'ll check in with you daily and you can text me literally anything. let\'s get it, ' + profile.name + '.',
       done: true
     };
   }
@@ -194,7 +279,7 @@ function nextOnboardingStep(state, inboundText, phoneNumber) {
   if (lower.includes('summary')) {
     return {
       state: current,
-      response: `${profile.name || 'hey'} — goal: ${profile.goal || 'not set'}. text me anytime.`,
+      response: (profile.name || 'hey') + ' — goal: ' + (profile.goal || 'not set') + '. text me anytime.',
       done: true
     };
   }

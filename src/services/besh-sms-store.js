@@ -47,7 +47,9 @@ function createBeshSmsStore(client = null) {
       onboarding_complete: !!done,
       profile_json: state.profile || {},
       display_name: (state.profile && state.profile.name) || undefined,
-      display_name: (state.profile && state.profile.name) || undefined,
+      birth_year: (state.profile && state.profile.birth_year) || null,
+      age_group: (state.profile && state.profile.age_group) || 'young_adult',
+      comm_style: (state.profile && state.profile.comm_style) || 'normal',
       updated_at: new Date().toISOString()
     };
     if (userId) payload.id = userId;
