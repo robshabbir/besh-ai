@@ -18,8 +18,8 @@ const FREE_TIER_MONTHLY_LIMIT = 600; // free tier: 600 msgs/month
 
 function hasPaidSubscription(user) {
   if (!user) return false;
-  const tier = user.subscription_tier || 'free';
-  const status = user.subscription_status || 'active';
+  const tier = (user.subscription_tier || 'free').toLowerCase();
+  const status = (user.subscription_status || 'active').toLowerCase();
   
   // Check if subscription has expired
   if (user.subscription_expires_at) {
