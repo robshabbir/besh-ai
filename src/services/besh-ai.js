@@ -48,6 +48,27 @@ async function callGemini(model, systemPrompt, messages) {
 }
 
 /**
+ * Pre-warm Gemini connection on startup
+ * Makes a minimal API call to initialize the connection
+ */
+let geminiWarmed = false;
+async function prewarmGemini() {
+  if (geminiWarmed) return;
+  try {
+    // Lightweight warm-up call
+    await callGemini(GEMINI_MODEL, 'ping', [{ role: 'user', content: 'ping' }]);
+    geminiWarmed = true;
+    logger.info('Gemini connection pre-warmed');
+  } catch (e) {
+    logger.warn('Gemini pre-warm failed (non-blocking)', { error: e.message });
+  }
+}
+
+// Auto-warm on module load (async, won't block)
+prewarmGemini();
+
+
+/**
  * Default LLM call via Gemini with automatic fallback
  * Tries primary model first, falls back to backup on failure
  */
@@ -195,7 +216,7 @@ CONTEXT:
     const systemPrompt = buildSystemPrompt({ userName, profile, intent: intent || 'chat', goals: context.goals || [] });
 
     // Build messages array: history + new message
-    const messages = (recentMessages || []).map(m => ({
+    const messages = (recentMessages || []).slice(-5).map(m => ({
       role: m.direction === 'inbound' ? 'user' : 'assistant',
       content: m.content
     }));

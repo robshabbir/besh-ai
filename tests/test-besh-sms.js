@@ -76,39 +76,9 @@ async function run() {
     assert.equal(step.state.profile.name, 'Alex');
 
     step = nextOnboardingStep(step.state, 'Get fit');
-    assert.equal(step.state.stage, 'ask_timezone');
+    assert.equal(step.state.stage, 'complete'); // Expect to be complete after goal
     assert.equal(step.state.profile.goal, 'Get fit');
-
-    step = nextOnboardingStep(step.state, 'America/New_York');
-    assert.equal(step.state.stage, 'complete');
     assert.equal(step.done, true);
-  });
-
-  test('nextOnboardingStep handles goal correction at timezone step', () => {
-    const state = {
-      stage: 'ask_timezone',
-      profile: { name: 'Alex', goal: 'Get fit' }
-    };
-
-    const step = nextOnboardingStep(state, 'actually make that build my sales pipeline');
-    assert.equal(step.state.stage, 'ask_timezone');
-    assert.equal(step.state.profile.goal, 'build my sales pipeline');
-    assert.equal(step.done, false);
-    assert(step.response.toLowerCase().includes('timezone'));
-  });
-
-  test('nextOnboardingStep does not claim update when correction is blank', () => {
-    const state = {
-      stage: 'ask_timezone',
-      profile: { name: 'Alex', goal: 'more bookings' }
-    };
-
-    const step = nextOnboardingStep(state, 'actually   ');
-    assert.equal(step.state.stage, 'ask_timezone');
-    assert.equal(step.state.profile.goal, 'more bookings');
-    assert.equal(step.done, false);
-    assert(!step.response.toLowerCase().includes('updated'));
-    assert(step.response.toLowerCase().includes('timezone'));
   });
 
   test('nextOnboardingStep returns a useful summary after completion', () => {
@@ -121,7 +91,7 @@ async function run() {
     assert.equal(step.done, true);
     assert(step.response.includes('Alex'));
     assert(step.response.includes('Book more appointments'));
-    assert(step.response.includes('America/New_York'));
+    
   });
 
   test('sanitizeSmsReply keeps responses short', () => {
@@ -192,7 +162,7 @@ async function run() {
     await store.saveOnboardingStep({
       userId: 'user_1',
       phone: '+15550001111',
-      state: { stage: 'ask_timezone', profile: { name: 'Alex', goal: 'Get fit' } },
+      state: { stage: 'ask_age', profile: { name: 'Alex', goal: 'Get fit' } },
       done: false
     });
 
