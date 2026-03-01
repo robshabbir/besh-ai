@@ -1,99 +1,62 @@
 /**
  * Besh AI Text Engine — Powers intelligent SMS/text conversations
- * Gemini-powered with conversation memory, intent-aware prompting.
+ * OpenAI GPT-4o mini-powered with conversation memory, intent-aware prompting.
  */
 
 const logger = require('../utils/logger');
 const { formatExamplesForPrompt, formatToneRules } = require('../prompts/besh-personality');
 const { detectInjectionAttempt } = require('./claude');
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite';
-const GEMINI_FALLBACK_MODEL = process.env.GEMINI_FALLBACK_MODEL || 'gemini-1.5-flash-8b';
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const MODEL = process.env.LLM_MODEL || 'gpt-4o-mini';
 
 /**
- * Call Gemini API with specific model
+ * Call OpenAI API
  */
-async function callGemini(model, systemPrompt, messages) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+async function callOpenAI(systemPrompt, messages) {
+  const url = 'https://api.openai.com/v1/chat/completions';
   
-  const geminiContents = messages.map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: m.content }]
-  }));
+  const openAIMessages = [
+    { role: 'system', content: systemPrompt },
+    ...messages.map(m => ({
+      role: m.role === 'assistant' ? 'assistant' : 'user',
+      content: m.content
+    }))
+  ];
 
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${OPENAI_API_KEY}`
+    },
     body: JSON.stringify({
-      system_instruction: { parts: [{ text: systemPrompt }] },
-      contents: geminiContents,
-      generationConfig: {
-        maxOutputTokens: 80,
-        temperature: 0.7,
-        topP: 0.9,
-        topK: 10
-      }
+      model: MODEL,
+      messages: openAIMessages,
+      max_tokens: 80,
+      temperature: 0.7
     })
   });
 
   if (!response.ok) {
     const errText = await response.text();
-    throw new Error(`Gemini API ${response.status}: ${errText}`);
+    throw new Error(`OpenAI API ${response.status}: ${errText}`);
   }
 
   const data = await response.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const text = data.choices?.[0]?.message?.content || '';
   return { text };
 }
 
 /**
- * Pre-warm Gemini connection on startup
- * Makes a minimal API call to initialize the connection
- */
-let geminiWarmed = false;
-async function prewarmGemini() {
-  if (geminiWarmed) return;
-  try {
-    // Lightweight warm-up call
-    await callGemini(GEMINI_MODEL, 'ping', [{ role: 'user', content: 'ping' }]);
-    geminiWarmed = true;
-    logger.info('Gemini connection pre-warmed');
-  } catch (e) {
-    logger.warn('Gemini pre-warm failed (non-blocking)', { error: e.message });
-  }
-}
-
-// Auto-warm on module load (async, won't block)
-prewarmGemini();
-
-
-/**
- * Default LLM call via Gemini with automatic fallback
- * Tries primary model first, falls back to backup on failure
+ * Default LLM call via OpenAI
  */
 async function defaultLLM(systemPrompt, messages) {
   try {
-    // Try primary model first
-    return await callGemini(GEMINI_MODEL, systemPrompt, messages);
-  } catch (primaryError) {
-    logger.warn('Primary Gemini model failed, trying fallback', { 
-      model: GEMINI_MODEL, 
-      error: primaryError.message 
-    });
-    
-    try {
-      // Fallback to secondary model
-      return await callGemini(GEMINI_FALLBACK_MODEL, systemPrompt, messages);
-    } catch (fallbackError) {
-      logger.error('Both Gemini models failed', { 
-        primary: GEMINI_MODEL, 
-        fallback: GEMINI_FALLBACK_MODEL,
-        primaryError: primaryError.message,
-        fallbackError: fallbackError.message
-      });
-      throw new Error(`All models failed: ${primaryError.message}, then ${fallbackError.message}`);
-    }
+    return await callOpenAI(systemPrompt, messages);
+  } catch (err) {
+    logger.error('OpenAI API failed', { error: err.message });
+    throw err;
   }
 }
 
@@ -106,8 +69,6 @@ const INTENT_CONTEXT = {
   chat: ''
 };
 
-
-// Age-aware tone instructions - dynamically loaded into prompts
 const AGE_TONE_INSTRUCTIONS = {
   teen: "\n- you're talking to a teenager (13-19). keep messages SHORT (under 100 chars). use some emojis naturally. sound like a cool older cousin. be hyped, casual, fun. use current slang.",
   young_adult: "\n- you're talking to someone in their 20s. keep it casual and relatable. be supportive but not preachy. a bit of emoji is fine. be conversational.",
@@ -124,14 +85,10 @@ const COMM_STYLE_INSTRUCTIONS = {
 function createBeshAI({ llm } = {}) {
   const callLLM = llm || defaultLLM;
 
-  /**
-   * Build system prompt with user context and intent
-   */
   function buildSystemPrompt({ userName, profile, intent, goals }) {
     const name = userName || 'there';
     const goal = profile?.goal || null;
     const rawTz = profile?.timezone || 'UTC';
-    // Validate timezone - fall back to UTC if invalid
     let tz = 'UTC';
     try { new Date().toLocaleString('en-US', { timeZone: rawTz }); tz = rawTz; } catch (e) { tz = 'UTC'; }
     const intentCtx = INTENT_CONTEXT[intent] || '';
@@ -142,7 +99,6 @@ function createBeshAI({ llm } = {}) {
     const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: tz });
     const dateStr = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()} at ${timeStr}`;
 
-    // Get age-aware instructions
     const ageGroup = profile?.age_group || 'young_adult';
     const commStyle = profile?.comm_style || 'normal';
     const ageTone = AGE_TONE_INSTRUCTIONS[ageGroup] || '';
@@ -168,7 +124,6 @@ CONTEXT:
 
     if (goal) prompt += `\n- Active goal: ${goal}`;
 
-    // Active goals
     if (goals && goals.length > 0) {
       prompt += '\n- Active goals:';
       goals.forEach(g => { prompt += `\n  • ${g.title}${g.cadence ? ' (' + g.cadence + ')' : ''}`; });
@@ -186,9 +141,6 @@ CONTEXT:
     return prompt;
   }
 
-  /**
-   * Sanitize LLM response for SMS
-   */
   function sanitizeResponse(text) {
     let cleaned = String(text || '')
       .replace(/\*\*/g, '')
@@ -208,21 +160,16 @@ CONTEXT:
     return cleaned;
   }
 
-  /**
-   * Generate a response given user context and new message
-   */
   async function generateResponse({ context, userMessage, intent }) {
     const { userName, profile, recentMessages } = context;
     const systemPrompt = buildSystemPrompt({ userName, profile, intent: intent || 'chat', goals: context.goals || [] });
 
-    // Build messages array: history + new message
     const messages = (recentMessages || []).slice(-5).map(m => ({
       role: m.direction === 'inbound' ? 'user' : 'assistant',
       content: m.content
     }));
     messages.push({ role: 'user', content: userMessage });
 
-    // Security: block injection attempts
     const injectionCheck = detectInjectionAttempt(userMessage);
     if (injectionCheck.isInjection) {
       logger.warn('Injection blocked in text path', { userName, pattern: injectionCheck.pattern });
@@ -252,5 +199,19 @@ CONTEXT:
     generateResponse
   };
 }
+
+// Pre-warm OpenAI on startup
+let openAIWarmed = false;
+async function prewarmOpenAI() {
+  if (openAIWarmed || !OPENAI_API_KEY) return;
+  try {
+    await callOpenAI('ping', [{ role: 'user', content: 'ping' }]);
+    openAIWarmed = true;
+    logger.info('OpenAI connection pre-warmed');
+  } catch (e) {
+    logger.warn('OpenAI pre-warm failed', { error: e.message });
+  }
+}
+prewarmOpenAI();
 
 module.exports = { createBeshAI };
