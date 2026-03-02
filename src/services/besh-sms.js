@@ -156,6 +156,7 @@ function parseCommStyle(text) {
 }
 
 function nextOnboardingStep(state, inboundText, phoneNumber) {
+
   const text = String(inboundText || '').trim();
   const lower = text.toLowerCase();
   const current = state || { stage: 'ask_name', profile: {} };
@@ -201,17 +202,61 @@ function nextOnboardingStep(state, inboundText, phoneNumber) {
     if (!profile.timezone) profile.timezone = 'UTC';
     
     return {
-      state: { stage: 'complete', profile },
-      response: 'locked in 🔥 i got you on "' + profile.goal + '". i\'ll check in with you daily and you can text me literally anything. let\'s get it, ' + profile.name + '.',
-      done: true
+      state: { stage: 'ask_age', profile },
+      response: 'locked in 🔥 i got you on "' + profile.goal + '". one quick question — how old are you? (just your age, i won\'t judge)',
+      done: false
     };
   }
 
-  if (current.stage === 'ask_age' || current.stage === 'ask_comm_style') {
-    if (!profile.timezone) profile.timezone = 'UTC';
+  // Handle ask_age stage
+  if (current.stage === 'ask_age') {
+    const yearMatch = text.match(/\b(19\d{2}|20[0-2]\d)\b/);
+    if (yearMatch) {
+      profile.birth_year = parseInt(yearMatch[1]);
+      profile.age_group = computeAgeGroup(profile.birth_year);
+    } else {
+      // Try to parse as age number
+      const ageMatch = text.match(/\b(\d{1,2})\b/);
+      if (ageMatch) {
+        const age = parseInt(ageMatch[1]);
+        if (age >= 10 && age <= 100) {
+          profile.birth_year = new Date().getFullYear() - age;
+          profile.age_group = computeAgeGroup(profile.birth_year);
+        }
+      }
+    }
+    
+    if (!profile.age_group) {
+      return {
+        state: { stage: 'ask_age', profile },
+        response: "hmm, i didn't catch that. can you tell me your age? (like 25 or 1990)",
+        done: false
+      };
+    }
+    
+    return {
+      state: { stage: 'ask_comm_style', profile },
+      response: "cool, you're a " + profile.age_group.replace('_', '') + "! last thing — do you want me to be casual ('hey!' 😎), formal ('Hello!' 👔), or motivate you ('LET\'S GO!' 🔥)?",
+      done: false
+    };
+  }
+
+  // Handle ask_comm_style stage
+  if (current.stage === 'ask_comm_style') {
+    const lowerText = lower;
+    if (lowerText.includes('casual') || lowerText.includes('😎') || text.length < 5) {
+      profile.comm_style = 'casual';
+    } else if (lowerText.includes('formal') || lowerText.includes('👔')) {
+      profile.comm_style = 'formal';
+    } else if (lowerText.includes('motivate') || lowerText.includes('go') || lowerText.includes('🔥') || text.length > 20) {
+      profile.comm_style = 'motivating';
+    } else {
+      profile.comm_style = 'casual';
+    }
+    
     return {
       state: { stage: 'complete', profile },
-      response: 'all set! 🎉 you can text me anytime about your goal or anything else. let\'s do this!',
+      response: 'all set, ' + profile.name + '! 🎉 i got your style: ' + profile.comm_style + '. text me anytime about your goal or anything else. let\'s do this!',
       done: true
     };
   }
@@ -247,3 +292,11 @@ module.exports = {
   isGreeting,
   AREA_CODE_TIMEZONES
 };
+
+function computeAgeGroup(birthYear) {
+  const age = new Date().getFullYear() - birthYear;
+  if (age < 18) return 'teen';
+  if (age < 25) return 'young_adult';
+  if (age < 45) return 'adult';
+  return 'mature_adult';
+}
