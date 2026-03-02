@@ -120,15 +120,56 @@ function createSmsBeshHandler({ store, llm } = {}) {
           
           // Check if already subscribed
           if (hasPaidSubscription(cmdUser)) {
-            cmdReply = "You're already on Pro! 🎉 Thanks for being a supporter. Need anything else?";
+            cmdReply = "You're already on Pro! 🎉 Thanks for being a supporter. Text 'MANAGE' to change your plan.";
           } else {
             // Check if Stripe is configured
-            if (process.env.STRIPE_PUBLIC_KEY) {
-              // TODO: Generate Stripe checkout link
-              cmdReply = "Want to upgrade to Pro for unlimited texts? Check your dashboard at besh.ai/dashboard for upgrade options! 🚀";
+            if (process.env.STRIPE_SECRET_KEY && process.env.BASE_URL) {
+              try {
+                const baseUrl = process.env.BASE_URL;
+                const response = await fetch(`${baseUrl}/api/besh/create-checkout-session`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ tier: 'pro', phone: from })
+                });
+                const data = await response.json();
+                if (data.url) {
+                  cmdReply = "Upgrade to Pro for unlimited texts! Click here: " + data.url + " 🚀";
+                } else {
+                  cmdReply = "Having trouble loading upgrade. Try: besh.ai/upgrade";
+                }
+              } catch (e) {
+                console.error('Upgrade error:', e);
+                cmdReply = "Oops! Something went wrong. Try: besh.ai/upgrade";
+              }
             } else {
-              cmdReply = "Pro is coming soon! You'll get unlimited texts, priority support, and early access to new features. Want me to notify you when it's ready?";
+              cmdReply = "Pro is coming soon! You'll get unlimited texts, priority support, and early access to new features.";
             }
+          }
+        }
+
+        // Handle MANAGE command - subscription management
+        if (specialCmd.command === 'manage') {
+          const cmdUser = await store.getOrCreateUserByPhone(from);
+          
+          if (cmdUser.stripe_customer_id) {
+            try {
+              const baseUrl = process.env.BASE_URL;
+              const response = await fetch(`${baseUrl}/api/besh/create-portal-session`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ customerId: cmdUser.stripe_customer_id })
+              });
+              const data = await response.json();
+              if (data.url) {
+                cmdReply = "Manage your subscription: " + data.url;
+              } else {
+                cmdReply = "Having trouble loading portal. Text 'STOP' to cancel.";
+              }
+            } catch (e) {
+              cmdReply = "Oops! Something went wrong.";
+            }
+          } else {
+            cmdReply = "You don't have an active subscription yet. Text 'UPGRADE' to get started!";
           }
         }
 

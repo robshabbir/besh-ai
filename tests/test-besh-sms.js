@@ -76,8 +76,18 @@ async function run() {
     assert.equal(step.state.profile.name, 'Alex');
 
     step = nextOnboardingStep(step.state, 'Get fit');
-    assert.equal(step.state.stage, 'complete'); // Expect to be complete after goal
+    assert.equal(step.state.stage, 'ask_age'); // Now goes to ask_age
     assert.equal(step.state.profile.goal, 'Get fit');
+    assert.equal(step.done, false);
+
+    step = nextOnboardingStep(step.state, '1990');
+    assert.equal(step.state.stage, 'ask_comm_style');
+    assert.equal(step.state.profile.birth_year, 1990);
+    assert.equal(step.done, false);
+
+    step = nextOnboardingStep(step.state, 'casual');
+    assert.equal(step.state.stage, 'complete');
+    assert.equal(step.state.profile.comm_style, 'casual');
     assert.equal(step.done, true);
   });
 

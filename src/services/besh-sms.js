@@ -156,8 +156,8 @@ function parseCommStyle(text) {
 }
 
 function nextOnboardingStep(state, inboundText, phoneNumber) {
-
   const text = String(inboundText || '').trim();
+
   const lower = text.toLowerCase();
   const current = state || { stage: 'ask_name', profile: {} };
   const profile = { ...(current.profile || {}) };

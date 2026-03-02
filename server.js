@@ -27,6 +27,7 @@ const calendarRoutes = require('./src/routes/calendar');
 const { setupConversationRelay } = require('./src/routes/conversation-relay');
 const voiceWidgetRoutes = require('./src/routes/voice-widget');
 const smsBeshRoutes = require('./src/routes/sms-besh');
+const stripeRoutes = require('./src/routes/stripe');
 const { createBeshScheduler } = require('./src/services/besh-scheduler');
 const { createBeshAdminRouter } = require('./src/routes/besh-admin-api');
 const { createBeshSmsStore } = require('./src/services/besh-sms-store');
@@ -156,6 +157,7 @@ app.use('/api', voiceWidgetRoutes);
 
 // Besh SMS (personal assistant prototype)
 app.use('/api', smsBeshRoutes);
+app.use('/api/besh', stripeRoutes);
 
 // Onboarding
 app.use('/onboard', onboardRoutes);
