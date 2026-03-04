@@ -53,23 +53,23 @@ function createMockReqRes(body = 'hello') {
 }
 
 async function testDailyLimitBlocked() {
-  const store = createMockStore({ messages_today: 30, last_message_date: new Date().toISOString().split('T')[0] });
+  const store = createMockStore({ messages_today: 20, last_message_date: new Date().toISOString().split('T')[0] });
   const handler = createSmsBeshHandler({ store, llm: {} });
   const { req, res } = createMockReqRes('hey there');
   await handler(req, res);
   const xml = res.getSentXml();
-  assert(xml.includes('daily limit'), `Expected daily limit message, got: ${xml}`);
+  assert(xml.includes('daily limit') && xml.includes('20 messages'), `Expected daily limit message mentioning "20 messages", got: ${xml}`);
   assert(!xml.includes('hiccup'), 'Should not be error response');
   console.log('✅ test_daily_limit_blocked');
 }
 
 async function testMonthlyLimitBlocked() {
-  const store = createMockStore({ messages_today: 5, messages_this_month: 300 });
+  const store = createMockStore({ messages_today: 5, messages_this_month: 600 });
   const handler = createSmsBeshHandler({ store, llm: {} });
   const { req, res } = createMockReqRes('hey');
   await handler(req, res);
   const xml = res.getSentXml();
-  assert(xml.includes('monthly limit'), `Expected monthly limit message, got: ${xml}`);
+  assert(xml.includes('monthly limit') && xml.includes('600 messages'), `Expected monthly limit message mentioning "600 messages", got: ${xml}`);
   console.log('✅ test_monthly_limit_blocked');
 }
 

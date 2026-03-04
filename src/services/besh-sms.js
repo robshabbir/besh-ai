@@ -138,20 +138,23 @@ function getAgeGroup(birthYear) {
 }
 
 function parseBirthYear(text) {
-  const yearMatch = String(text).match(/\b(19[2-9]\d|200\d|201[0-5])\b/);
+  const currentYear = new Date().getFullYear();
+  // Allow years from 1924 to 2012 for age between ~12 and ~100
+  const yearMatch = String(text).match(/\b(19(?:2[4-9]|[3-9]\d)|20(?:0\d|1[0-2]))\b/);
   if (yearMatch) {
     const year = parseInt(yearMatch[1], 10);
-    const age = new Date().getFullYear() - year;
-    if (age >= 10 && age <= 100) return year;
+    // Double check age derived from year is reasonable
+    const age = currentYear - year;
+    if (age >= 12 && age <= 100) return year;
   }
   return null;
 }
 
 function parseCommStyle(text) {
   const lower = String(text).toLowerCase();
-  if (lower.includes('casual') || lower.includes('relaxed') || lower.includes('fun')) return 'casual';
-  if (lower.includes('formal') || lower.includes('professional') || lower.includes('serious')) return 'formal';
-  if (lower.includes('emoji') || lower.includes('lots of emoji') || lower.includes('many emoji')) return 'emoji';
+  if (lower.includes('casual') || lower.includes('relaxed') || lower.includes('fun') || lower.includes('chill') || lower.includes('easy') || lower.includes('😎')) return 'casual';
+  if (lower.includes('formal') || lower.includes('professional') || lower.includes('serious') || lower.includes('proper') || lower.includes('👔')) return 'formal';
+  if (lower.includes('motivate') || lower.includes('go') || lower.includes('energetic') || lower.includes('hype') || lower.includes('🔥')) return 'motivating';
   return 'normal';
 }
 
@@ -210,49 +213,29 @@ function nextOnboardingStep(state, inboundText, phoneNumber) {
 
   // Handle ask_age stage
   if (current.stage === 'ask_age') {
-    const yearMatch = text.match(/\b(19\d{2}|20[0-2]\d)\b/);
-    if (yearMatch) {
-      profile.birth_year = parseInt(yearMatch[1]);
-      profile.age_group = computeAgeGroup(profile.birth_year);
-    } else {
-      // Try to parse as age number
-      const ageMatch = text.match(/\b(\d{1,2})\b/);
-      if (ageMatch) {
-        const age = parseInt(ageMatch[1]);
-        if (age >= 10 && age <= 100) {
-          profile.birth_year = new Date().getFullYear() - age;
-          profile.age_group = computeAgeGroup(profile.birth_year);
-        }
-      }
-    }
+    const birthYear = parseBirthYear(text);
     
-    if (!profile.age_group) {
+    if (birthYear) {
+      profile.birth_year = birthYear;
+      profile.age_group = computeAgeGroup(birthYear);
+    } else {
       return {
         state: { stage: 'ask_age', profile },
-        response: "hmm, i didn't catch that. can you tell me your age? (like 25 or 1990)",
+        response: "hmm, i didn't catch that. can you tell me your birth year? (like 1990)",
         done: false
       };
     }
     
     return {
       state: { stage: 'ask_comm_style', profile },
-      response: "cool, you're a " + profile.age_group.replace('_', '') + "! last thing — do you want me to be casual ('hey!' 😎), formal ('Hello!' 👔), or motivate you ('LET\'S GO!' 🔥)?",
+      response: "cool, you're a " + profile.age_group.replace('_', ' ') + "! last thing — how do you want me to talk? casual (like this! 😎), formal (more proper 👔), or motivating (LET\'S GO! 🔥)?",
       done: false
     };
   }
 
   // Handle ask_comm_style stage
   if (current.stage === 'ask_comm_style') {
-    const lowerText = lower;
-    if (lowerText.includes('casual') || lowerText.includes('😎') || text.length < 5) {
-      profile.comm_style = 'casual';
-    } else if (lowerText.includes('formal') || lowerText.includes('👔')) {
-      profile.comm_style = 'formal';
-    } else if (lowerText.includes('motivate') || lowerText.includes('go') || lowerText.includes('🔥') || text.length > 20) {
-      profile.comm_style = 'motivating';
-    } else {
-      profile.comm_style = 'casual';
-    }
+    profile.comm_style = parseCommStyle(text);
     
     return {
       state: { stage: 'complete', profile },
@@ -295,8 +278,9 @@ module.exports = {
 
 function computeAgeGroup(birthYear) {
   const age = new Date().getFullYear() - birthYear;
-  if (age < 18) return 'teen';
-  if (age < 25) return 'young_adult';
-  if (age < 45) return 'adult';
-  return 'mature_adult';
+  if (age >= 13 && age <= 19) return 'teen';
+  if (age >= 20 && age <= 29) return 'young_adult';
+  if (age >= 30 && age <= 49) return 'adult';
+  if (age >= 50) return 'mature_adult';
+  return 'young_adult'; // Default if outside explicit ranges
 }
