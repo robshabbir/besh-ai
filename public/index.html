@@ -421,8 +421,8 @@
 </head>
 <body>
     <!-- Floating Message Button - Opens SMS -->
-    <!-- Mobile: SMS direct | Desktop: /text page -->
-    <a href="/text" class="floating-msg-btn" title="Text Besh Now!" onclick="if(window.innerWidth>768)return true;this.href='sms:+19297557288&body=Hey';return true;">
+    <!-- Always opens native SMS -->
+    <a href="sms:+19297557288&body=Hey" class="floating-msg-btn" title="Text Besh Now!">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
         </svg>
