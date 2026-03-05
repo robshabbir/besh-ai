@@ -12,6 +12,7 @@ const { createBeshAI } = require('../services/besh-ai');
 const { parseReminder } = require('../services/besh-reminders');
 const { detectSpecialCommands, detectGoalCompletion, formatGoalsList, formatSummary } = require('../services/besh-commands');
 const { detectIntent, detectSentiment, routeMessage } = require('../services/besh-intent');
+const { logInsight } = require('../services/besh-insights');
 
 const SUBSCRIPTION_TIERS = { free: 'free', pro: 'pro', premium: 'premium' };
 const FREE_TIER_DAILY_LIMIT = 20; // free tier: 20 msgs/day
@@ -322,6 +323,20 @@ function createSmsBeshHandler({ store, llm } = {}) {
             content: reply,
             meta: { intent, inReplyToMessageSid: messageSid }
           });
+          
+          // Log insight for analytics
+          logInsight({
+            userId: onboarding.user.id,
+            conversationId: null,
+            intent: intentResult,
+            sentiment: sentiment,
+            routing: routing,
+            metadata: {
+              messageLength: body.length,
+              responseTimeMs: Date.now() - (global.aiStartTime || Date.now()),
+              activeGoals: userContext.goals?.length || 0
+            }
+          }).catch(() => {}); // Don't fail on insight logging
         } else {
           // ===== ONBOARDING FLOW =====
           smsBeshMetrics.onboardingStarted += 1;
