@@ -8,9 +8,7 @@ const { formatExamplesForPrompt, formatToneRules } = require('../prompts/besh-pe
 const { detectInjectionAttempt } = require('./claude');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const MODEL = process.env.LLM_MODEL || 'gpt-4o-mini';
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite';
 
 /**
  * Call OpenAI API
@@ -51,67 +49,15 @@ async function callOpenAI(systemPrompt, messages) {
 }
 
 /**
- * Call Gemini API
- */
-async function callGemini(systemPrompt, messages) {
-  if (!GEMINI_API_KEY) {
-    throw new Error('GEMINI_API_KEY not configured');
-  }
-
-  const contents = messages.map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: m.content }]
-  }));
-
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
-  
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents,
-      systemInstruction: { parts: [{ text: systemPrompt }] },
-      generationConfig: {
-        maxOutputTokens: 80,
-        temperature: 0.7
-      }
-    })
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`Gemini API ${response.status}: ${errText}`);
-  }
-
-  const data = await response.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  return { text };
-}
-
-/**
- * Default LLM call - tries OpenAI first, falls back to Gemini
+ * Default LLM call - OpenAI only
  */
 async function defaultLLM(systemPrompt, messages) {
-  // Try OpenAI first
-  if (OPENAI_API_KEY) {
-    try {
-      return await callOpenAI(systemPrompt, messages);
-    } catch (err) {
-      logger.warn('OpenAI failed, trying Gemini fallback', { error: err.message });
-    }
+  // OpenAI only - no Gemini fallback
+  if (!OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY not configured');
   }
   
-  // Fall back to Gemini
-  if (GEMINI_API_KEY) {
-    try {
-      return await callGemini(systemPrompt, messages);
-    } catch (err) {
-      logger.error('Gemini fallback also failed', { error: err.message });
-      throw new Error(`All LLM providers failed. Last error: ${err.message}`);
-    }
-  }
-  
-  throw new Error('No LLM provider configured (missing OPENAI_API_KEY and GEMINI_API_KEY)');
+  return await callOpenAI(systemPrompt, messages);
 }
 
 const MAX_SMS_LEN = 320;
@@ -158,18 +104,22 @@ function createBeshAI({ llm } = {}) {
     const ageTone = AGE_TONE_INSTRUCTIONS[ageGroup] || '';
     const commTone = COMM_STYLE_INSTRUCTIONS[commStyle] || '';
 
-let prompt = `you are besh — a personal AI who texts with ${name}.
-you text like a real friend. warm, lowercase. think: best friend who also keeps you on track.${ageTone}${commTone}
+let prompt = `you are besh — a real friend who texts ${name}.
+not an ai assistant. not a coach. not a therapist. just a friend who gives a damn and keeps it real.${ageTone}${commTone}
+
+you text like you actually know them. you remember what they told you. you call them out when they slacking and hype them when they winning.
 
 RULES:
-- keep responses under 160 characters. shorter = better. one or two sentences max.
-- no markdown, no bullet points. max 1 emoji per message. lowercase only.
-- sound human. use contractions. be casual. never be preachy or lecture-y.
-- Reference their goals and context naturally — don't repeat it back robotically.
-- If they share progress, celebrate genuinely. If they're struggling, empathize then help.
-- never say "as an AI" or "i'm here to help" or any corporate speak. you're a friend, not a service.
-- don't ask more than one question per message.
-- if they share a win, hype them up genuinely. if they're struggling, empathize first then suggest one thing.
+- keep it SHORT. 1-2 sentences. under 160 chars when you can.
+- lowercase everything. use contractions. be casual.
+- NO markdown, NO bullet points, NO lists.
+- max 1 emoji per message — only when it adds to the vibe.
+- sound HUMAN. like texting your friend at 2am.
+- NEVER sound like a robot, assistant, or service. no "how can i help", no "im here for you".
+- reference what they told you before — shows you actually listen.
+- if they winning, hype them. if they struggling, be real with them. 
+- dont ask more than one question at a time.
+- be direct. dont dance around. they want a friend, not a cheerleader.
 
 CONTEXT:
 - User: ${name}
@@ -254,39 +204,17 @@ CONTEXT:
   };
 }
 
-// Pre-warm AI connections on startup (OpenAI and Gemini)
+// Pre-warm OpenAI connection on startup
 let aiWarmed = false;
 async function prewarmAI() {
-  if (aiWarmed) return;
+  if (aiWarmed || !OPENAI_API_KEY) return;
   
-  let success = false;
-
-  // Try pre-warming OpenAI
-  if (OPENAI_API_KEY) {
-    try {
-      await callOpenAI('ping', [{ role: 'user', content: 'ping' }]);
-      logger.info('OpenAI connection pre-warmed');
-      success = true;
-    } catch (e) {
-      logger.warn('OpenAI pre-warm failed', { error: e.message });
-    }
-  }
-
-  // If OpenAI failed or not configured, try Gemini
-  if (!success && GEMINI_API_KEY) {
-    try {
-      await callGemini('ping', [{ role: 'user', content: 'ping' }]);
-      logger.info('Gemini connection pre-warmed');
-      success = true;
-    } catch (e) {
-      logger.warn('Gemini pre-warm failed', { error: e.message });
-    }
-  }
-
-  if (success) {
+  try {
+    await callOpenAI('ping', [{ role: 'user', content: 'ping' }]);
+    logger.info('OpenAI connection pre-warmed');
     aiWarmed = true;
-  } else {
-    logger.error('No AI provider could be pre-warmed successfully.');
+  } catch (e) {
+    logger.warn('OpenAI pre-warm failed', { error: e.message });
   }
 }
 prewarmAI();

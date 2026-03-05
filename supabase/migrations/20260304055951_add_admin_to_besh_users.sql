@@ -1,0 +1,2 @@
+ALTER TABLE public.besh_users
+ADD COLUMN is_admin BOOLEAN DEFAULT FALSE;
