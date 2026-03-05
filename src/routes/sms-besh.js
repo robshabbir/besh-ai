@@ -11,6 +11,7 @@ const { createBeshMemory } = require('../services/besh-memory');
 const { createBeshAI } = require('../services/besh-ai');
 const { parseReminder } = require('../services/besh-reminders');
 const { detectSpecialCommands, detectGoalCompletion, formatGoalsList, formatSummary } = require('../services/besh-commands');
+const { detectIntent, detectSentiment, routeMessage } = require('../services/besh-intent');
 
 const SUBSCRIPTION_TIERS = { free: 'free', pro: 'pro', premium: 'premium' };
 const FREE_TIER_DAILY_LIMIT = 20; // free tier: 20 msgs/day
@@ -233,10 +234,22 @@ function createSmsBeshHandler({ store, llm } = {}) {
             }
           }
 
-          // ===== POST-ONBOARDING: AI CONVERSATION =====
+          // =====ING: AI CON POST-ONBOARDVERSATION =====
           smsBeshMetrics.aiConversations += 1;
 
-          const intent = memory.detectIntent(body);
+          // Use smart intent detection with sentiment
+          const userContext = {
+            onboardingStage: onboarding.state?.stage,
+            pendingQuestion: onboarding.state?.pendingQuestion,
+            goals: await store.getActiveGoals?.(onboarding.user.id) || []
+          };
+          const intentResult = detectIntent(body, userContext);
+          const sentiment = detectSentiment(body);
+          const routing = routeMessage(intentResult);
+          
+          // Log insights for data collection
+          const intent = intentResult.intent;
+          logger.info('Intent detected', { intent, sentiment: sentiment.sentiment, route: routing.route, userId: onboarding.user.id });
 
           // Create goal if goal intent detected (deduplicated by title)
           if (intent === 'goal' && store.createGoal) {
