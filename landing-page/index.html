@@ -3,495 +3,584 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calva - Every Call, Covered | AI Receptionist for Your Business</title>
+    <title>Besh — Your AI Buddy Who Keeps You on Track</title>
+    <meta name="description" content="Besh texts you like a real friend. Helps you set goals, track progress, and actually follow through. Start for free.">
     
-    <!-- Meta Description -->
-    <meta name="description" content="Never miss a customer call again. Calva's AI receptionist answers calls 24/7, books appointments, and captures leads for $297/month. Setup in minutes.">
-    
-    <!-- Open Graph / Facebook -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://calva.ai/">
-    <meta property="og:title" content="Calva - Every Call, Covered | AI Receptionist">
-    <meta property="og:description" content="Never miss a customer call again. AI receptionist that answers 24/7, books appointments, and captures leads.">
-    <meta property="og:image" content="https://calva.ai/og-image.jpg">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://calva.ai/">
-    <meta property="twitter:title" content="Calva - Every Call, Covered">
-    <meta property="twitter:description" content="Never miss a customer call again. AI receptionist that answers 24/7, books appointments, and captures leads.">
-    <meta property="twitter:image" content="https://calva.ai/og-image.jpg">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <meta property="og:title" content="Besh — Your AI Buddy Who Keeps You on Track">
+    <meta property="og:description" content="Text Besh and get a real friend who helps you crush your goals. Free to start.">
+    <meta property="og:image" content="/og-image.png">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #f472b6;
+            --dark: #0f0f0f;
+            --dark-gray: #1a1a1a;
+            --gray: #2a2a2a;
+            --light: #f5f5f5;
+            --white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Floating Message Button */
+        .floating-msg-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            text-decoration: none;
+        }
+        
+        .floating-msg-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 50px rgba(99, 102, 241, 0.5);
+        }
+        
+        .floating-msg-btn svg {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+        
+        /* Navigation */
+        nav {
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 15, 15, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo-icon {
+            font-size: 32px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+        
+        /* Hero */
+        .hero {
+            padding: 160px 0 100px;
+            text-align: center;
+            background: radial-gradient(ellipse at top, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
+        }
+        
+        .hero h1 {
+            font-size: 64px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+        }
+        
+        .hero p {
+            font-size: 22px;
+            color: #999;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-large {
+            padding: 18px 36px;
+            font-size: 18px;
+        }
+        
+        .btn-secondary {
+            background: var(--gray);
+            color: var(--white);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--dark-gray);
+        }
+        
+        .hero-note {
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        /* Demo Chat */
+        .demo-section {
+            padding: 60px 0;
+        }
+        
+        .demo-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--dark-gray);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid var(--gray);
+        }
+        
+        .demo-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray);
+        }
+        
+        .demo-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .demo-name {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .demo-status {
+            font-size: 13px;
+            color: #22c55e;
+        }
+        
+        .chat-bubble {
+            padding: 14px 18px;
+            border-radius: 18px;
+            margin-bottom: 12px;
+            max-width: 85%;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        .chat-bubble.incoming {
+            background: var(--gray);
+            border-bottom-left-radius: 4px;
+        }
+        
+        .chat-bubble.outgoing {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        
+        /* How it works */
+        .how-it-works {
+            padding: 100px 0;
+        }
+        
+        .section-title {
+            font-size: 42px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 18px;
+            margin-bottom: 60px;
+        }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        
+        .step {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .step-num {
+            width: 50px;
+            height: 50px;
+            background: var(--gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            margin: 0 auto 20px;
+            border: 2px solid var(--primary);
+        }
+        
+        .step h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        
+        .step p {
+            color: #888;
+        }
+        
+        /* Features */
+        .features {
+            padding: 100px 0;
+            background: var(--dark-gray);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        
+        .feature {
+            padding: 30px;
+            background: var(--dark);
+            border-radius: 16px;
+            border: 1px solid var(--gray);
+        }
+        
+        .feature-icon {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+        
+        .feature h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .feature p {
+            color: #888;
+            font-size: 14px;
+        }
+        
+        /* CTA */
+        .cta {
+            padding: 100px 0;
+            text-align: center;
+            background: radial-gradient(ellipse at bottom, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
+        }
+        
+        .cta h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .cta p {
+            color: #888;
+            font-size: 20px;
+            margin-bottom: 40px;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 60px 0 30px;
+            border-top: 1px solid var(--gray);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--white);
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 40px;
+            }
+            
+            .steps, .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Floating Message Button - Opens SMS -->
+    <!-- Mobile: SMS direct | Desktop: /text page -->
+    <a href="/text" class="floating-msg-btn" title="Text Besh Now!" onclick="if(window.innerWidth>768)return true;this.href='sms:+19292955769&body=Hey';return true;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+    </a>
+
     <!-- Navigation -->
-    <nav class="nav">
+    <nav>
         <div class="container">
             <div class="nav-content">
-                <div class="logo">
-                    <span class="logo-icon">📞</span>
-                    <span class="logo-text">Calva</span>
-                </div>
+                <a href="/" class="logo">
+                    <span class="logo-icon">✨</span>
+                    <span>Besh</span>
+                </a>
                 <div class="nav-links">
+                    <a href="#how-it-works">How It Works</a>
                     <a href="#features">Features</a>
-                    <a href="#pricing">Pricing</a>
-                    <a href="#faq">FAQ</a>
-                    <a href="#signup" class="btn btn-primary">Start Free Trial</a>
+                    <a href="sms:+19292955769&body=Hey" class="btn btn-primary">Text Besh</a>
                 </div>
-                <button class="mobile-menu-toggle" aria-label="Toggle menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section class="hero">
         <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title">Every Call, Covered.</h1>
-                <p class="hero-subtitle">
-                    Never miss a customer call again. Calva's AI receptionist answers 24/7, books appointments, and captures every lead—while you focus on running your business.
-                </p>
-                <div class="hero-cta">
-                    <a href="#signup" class="btn btn-primary btn-large">Start Your Free Trial</a>
-                    <a href="tel:+19297557288" class="btn btn-secondary btn-large">📞 Call to Hear Demo</a>
-                </div>
-                <p class="hero-note">No credit card required • Setup in 5 minutes • Cancel anytime</p>
+            <h1>The Friend Who Actually<br>Helps You Follow Through</h1>
+            <p>Besh texts you like a real buddy. Set goals, track progress, and actually achieve what you want. No judgment, just accountability.</p>
+            <div class="hero-cta">
+                <a href="sms:+19292955769&body=Hey" class="btn btn-primary btn-large">✨ Text Besh Now</a>
+                <a href="#demo" class="btn btn-secondary btn-large">See How It Works</a>
             </div>
+            <p class="hero-note">Free to start • No app needed • Just text</p>
         </div>
     </section>
 
-    <!-- Problem Section -->
-    <section class="problem">
+    <!-- Demo Chat -->
+    <section class="demo-section" id="demo">
         <div class="container">
-            <div class="section-header">
-                <h2>Missing Calls Is Costing You Money</h2>
-                <p class="section-subtitle">Every unanswered call is a customer walking to your competitor</p>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number">60%</div>
-                    <div class="stat-label">of calls to small businesses go unanswered</div>
+            <div class="demo-container">
+                <div class="demo-header">
+                    <div class="demo-avatar">B</div>
+                    <div>
+                        <div class="demo-name">Besh</div>
+                        <div class="demo-status">● Online now</div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number">$100-$1000</div>
-                    <div class="stat-label">lost revenue per missed call</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">85%</div>
-                    <div class="stat-label">of customers won't call back if you miss once</div>
-                </div>
-            </div>
-            <div class="problem-text">
-                <p>Your phone rings during lunch. After hours. On weekends. And every time you miss it, a potential customer moves on to the next business in their search results.</p>
-                <p><strong>Hiring a full-time receptionist costs $36,000+ per year.</strong> Calva does it better for $297/month.</p>
+                <div class="chat-bubble incoming">hey! what's good</div>
+                <div class="chat-bubble outgoing">im gonna start working out every morning</div>
+                <div class="chat-bubble incoming">nice. what time you tryna wake up? i gotta know when to bug you 😂</div>
+                <div class="chat-bubble outgoing">6am i guess</div>
+                <div class="chat-bubble incoming">bet. 6am it is. im gonna check in on you. dont flake 💪</div>
             </div>
         </div>
     </section>
 
-    <!-- How It Works Section -->
-    <section class="how-it-works">
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
         <div class="container">
-            <div class="section-header">
-                <h2>Get Started in 3 Simple Steps</h2>
-                <p class="section-subtitle">From signup to answering calls in under 5 minutes</p>
-            </div>
-            <div class="steps-grid">
-                <div class="step-card">
-                    <div class="step-number">1</div>
-                    <h3>Sign Up</h3>
-                    <p>Choose your plan and create your account. No technical knowledge needed.</p>
+            <h2 class="section-title">Simple As 1-2-3</h2>
+            <p class="section-subtitle">Just text. That's it.</p>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h3>Text Besh</h3>
+                    <p>Just send a text to +1 (929) 295-5769. No app, no signup, nothing to download.</p>
                 </div>
-                <div class="step-card">
-                    <div class="step-number">2</div>
-                    <h3>Choose Your Industry</h3>
-                    <p>Select from pre-built templates designed for your specific business type.</p>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h3>Set Your Goal</h3>
+                    <p>Tell Besh what you want to accomplish. Run every day? Read more? Save money?</p>
                 </div>
-                <div class="step-card">
-                    <div class="step-number">3</div>
-                    <h3>Go Live</h3>
-                    <p>Forward your calls or get a new number. Your AI receptionist starts working immediately.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Industry Templates Section -->
-    <section class="industries">
-        <div class="container">
-            <div class="section-header">
-                <h2>Built for Your Industry</h2>
-                <p class="section-subtitle">Pre-configured templates that understand your business from day one</p>
-            </div>
-            <div class="industries-grid">
-                <div class="industry-card">
-                    <div class="industry-icon">🔧</div>
-                    <h3>Plumbing & HVAC</h3>
-                    <p>Emergency triage, appointment scheduling, service area questions</p>
-                </div>
-                <div class="industry-card">
-                    <div class="industry-icon">⚖️</div>
-                    <h3>Law Firms</h3>
-                    <p>Case intake, consultation booking, practice area routing</p>
-                </div>
-                <div class="industry-card">
-                    <div class="industry-icon">🏥</div>
-                    <h3>Medical & Dental</h3>
-                    <p>Patient intake, appointment booking, insurance questions</p>
-                </div>
-                <div class="industry-card">
-                    <div class="industry-icon">🍽️</div>
-                    <h3>Restaurants</h3>
-                    <p>Reservations, hours, menu questions, takeout orders</p>
-                </div>
-                <div class="industry-card">
-                    <div class="industry-icon">💇</div>
-                    <h3>Salons & Spas</h3>
-                    <p>Booking, cancellations, service pricing, stylist availability</p>
-                </div>
-                <div class="industry-card">
-                    <div class="industry-icon">🚗</div>
-                    <h3>Auto Repair</h3>
-                    <p>Appointment scheduling, estimates, repair status updates</p>
-                </div>
-                <div class="industry-card">
-                    <div class="industry-icon">🏠</div>
-                    <h3>Real Estate</h3>
-                    <p>Lead capture, showing scheduling, property information</p>
-                </div>
-                <div class="industry-card">
-                    <div class="industry-icon">🐾</div>
-                    <h3>Veterinary</h3>
-                    <p>Appointment booking, emergency triage, medication refills</p>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <h3>Get Stuff Done</h3>
+                    <p>Besh checks in, keeps you accountable, and celebrates your wins. Real friend energy.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
+    <!-- Features -->
     <section class="features" id="features">
         <div class="container">
-            <div class="section-header">
-                <h2>Everything You Need to Never Miss a Call</h2>
-                <p class="section-subtitle">Your AI receptionist does more than just answer—it converts</p>
-            </div>
+            <h2 class="section-title">Why You'll Actually Use This</h2>
+            <p class="section-subtitle">Not another productivity app. Just a friend who gives a damn.</p>
+            
             <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🌙</div>
-                    <h3>24/7 Availability</h3>
-                    <p>No sick days, no vacation, no lunch breaks. Your AI receptionist answers every call, any time of day or night.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📅</div>
-                    <h3>Books Appointments</h3>
-                    <p>Directly schedules appointments into your calendar. No more phone tag or missed opportunities.</p>
-                </div>
-                <div class="feature-card">
+                <div class="feature">
                     <div class="feature-icon">🎯</div>
-                    <h3>Captures Leads</h3>
-                    <p>Collects name, phone, email, and service details from every caller. Automatically syncs to your CRM.</p>
+                    <h3>Goal Tracking</h3>
+                    <p>Set goals and Besh remembers them. Checks in on your progress without being annoying.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🗣️</div>
-                    <h3>Sounds Human</h3>
-                    <p>Natural conversation with advanced AI. Callers think they're talking to a real person.</p>
+                <div class="feature">
+                    <div class="feature-icon">⏰</div>
+                    <h3>Reminders</h3>
+                    <p>Tell Besh to remind you about anything. Water at 3pm. Stretch every hour. Whatever.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🌎</div>
-                    <h3>Speaks Spanish</h3>
-                    <p>Bilingual support included. Automatically detects language and responds accordingly.</p>
+                <div class="feature">
+                    <div class="feature-icon">🔥</div>
+                    <h3>Accountability</h3>
+                    <p>Actually follow through because someone's checking in. No more letting yourself down.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Call Summaries</h3>
-                    <p>Get instant email summaries after every call. Know who called, what they needed, and what action was taken.</p>
+                <div class="feature">
+                    <div class="feature-icon">🎉</div>
+                    <h3>Celebrates Wins</h3>
+                    <p>Hit a goal? Besh hype you up. Every win counts and Besh makes sure you know it.</p>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section class="pricing" id="pricing">
-        <div class="container">
-            <div class="section-header">
-                <h2>Simple, Transparent Pricing</h2>
-                <p class="section-subtitle">Choose the plan that fits your call volume. Upgrade or downgrade anytime.</p>
-            </div>
-            <div class="pricing-grid">
-                <div class="pricing-card">
-                    <div class="pricing-tier">Starter</div>
-                    <div class="pricing-price">
-                        <span class="price-currency">$</span>
-                        <span class="price-amount">297</span>
-                        <span class="price-period">/month</span>
-                    </div>
-                    <ul class="pricing-features">
-                        <li><span class="check">✓</span> 200 calls per month</li>
-                        <li><span class="check">✓</span> 1 phone number</li>
-                        <li><span class="check">✓</span> Business hours (7am-6pm)</li>
-                        <li><span class="check">✓</span> Industry template</li>
-                        <li><span class="check">✓</span> Calendar integration</li>
-                        <li><span class="check">✓</span> Email summaries</li>
-                        <li><span class="cross">✗</span> SMS follow-up</li>
-                        <li><span class="cross">✗</span> 24/7 coverage</li>
-                        <li><span class="cross">✗</span> Priority support</li>
-                    </ul>
-                    <a href="#signup" class="btn btn-outline">Start Free Trial</a>
+                <div class="feature">
+                    <div class="feature-icon">💪</div>
+                    <h3>No Judgment</h3>
+                    <p>Missed a day? Besh doesn't guilt trip. Just helps you get back on the horse.</p>
                 </div>
-                <div class="pricing-card pricing-card-popular">
-                    <div class="pricing-badge">Most Popular</div>
-                    <div class="pricing-tier">Growth</div>
-                    <div class="pricing-price">
-                        <span class="price-currency">$</span>
-                        <span class="price-amount">597</span>
-                        <span class="price-period">/month</span>
-                    </div>
-                    <ul class="pricing-features">
-                        <li><span class="check">✓</span> 500 calls per month</li>
-                        <li><span class="check">✓</span> 2 phone numbers</li>
-                        <li><span class="check">✓</span> 24/7 availability</li>
-                        <li><span class="check">✓</span> Industry template</li>
-                        <li><span class="check">✓</span> Calendar integration</li>
-                        <li><span class="check">✓</span> Email summaries</li>
-                        <li><span class="check">✓</span> SMS follow-up</li>
-                        <li><span class="check">✓</span> CRM integration</li>
-                        <li><span class="cross">✗</span> Priority support</li>
-                    </ul>
-                    <a href="#signup" class="btn btn-primary">Start Free Trial</a>
-                </div>
-                <div class="pricing-card">
-                    <div class="pricing-tier">Premium</div>
-                    <div class="pricing-price">
-                        <span class="price-currency">$</span>
-                        <span class="price-amount">997</span>
-                        <span class="price-period">/month</span>
-                    </div>
-                    <ul class="pricing-features">
-                        <li><span class="check">✓</span> Unlimited calls</li>
-                        <li><span class="check">✓</span> Up to 5 phone numbers</li>
-                        <li><span class="check">✓</span> 24/7 availability</li>
-                        <li><span class="check">✓</span> Custom voice & script</li>
-                        <li><span class="check">✓</span> Calendar integration</li>
-                        <li><span class="check">✓</span> Email summaries</li>
-                        <li><span class="check">✓</span> SMS follow-up</li>
-                        <li><span class="check">✓</span> CRM integration</li>
-                        <li><span class="check">✓</span> Priority support</li>
-                    </ul>
-                    <a href="#signup" class="btn btn-outline">Start Free Trial</a>
-                </div>
-            </div>
-            <p class="pricing-note">All plans include a 7-day free trial. No credit card required to start.</p>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section class="testimonials">
-        <div class="container">
-            <div class="section-header">
-                <h2>Trusted by Businesses Nationwide</h2>
-                <p class="section-subtitle">Real results from real customers</p>
-            </div>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"We were losing 20+ calls per week after hours. Calva catches every single one now. Our booking rate went up 40% in the first month."</div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">MP</div>
-                        <div class="author-info">
-                            <div class="author-name">Mike Peterson</div>
-                            <div class="author-title">Owner, Mike's Plumbing NYC</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"Best investment we've made this year. Pays for itself with just 2-3 captured appointments per month. Our clients love the instant response."</div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">SL</div>
-                        <div class="author-info">
-                            <div class="author-name">Sarah Lin</div>
-                            <div class="author-title">Practice Manager, Downtown Dental</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"Setup took literally 5 minutes. The AI sounds so natural that customers don't even realize it's not a human. Game changer for my one-person law firm."</div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">JR</div>
-                        <div class="author-info">
-                            <div class="author-name">James Rodriguez</div>
-                            <div class="author-title">Attorney, Rodriguez Law Group</div>
-                        </div>
-                    </div>
+                <div class="feature">
+                    <div class="feature-icon">💬</div>
+                    <h3>Just Texts</h3>
+                    <p>No apps to open, no logins, no dashboards. Already know how to text? You're good.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FAQ Section -->
-    <section class="faq" id="faq">
+    <!-- CTA -->
+    <section class="cta">
         <div class="container">
-            <div class="section-header">
-                <h2>Frequently Asked Questions</h2>
-            </div>
-            <div class="faq-list">
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>How does Calva sound? Will callers know it's AI?</span>
-                        <span class="faq-icon">+</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Calva uses advanced AI to create natural-sounding conversations. Most callers think they're talking to a real receptionist. The voice is warm, professional, and responds naturally to questions. You can call our demo line at <strong>(929) 755-7288</strong> to hear it yourself.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>How long does setup take?</span>
-                        <span class="faq-icon">+</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Most businesses are up and running in under 5 minutes. Simply choose your industry template, customize your business details (name, hours, services), and forward your calls. That's it. No technical knowledge required.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>Can I use my existing phone number?</span>
-                        <span class="faq-icon">+</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Yes! You can forward your existing business number to Calva, or we can provide you with a new local number. Call forwarding is simple and reversible—you stay in full control of your phone number.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>What happens if Calva can't answer a question?</span>
-                        <span class="faq-icon">+</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Calva is trained on your business information and handles 95%+ of calls successfully. For complex situations or emergencies, Calva can transfer to your cell phone or take a detailed message with callback information. You always stay in control.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>Does Calva integrate with my calendar?</span>
-                        <span class="faq-icon">+</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Yes! Calva integrates with Google Calendar, Outlook, and popular scheduling tools like Calendly and Cal.com. When someone books an appointment, it appears instantly on your calendar with all the details.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>What if I get more calls than my plan allows?</span>
-                        <span class="faq-icon">+</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>We'll notify you when you're approaching your limit. Additional calls beyond your plan are billed at $1.50 per call. You can also upgrade to a higher tier anytime—it takes effect immediately.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>Is there a contract or commitment?</span>
-                        <span class="faq-icon">+</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>No contracts. No setup fees. No cancellation fees. Pay month-to-month and cancel anytime. We earn your business every month by delivering results.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>Can Calva handle multiple locations?</span>
-                        <span class="faq-icon">+</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Absolutely! You can add multiple phone numbers and locations to your account. Each location can have its own customized greeting, hours, and scheduling. Perfect for multi-location businesses.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Footer Section -->
-    <section class="cta-footer">
-        <div class="container">
-            <div class="cta-content">
-                <h2>Never Miss Another Customer Call</h2>
-                <p>Join hundreds of businesses that chose to never miss an opportunity. Start your free 7-day trial today.</p>
-                <div class="cta-buttons">
-                    <a href="#signup" class="btn btn-primary btn-large">Start Your Free Trial</a>
-                    <a href="tel:+19297557288" class="btn btn-secondary-light btn-large">📞 (929) 755-7288</a>
-                </div>
-                <p class="cta-note">Call to hear Calva in action • No credit card required • Setup in 5 minutes</p>
-            </div>
+            <h2>Ready to Actually Get Things Done?</h2>
+            <p>Just text Besh. It'll change how you think about goals.</p>
+            <a href="sms:+19292955769&body=Hey" class="btn btn-primary btn-large">✨ Text Besh Now</a>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer>
         <div class="container">
             <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="logo">
-                        <span class="logo-icon">📞</span>
-                        <span class="logo-text">Calva</span>
-                    </div>
-                    <p>Every call, covered.</p>
-                </div>
+                <a href="/" class="logo">
+                    <span class="logo-icon">✨</span>
+                    <span>Besh</span>
+                </a>
                 <div class="footer-links">
-                    <div class="footer-column">
-                        <h4>Product</h4>
-                        <a href="#features">Features</a>
-                        <a href="#pricing">Pricing</a>
-                        <a href="#industries">Industries</a>
-                        <a href="tel:+19297557288">Demo</a>
-                    </div>
-                    <div class="footer-column">
-                        <h4>Company</h4>
-                        <a href="#about">About</a>
-                        <a href="#contact">Contact</a>
-                        <a href="#privacy">Privacy</a>
-                        <a href="#terms">Terms</a>
-                    </div>
-                    <div class="footer-column">
-                        <h4>Support</h4>
-                        <a href="#faq">FAQ</a>
-                        <a href="#help">Help Center</a>
-                        <a href="mailto:support@calva.ai">support@calva.ai</a>
-                        <a href="tel:+19297557288">(929) 755-7288</a>
-                    </div>
+                    <a href="sms:+19292955769&body=Hey">Text Besh</a>
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
                 </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Calva. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Signup Modal (placeholder) -->
-    <div id="signup" class="modal">
-        <div class="modal-content">
-            <h2>Start Your Free Trial</h2>
-            <p>Choose your plan to get started. No credit card required.</p>
-            <div class="modal-buttons">
-                <a href="#pricing" class="btn btn-primary">View Pricing</a>
-                <button class="btn btn-outline" onclick="closeModal()">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript -->
-    <script src="script.js"></script>
+    <script>
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
 </html>
