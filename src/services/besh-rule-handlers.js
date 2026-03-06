@@ -156,6 +156,50 @@ const ruleHandlers = {
   },
 
   /**
+   * Encouragement handler
+   */
+  encouraging: async ({ user, context }) => {
+    const responses = [
+      `thats the spirit! 💪 lets get it`,
+      `i love that energy! lets gooo 🔥`,
+      `thats what im talking about! keep pushing!`,
+      `you got this! i believe in you ✌️`
+    ];
+    return responses[Math.floor(Math.random() * responses.length)];
+  },
+
+  /**
+   * OK/Sure response handler
+   */
+  ok: async ({ user, context }) => {
+    const responses = [
+      `bet 👍`,
+      `alright 👍`,
+      `cool 👍`
+    ];
+    return responses[Math.floor(Math.random() * responses.length)];
+  },
+
+  /**
+   * "How about you" response
+   */
+  hbu: async ({ user, context }) => {
+    return `im good! just here helping you crush your goals. what about you?`;
+  },
+
+  /**
+   * Celebration handler
+   */
+  celebrating: async ({ user, context }) => {
+    const responses = [
+      `YASS! 🎉 thats what im talking about!`,
+      `SO PROUD OF YOU 🔥🎉`,
+      `HELL YEAH! 💪 lets gooo!`
+    ];
+    return responses[Math.floor(Math.random() * responses.length)];
+  },
+
+  /**
    * Confirmation handler (yes/no responses)
    */
   confirmation: async ({ user, context, response, pendingQuestion }) => {

@@ -32,6 +32,13 @@ const INTENT_PATTERNS = {
   
   // Help
   help: /(help|what can|what do|how do i|what should|commands?|menu|options)/i,
+  
+  // Encouragement
+  encouraging: /(you got this|keep going|don'?t give up|stay focused|stay strong|keep pushing|you can do it|believe)/i,
+  
+  // Random casual
+  ok: /^ok$|^okay$|^alright$|^sure$|^yeah$/i,
+  hbu: /(how about you|and you|you doing|what about you)/i,
 };
 
 const SENTIMENT_KEYWORDS = {
@@ -127,7 +134,7 @@ function routeMessage(intentResult) {
   }
   
   // Route to rule-based handlers for simple intents
-  if (['goal_setting', 'goal_complete', 'goal_missed', 'reminder_set', 'reminder_cancel', 'greeting', 'thanks', 'goodbye', 'confirmation', 'off_topic', 'help', 'question', 'goal_progress'].includes(intent)) {
+  if (['goal_setting', 'goal_complete', 'goal_missed', 'reminder_set', 'reminder_cancel', 'greeting', 'thanks', 'goodbye', 'confirmation', 'off_topic', 'help', 'question', 'goal_progress', 'encouraging', 'ok', 'hbu', 'celebrating'].includes(intent)) {
     return { route: 'rule', handler: intent };
   }
   
