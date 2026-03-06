@@ -28,7 +28,7 @@ const INTENT_PATTERNS = {
   thanks: /(thanks|thank you|thx|ty|appreciate|grateful)/i,
   
   // Off-topic
-  off_topic: /(weather|news|stock|bitcoin|sports|score|game|movie|recipe|random)/i,
+  off_topic: /(weather|news|stock|bitcoin|sports|score|game|movie|recipe|random|what'?s the| tell me about)/i,
   
   // Help
   help: /(help|what can|what do|how do i|what should|commands?|menu|options)/i,
