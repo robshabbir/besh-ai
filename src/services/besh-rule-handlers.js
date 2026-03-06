@@ -14,16 +14,16 @@ const ruleHandlers = {
    */
   greeting: async ({ user, context }) => {
     const name = user?.profile?.name;
-    const time = new Date().getHours();
-    let greeting = 'hey';
-    if (time >= 5 && time < 12) greeting = 'morning';
-    else if (time >= 12 && time < 17) greeting = 'afternoon';
-    else if (time >= 17 && time < 21) greeting = 'evening';
+    const hour = new Date().getHours();
+    let timeOfDay = 'there';
+    if (hour >= 5 && hour < 12) timeOfDay = 'morning ☀️';
+    else if (hour >= 12 && hour < 17) timeOfDay = 'afternoon 🌞';
+    else if (hour >= 17 && hour < 21) timeOfDay = 'evening 🌙';
     
     if (name) {
-      return `hey ${name}! good ${greeting} ☀️ whats up?`;
+      return `hey ${name}! good ${timeOfDay} whats up?`;
     }
-    return `hey! good ${gorning}! whats good?`;
+    return `hey! good ${timeOfDay} whats good?`;
   },
 
   /**
