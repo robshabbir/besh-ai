@@ -12,8 +12,11 @@ function getSupabase() {
   if (!supabase) {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
+    console.log('[insights] init:', { hasUrl: !!supabaseUrl, hasKey: !!supabaseKey });
     if (supabaseUrl && supabaseKey) {
       supabase = createClient(supabaseUrl, supabaseKey);
+    } else {
+      console.log('[insights] Missing config - URL:', !!supabaseUrl, 'Key:', !!supabaseKey);
     }
   }
   return supabase;

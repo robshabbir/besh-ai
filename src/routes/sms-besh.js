@@ -352,7 +352,7 @@ function createSmsBeshHandler({ store, llm } = {}) {
               responseTimeMs: Date.now() - (global.aiStartTime || Date.now()),
               activeGoals: userContext.goals?.length || 0
             }
-          }).catch(() => {}); // Don't fail on insight logging
+          }).catch(err => console.log('[insights] Error:', err.message));
         } else {
           // ===== ONBOARDING FLOW =====
           smsBeshMetrics.onboardingStarted += 1;
