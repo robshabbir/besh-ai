@@ -128,6 +128,18 @@ const ruleHandlers = {
   },
 
   /**
+   * Simple question handler
+   */
+  question: async ({ user, context }) => {
+    const responses = [
+      `im mainly here for goals and accountability — but lets talk about what you want to accomplish!`,
+      `great question — but lets focus on your goals. what do you want to work on?`,
+      `im your goal buddy. tell me what you want to achieve!`
+    ];
+    return responses[Math.floor(Math.random() * responses.length)];
+  },
+
+  /**
    * Confirmation handler (yes/no responses)
    */
   confirmation: async ({ user, context, response, pendingQuestion }) => {
