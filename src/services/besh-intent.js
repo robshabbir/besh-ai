@@ -122,12 +122,12 @@ function routeMessage(intentResult) {
   const { intent } = intentResult;
   
   // Route to LLM for complex conversations
-  if (['venting', 'question', 'how_are_you', 'goal_progress', 'help'].includes(intent)) {
+  if (['venting', 'question', 'how_are_you', 'goal_progress'].includes(intent)) {
     return { route: 'llm', handler: 'conversation' };
   }
   
   // Route to rule-based handlers for simple intents
-  if (['goal_setting', 'goal_complete', 'goal_missed', 'reminder_set', 'reminder_cancel', 'greeting', 'thanks', 'goodbye', 'confirmation', 'off_topic'].includes(intent)) {
+  if (['goal_setting', 'goal_complete', 'goal_missed', 'reminder_set', 'reminder_cancel', 'greeting', 'thanks', 'goodbye', 'confirmation', 'off_topic', 'help'].includes(intent)) {
     return { route: 'rule', handler: intent };
   }
   

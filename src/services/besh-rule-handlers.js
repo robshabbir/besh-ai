@@ -116,6 +116,18 @@ const ruleHandlers = {
   },
 
   /**
+   * Help handler
+   */
+  help: async ({ user, context }) => {
+    const responses = [
+      `just tell me what you want to work on — like 'i want to run every morning' or 'remind me to drink water'. simple as that.`,
+      `im easy. just text me what you want to do — set a goal, get a reminder, or just chat. what do you need?`,
+      `say things like 'remind me to stretch at 3pm' or 'i want to read 20 pages a day' — whatever you want to accomplish.`
+    ];
+    return responses[Math.floor(Math.random() * responses.length)];
+  },
+
+  /**
    * Confirmation handler (yes/no responses)
    */
   confirmation: async ({ user, context, response, pendingQuestion }) => {
