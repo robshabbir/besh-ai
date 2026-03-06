@@ -6,6 +6,7 @@
 const logger = require('../utils/logger');
 const { formatExamplesForPrompt, formatToneRules } = require('../prompts/besh-personality');
 const { detectInjectionAttempt } = require('./claude');
+const { getCachedResponse, setCachedResponse, getCacheKey } = require('./besh-cache');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const MODEL = process.env.LLM_MODEL || 'gpt-4o-mini';
@@ -197,9 +198,19 @@ User: ${name} | Time: ${timeStr} | Goal: ${goal || 'none'}`;
       };
     }
 
+    // Check cache for identical queries
+    const cacheKey = getCacheKey(userMessage, context?.user?.id, intent);
+    const cached = getCachedResponse(cacheKey);
+    if (cached) {
+      logger.info('Cache hit', { intent });
+      return { response: cached, intent: intent || 'chat', cached: true };
+    }
+
     try {
       const result = await callLLM(systemPrompt, messages);
       const response = sanitizeResponse(result.text);
+      // Cache successful responses
+      setCachedResponse(cacheKey, response);
       return { response, intent: intent || 'chat' };
     } catch (err) {
       logger.error('Besh AI generation failed', { error: err.message, userName });
