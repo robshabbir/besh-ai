@@ -39,6 +39,12 @@ const INTENT_PATTERNS = {
   // Random casual
   ok: /^ok$|^okay$|^alright$|^sure$|^yeah$/i,
   hbu: /(how about you|and you|you doing|what about you)/i,
+  
+  // More casual
+  yes: /^(yes|yeah|yep|yup|definitely|absolutely|course|yep|yup)$/i,
+  no: /^(no|nah|nope|na)$/i,
+  lol: /(lol|lmao|haha|ha ha|heh)/i,
+  idk: /(i don'?t know|idk|not sure|maybe|i guess|probably)/i,
 };
 
 const SENTIMENT_KEYWORDS = {
@@ -134,7 +140,7 @@ function routeMessage(intentResult) {
   }
   
   // Route to rule-based handlers for simple intents
-  if (['goal_setting', 'goal_complete', 'goal_missed', 'reminder_set', 'reminder_cancel', 'greeting', 'thanks', 'goodbye', 'confirmation', 'off_topic', 'help', 'question', 'goal_progress', 'encouraging', 'ok', 'hbu', 'celebrating'].includes(intent)) {
+  if (['goal_setting', 'goal_complete', 'goal_missed', 'reminder_set', 'reminder_cancel', 'greeting', 'thanks', 'goodbye', 'confirmation', 'off_topic', 'help', 'question', 'goal_progress', 'encouraging', 'ok', 'hbu', 'celebrating', 'yes', 'no', 'lol', 'idk'].includes(intent)) {
     return { route: 'rule', handler: intent };
   }
   

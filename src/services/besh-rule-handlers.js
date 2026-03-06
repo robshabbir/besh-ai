@@ -200,6 +200,49 @@ const ruleHandlers = {
   },
 
   /**
+   * Yes handler
+   */
+  yes: async ({ user, context }) => {
+    const responses = [
+      `bet! 💪 lets do it`,
+      `alright lets gooo 🔥`,
+      `nice! lets get it`
+    ];
+    return responses[Math.floor(Math.random() * responses.length)];
+  },
+
+  /**
+   * No handler
+   */
+  no: async ({ user, context }) => {
+    return `alright no worries 👍`;
+  },
+
+  /**
+   * LOL handler
+   */
+  lol: async ({ user, context }) => {
+    const responses = [
+      `lol 😂 whats so funny?`,
+      `haha got me laughing too 😂`,
+      ` 😂 whats good?`
+    ];
+    return responses[Math.floor(Math.random() * responses.length)];
+  },
+
+  /**
+   * IDK handler
+   */
+  idk: async ({ user, context }) => {
+    const responses = [
+      `thats fair. just let me know when you figure it out 👍`,
+      `no worries. im here when you need me.`,
+      `take your time. whats on your mind?`
+    ];
+    return responses[Math.floor(Math.random() * responses.length)];
+  },
+
+  /**
    * Confirmation handler (yes/no responses)
    */
   confirmation: async ({ user, context, response, pendingQuestion }) => {

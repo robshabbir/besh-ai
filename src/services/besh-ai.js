@@ -35,7 +35,7 @@ async function callOpenAI(systemPrompt, messages, retries = 3) {
         body: JSON.stringify({
           model: MODEL,
           messages: openAIMessages,
-          max_tokens: 80,
+          max_tokens: 50, // Keep responses short for cost savings
           temperature: 0.7
         })
       });
