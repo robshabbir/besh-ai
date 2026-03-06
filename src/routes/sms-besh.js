@@ -254,7 +254,7 @@ function createSmsBeshHandler({ store, llm } = {}) {
           logger.info('Intent detected', { intent, sentiment: sentiment.sentiment, route: routing.route, userId: onboarding.user.id });
 
           // Create goal if goal intent detected (deduplicated by title)
-          if (intent === 'goal' && store.createGoal) {
+          if ((intent === 'goal' || intent === 'goal_setting') && store.createGoal) {
             const goalText = memory.extractGoalText(body);
             if (goalText) {
               const activeGoals = await store.getActiveGoals(onboarding.user.id);
