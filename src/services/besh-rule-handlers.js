@@ -140,6 +140,22 @@ const ruleHandlers = {
   },
 
   /**
+   * Goal progress handler
+   */
+  goal_progress: async ({ user, context, store }) => {
+    let goalsText = "you got this!";
+    if (store && user?.id) {
+      try {
+        const goals = await store.getActiveGoals(user.id);
+        if (goals && goals.length > 0) {
+          goalsText = goals.map(g => g.title).join(', ');
+        }
+      } catch (e) {}
+    }
+    return `you've got goals — ${goalsText}. keep pushing! 💪`;
+  },
+
+  /**
    * Confirmation handler (yes/no responses)
    */
   confirmation: async ({ user, context, response, pendingQuestion }) => {

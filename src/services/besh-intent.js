@@ -127,7 +127,7 @@ function routeMessage(intentResult) {
   }
   
   // Route to rule-based handlers for simple intents
-  if (['goal_setting', 'goal_complete', 'goal_missed', 'reminder_set', 'reminder_cancel', 'greeting', 'thanks', 'goodbye', 'confirmation', 'off_topic', 'help', 'question'].includes(intent)) {
+  if (['goal_setting', 'goal_complete', 'goal_missed', 'reminder_set', 'reminder_cancel', 'greeting', 'thanks', 'goodbye', 'confirmation', 'off_topic', 'help', 'question', 'goal_progress'].includes(intent)) {
     return { route: 'rule', handler: intent };
   }
   
