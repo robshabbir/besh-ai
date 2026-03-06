@@ -272,7 +272,7 @@ function createSmsBeshHandler({ store, llm } = {}) {
           }
 
           // Create reminder if reminder intent detected
-          if (intent === 'reminder' && store.createReminder) {
+          if ((intent === 'reminder' || intent === 'reminder_set') && store.createReminder) {
             const parsed = parseReminder(body, (onboarding.user.profile_json || {}).timezone || 'UTC');
             if (parsed) {
               await store.createReminder({
