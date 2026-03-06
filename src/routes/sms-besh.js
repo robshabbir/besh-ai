@@ -13,6 +13,7 @@ const { parseReminder } = require('../services/besh-reminders');
 const { detectSpecialCommands, detectGoalCompletion, formatGoalsList, formatSummary } = require('../services/besh-commands');
 const { detectIntent, detectSentiment, routeMessage } = require('../services/besh-intent');
 const { logInsight } = require('../services/besh-insights');
+const { processWithRules } = require('../services/besh-rule-handlers');
 
 const SUBSCRIPTION_TIERS = { free: 'free', pro: 'pro', premium: 'premium' };
 const FREE_TIER_DAILY_LIMIT = 20; // free tier: 20 msgs/day
@@ -288,7 +289,21 @@ function createSmsBeshHandler({ store, llm } = {}) {
 
           // Only call AI if a handler above hasn't already set an explicit reply
           if (!reply) {
-            const ctx = await memory.buildContext(onboarding.user.id);
+            // Try rule-based handlers first (free, faster)
+            const ruleResult = await processWithRules({
+              intent: intentResult,
+              user: onboarding.user,
+              context: userContext,
+              store,
+              message: body
+            });
+            
+            if (ruleResult && ruleResult.handled) {
+              reply = ruleResult.response;
+              logger.info('Rule handler executed', { handler: ruleResult.handler, intent: ruleResult.intent });
+            } else {
+              // Fall back to LLM
+              const ctx = await memory.buildContext(onboarding.user.id);
             // Detect goal completion — celebrate + offer to mark done
           const isCompletion = detectGoalCompletion(body);
           if (isCompletion && store.getActiveGoals) {
@@ -299,22 +314,23 @@ function createSmsBeshHandler({ store, llm } = {}) {
             }
           }
 
-          const startTime = Date.now();
-          try {
-            const result = await ai.generateResponse({
-              context: ctx,
-              userMessage: body,
-              intent
-            });
-            const responseTime = Date.now() - startTime;
-            updateAIMetrics(true, responseTime, intent, result.blocked || false);
-            reply = result.response;
-          } catch (aiErr) {
-            const responseTime = Date.now() - startTime;
-            updateAIMetrics(false, responseTime, intent, false);
-            logger.error('AI generation failed in SMS flow', { error: aiErr.message, userId: onboarding?.user?.id });
-            reply = "Hey, I hit a snag. Mind sending that again?";
-          }
+            const startTime = Date.now();
+            try {
+              const result = await ai.generateResponse({
+                context: ctx,
+                userMessage: body,
+                intent
+              });
+              const responseTime = Date.now() - startTime;
+              updateAIMetrics(true, responseTime, intent, result.blocked || false);
+              reply = result.response;
+            } catch (aiErr) {
+              const responseTime = Date.now() - startTime;
+              updateAIMetrics(false, responseTime, intent, false);
+              logger.error('AI generation failed in SMS flow', { error: aiErr.message, userId: onboarding?.user?.id });
+              reply = "Hey, I hit a snag. Mind sending that again?";
+            }
+            }
           }
 
           await store.appendConversation({
