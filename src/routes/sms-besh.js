@@ -304,32 +304,32 @@ function createSmsBeshHandler({ store, llm } = {}) {
             } else {
               // Fall back to LLM
               const ctx = await memory.buildContext(onboarding.user.id);
-            // Detect goal completion — celebrate + offer to mark done
-          const isCompletion = detectGoalCompletion(body);
-          if (isCompletion && store.getActiveGoals) {
-            const userGoals = await store.getActiveGoals(onboarding.user.id);
-            if (userGoals.length > 0) {
-              // Append completion context to AI message
-              body = body + ' [user is celebrating completing their goal: ' + userGoals[0].title + ']';
-            }
-          }
+              
+              // Detect goal completion — celebrate + offer to mark done
+              const isCompletion = detectGoalCompletion(body);
+              if (isCompletion && store.getActiveGoals) {
+                const userGoals = await store.getActiveGoals(onboarding.user.id);
+                if (userGoals.length > 0) {
+                  body = body + ' [user is celebrating completing their goal: ' + userGoals[0].title + ']';
+                }
+              }
 
-            const startTime = Date.now();
-            try {
-              const result = await ai.generateResponse({
-                context: ctx,
-                userMessage: body,
-                intent
-              });
-              const responseTime = Date.now() - startTime;
-              updateAIMetrics(true, responseTime, intent, result.blocked || false);
-              reply = result.response;
-            } catch (aiErr) {
-              const responseTime = Date.now() - startTime;
-              updateAIMetrics(false, responseTime, intent, false);
-              logger.error('AI generation failed in SMS flow', { error: aiErr.message, userId: onboarding?.user?.id });
-              reply = "Hey, I hit a snag. Mind sending that again?";
-            }
+              const startTime = Date.now();
+              try {
+                const result = await ai.generateResponse({
+                  context: ctx,
+                  userMessage: body,
+                  intent
+                });
+                const responseTime = Date.now() - startTime;
+                updateAIMetrics(true, responseTime, intent, result.blocked || false);
+                reply = result.response;
+              } catch (aiErr) {
+                const responseTime = Date.now() - startTime;
+                updateAIMetrics(false, responseTime, intent, false);
+                logger.error('AI generation failed in SMS flow', { error: aiErr.message, userId: onboarding?.user?.id });
+                reply = "Hey, I hit a snag. Mind sending that again?";
+              }
             }
           }
 
