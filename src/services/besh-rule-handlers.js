@@ -104,6 +104,18 @@ const ruleHandlers = {
   },
 
   /**
+   * Off-topic handler - redirect to goals
+   */
+  off_topic: async ({ user, context }) => {
+    const responses = [
+      `hey im mainly here to help you crush your goals. what are you working on?`,
+      `im your goal buddy — lets stay focused. what do you want to accomplish?`,
+      `nice but im here for goals and accountability. whats on your mind?`
+    ];
+    return responses[Math.floor(Math.random() * responses.length)];
+  },
+
+  /**
    * Confirmation handler (yes/no responses)
    */
   confirmation: async ({ user, context, response, pendingQuestion }) => {
