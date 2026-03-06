@@ -33,6 +33,7 @@ function getSupabase() {
  * @param {object} params.metadata - Additional metadata
  */
 async function logInsight({ userId, conversationId, intent, sentiment, routing, metadata = {} }) {
+  console.log('[insights] logInsight called:', { userId, intent: intent?.intent, sentiment: sentiment?.sentiment, routing: routing?.route });
   const sb = getSupabase();
   if (!sb) {
     console.log('[insights] Supabase not configured, skipping log');
