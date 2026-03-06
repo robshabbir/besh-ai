@@ -11,9 +11,9 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const MODEL = process.env.LLM_MODEL || 'gpt-4o-mini';
 
 /**
- * Call OpenAI API
+ * Call OpenAI API with retry and exponential backoff
  */
-async function callOpenAI(systemPrompt, messages) {
+async function callOpenAI(systemPrompt, messages, retries = 3) {
   const url = 'https://api.openai.com/v1/chat/completions';
   
   const openAIMessages = [
@@ -24,28 +24,55 @@ async function callOpenAI(systemPrompt, messages) {
     }))
   ];
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENAI_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: openAIMessages,
-      max_tokens: 80,
-      temperature: 0.7
-    })
-  });
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          messages: openAIMessages,
+          max_tokens: 80,
+          temperature: 0.7
+        })
+      });
 
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`OpenAI API ${response.status}: ${errText}`);
+      // Rate limited - retry with backoff
+      if (response.status === 429) {
+        const waitTime = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s
+        console.log(`[OpenAI] Rate limited, retrying in ${waitTime}ms...`);
+        await new Promise(r => setTimeout(r, waitTime));
+        continue;
+      }
+
+      if (!response.ok) {
+        const errText = await response.text();
+        // Server error - retry
+        if (response.status >= 500) {
+          const waitTime = Math.pow(2, attempt) * 1000;
+          console.log(`[OpenAI] Server error ${response.status}, retrying in ${waitTime}ms...`);
+          await new Promise(r => setTimeout(r, waitTime));
+          continue;
+        }
+        throw new Error(`OpenAI API ${response.status}: ${errText}`);
+      }
+
+      const data = await response.json();
+      const text = data.choices?.[0]?.message?.content || '';
+      return { text };
+      
+    } catch (err) {
+      if (attempt === retries - 1) throw err;
+      const waitTime = Math.pow(2, attempt) * 1000;
+      console.log(`[OpenAI] Error: ${err.message}, retrying in ${waitTime}ms...`);
+      await new Promise(r => setTimeout(r, waitTime));
+    }
   }
-
-  const data = await response.json();
-  const text = data.choices?.[0]?.message?.content || '';
-  return { text };
+  
+  throw new Error('OpenAI retries exhausted');
 }
 
 /**

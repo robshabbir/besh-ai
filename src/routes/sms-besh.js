@@ -328,7 +328,13 @@ function createSmsBeshHandler({ store, llm } = {}) {
                 const responseTime = Date.now() - startTime;
                 updateAIMetrics(false, responseTime, intent, false);
                 logger.error('AI generation failed in SMS flow', { error: aiErr.message, userId: onboarding?.user?.id });
-                reply = "Hey, I hit a snag. Mind sending that again?";
+                // Fallback responses for reliability
+                const fallbacks = [
+                  "hey sorry im having a moment. try again?",
+                  "sorry about that - got caught up. what were you saying?",
+                  "yo sorry - i totally spaced. say that again?"
+                ];
+                reply = fallbacks[Math.floor(Math.random() * fallbacks.length)];
               }
             }
           }
